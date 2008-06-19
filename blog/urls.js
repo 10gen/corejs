@@ -80,14 +80,28 @@ Blog.handleRequest = function( request , arg ){
             uri = uri.replace( /\/page\/[0-9]*/ , '');
         }
 
+        var extraFields = allowModule.blog.extraFields;
+        var useQuery = false;
+
         if (request.q)
             posts = Search.search(db.blog.posts, request.q , { min : 100 , sort : { ts : -1 } } );
         else if (request.category) {
             posts = db.blog.posts.find( { categories : request.category } ).sort({ ts: -1 }).toArray();
             isCategorySearch = true;
         }
+        else if(extraFields){
+            var query = {};
+            for(var key in extraFields){
+                if(extraFields[key].searchFunction)
+                    extraFields[key].searchFunction(request, query);
+            }
+            if(Object.keys(query).length > 0){
+                posts = db.blog.posts.find( query ).sort({ts: -1}).toArray();
+                useQuery = true;
+            }
+        }
 
-        if (request.q || request.category) {
+        if (request.q || request.category || useQuery) {
             var now = new Date();
             // We filter dontSearch posts out of search results but not category
             // searches. This was the result of a debate between me and Paul;
@@ -144,7 +158,7 @@ Blog.handleRequest = function( request , arg ){
         // process the URL
         // strip out the .html and leading and trailing slash if it exists (for MovableType URL migration)
         uri = uri.replace(/\.(jxp|html)$/, '').replace(/index$/, '');
-        uri = uri.replace(/^.rss\b/ , "/" );
+        uri = uri.replace(/^.rss\b/ , "" );
         uri = uri.replace(/\/$/, '').replace(/^\//, '').replace( /^(\d\d\d\d)\/0(\d)/ , "$1/$2" );
 
         Blog.log.debug("base URI: [" + uri + "]" );
