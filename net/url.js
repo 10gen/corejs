@@ -59,6 +59,7 @@ URL = function(s){
 LocalURL = function(path){
     // Don't call using new, bad things happen
     // Tests not yet written
+    path = path || request.getURL();
     var u = new URL(path);
     u.hostname = request.getHost();
     u.port = request.getPort();
@@ -196,6 +197,16 @@ URL.prototype._replaceLastPath = function(s){
     components.pop();
     components.push(s);
     this.path = components.join('/');
+};
+
+URL.prototype.setPath = function(s){
+    var c = this.clone();
+    c._setPath(s);
+    return c;
+};
+
+URL.prototype._setPath = function(s){
+    this.path = s;
 };
 
 URL.escape_queryargs = function( s , plusIsLiteral ){
