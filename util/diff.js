@@ -59,54 +59,24 @@ Util.Diff = {
     },
 
     diffArray : function( a , b ){
-        // if we are comparing the same array to itself, we need to make a copy
-        // so that we aren't unshifting it twice
-        if(a == b) {
-            b = Object.extend([], a);
-        }
+        var newa = Object.extend([], a);
+        var newb = Object.extend([], b);
 
-        var dArr = [];
-        c = [];
-        a.unshift();
-        b.unshift();
-        for(var i in a) {
-            c[i] = [];
-            c[i][0] = 0;
-        }
-        for(var j=1; j< b.length; j++) {
-            c[0][j] = 0;
-        }
-        for(var i=1; i< a.length; i++) {
-            for(var j=1; j< b.length; j++) {
-                var obj = Util.Diff.diff(a[i], b[j]);
-                if(obj == null || !c || !c[i-1] || !c[i]) {
-                    return ["oops, something went wrong diffing the array."];
-                }
-                if ( Object.keys(obj).length == 0)
-                    c[i][j] = c[i-1][j-1] + 1;
-                else
-                    c[i][j] = Math.max(c[i][j-1], c[i-1][j]);
-            }
-        }
-
-        function printDiff(c, x, y, i, j) {
-            if (i > 0 && j > 0 && x[i] == y[j]) {
-                printDiff(c, x, y, i-1, j-1);
+        var dArr = {};
+        for(var i in newa) {
+            if(newb[i]) {
+                var d = Util.Diff.diff(newa[i], newb[i]);
+                if(Object.keys(d).length > 0)
+                    dArr[i] = d;
             }
             else {
-                if (j > 0 && (i == 0 || (i > 0 && j > 0 && c[i][j-1] >= c[i-1][j]))) {
-                    printDiff(c, x, y, i, j-1);
-                    dArr.push({ add : y[j]});
-                }
-                else if (i > 0 && (j == 0 || ( i > 0 && j > 0 && c[i][j-1] < c[i-1][j]))) {
-                    printDiff(c, x, y, i-1, j);
-                    dArr.push({ remove : x[i] });
-                }
+                dArr[i] = {add : newa[i]};
             }
         }
-        printDiff(c, a, b, a.length-1, b.length-1);
-        a.shift();
-        b.shift();
+        for(var i = newa.length; i<newb.length; i++) {
+            dArr[i] = {add: newb[i]};
+        }
+
         return dArr;
 
     },
@@ -146,7 +116,7 @@ Util.Diff = {
             }
             else if(a[prop] instanceof Array && b[prop] instanceof Array) {
                 var diffy = Util.Diff.diffFunc["Array"](a[prop], b[prop]);
-                if(diffy instanceof Array && diffy.length > 0) {
+                if(diffy && Object.keys(diffy).length > 0) {
                     d[prop] = {change: diffy};
                 }
             }
@@ -164,7 +134,9 @@ Util.Diff = {
         for(var prop in b){
             if(! (prop in a) ){
                 // add it
-                d[prop] = {add: b[prop]};
+                log("here!");
+                if(!d.add) d.add = {};
+                d.add[prop] = b[prop];
             }
         }
         return d;
