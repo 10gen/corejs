@@ -17,4 +17,7 @@ User.Perm.RoleDB = Class.create(User.Perm.RoleBased, {
         if(! r) return null;
         return r.urls;
     },
+    getRoles: function(url){
+
+    },
 });
