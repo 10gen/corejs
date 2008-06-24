@@ -15,6 +15,7 @@ Util.Doc.toDb = function(file, javaFunc) {
 }
 
 Util.Doc.DbToHTML = function(out_dir) {
+    javaStatic("ed.doc.Generate", "removeOldDocs", local.getRoot()+"/"+out_dir+"DOC_DIR");
     var d = db.doc.find();
     while(d.hasNext()) {
         this.DbObjToHTML(d.next(), out_dir);
