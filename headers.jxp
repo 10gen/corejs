@@ -73,6 +73,17 @@
     </forarray>
     </table>
 
+    <h3>Session</h3>
+    <table border="1">
+    <forin mykey session >
+      <% var val = session[mykey]; if ( val ) val = val.toString(); %>
+       <tr>
+         <th><%= mykey %></th>
+         <td><%= val ? ( val.substring( 0 ,  30 ) + ( val.length > 30 ? "..." : "" ) ) : "null" %></td>
+       </tr>
+    </forin>
+    </table>
+
   </body>
 </html>
   
