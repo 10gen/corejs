@@ -30,20 +30,6 @@ var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
 
 </script>
 
-<table class="htmltable" width="550" border="0">
-
-  <!-- White table -->
-  <tr class="white-top">
-    <!-- Top area -->
-    <td class="left"><img src="/~~/modules/admin/assets/img/transparent.gif" width="14" height="1"></td>
-    <td class="middle">&nbsp;</td>
-    <td class="right"><img src="/~~/modules/admin/assets/img/transparent.gif" width="14" height="1"></td>
-  </tr>
-
-  <tr class="white-main">
-    <td class="left">&nbsp;</td>
-    <td>
-
 <div ? user >
   <div ? (conf.reason) class="notice"><%= conf.reason %></div>
   <div class="notice">You are already logged in as <strong><%= user.name %> (<%= user.email %>)</strong>.<br/><br/>If you would like to log in as another user, please <a href="<%= login %>/logout?to=<%= escape( request.getURL() ) %>">log out</a> first.</div>
@@ -53,11 +39,9 @@ var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
 
     <form id="login_form" method="POST" action="/goaway" onSubmit="return processLoginForm( this , <%= content.HTML.escape(tojson(toURL)) %>)" class="edit login">
 
+        <fieldset class="login">
+            <legend>Login</legend>
             <table>
-                <tr>
-                    <td></td>
-                    <td><h1>Please Login</h1></td>
-                </tr>
                 <tr>
                     <td><label for="login_user">Username</label></td>
                     <td><input name="login_user" class="text"></td>
@@ -81,37 +65,16 @@ var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
                 <tr>
                     <td></td>
                     <td>
-                        <input type="image" src="/~~/modules/admin/assets/img/button_login_on_white.gif" name="action" value="Login" class="button">
+                        <input type="submit" name="action" value="Login" class="button">
                         <strong ? ( "11" == request.getCookie( "__sudo" ) ) style="color:red;">sudo</strong>
                     </td>
                 </tr>
-				<tr>
-					<td></td>
-					<td>
-						<p class="login">
-						  <a href="<%= login %>/username_send">Forgot your username?</a> <br />
-					      <a href="<%= login %>/reset_send">Forgot your password?</a>
-					 	</p>	
-					</td>
-				</tr>
             </table>
+			<p class="login">
+			  <a href="<%= login %>/username_send">Forgot your username?</a> <br />
+		      <a href="<%= login %>/reset_send">Forgot your password?</a>
+		 	</p>
+    </fieldset>
+  </form>
 
-	</form>
-	
-	<div align="right"><a href="http://www.10gen.com"><img src="/~~/modules/admin/assets/img/logo_10gen_on_white.gif" width="90" height="50"></a></div>
-	
 </div>
-
-</td>
-<td class="right">&nbsp;</td>
-</tr>
-
-<tr class="white-bottom">
-
-<!-- Bottom area -->
-<td class="left">&nbsp;</td>
-<td class="middle">&nbsp;</td>
-<td class="right">&nbsp;</td>
-</tr>
-
-</table>
