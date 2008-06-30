@@ -7,7 +7,7 @@ Util.Doc.JSToDb = function(file) {
 }
 
 Util.Doc.JavadocToDb = function(file) {
-    this.toDb("../"+file, "JavadocArgHelper");
+    this.toDb("../"+file, "JavaToDb");
 }
 
 Util.Doc.toDb = function(file, javaFunc) {
