@@ -221,13 +221,14 @@ Search = {
             );
         }
 
-        all.sort( function( l , r ){
-            var diff = matchCounts[r] - matchCounts[l];
-            if ( diff != 0 )
-                return diff;
+        if( ! options.ignoreRelevancy )
+            all.sort( function( l , r ){
+                var diff = matchCounts[r] - matchCounts[l];
+                if ( diff != 0 )
+                    return diff;
 
-            return 0;
-        } );
+                return 0;
+            } );
         
         if ( Search.DEBUG ){
             Search.log( "matchCounts sorted: ");
