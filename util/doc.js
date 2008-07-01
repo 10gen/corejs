@@ -2,16 +2,8 @@ core.core.file();
 
 Util.Doc = {};
 
-Util.Doc.JSToDb = function(file) {
-    this.toDb("../"+file, "jsToDb");
-}
-
-Util.Doc.JavadocToDb = function(file) {
-    this.toDb("../"+file, "javaToDb");
-}
-
-Util.Doc.toDb = function(file, javaFunc) {
-    javaStatic("ed.doc.Generate", javaFunc, file);
+Util.Doc.SrcToDb = function(file) {
+    javaStatic("ed.doc.Generate", "srcToDb", "../"+file);
 }
 
 Util.Doc.DbToHTML = function(out_dir, version) {
