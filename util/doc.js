@@ -3,11 +3,11 @@ core.core.file();
 Util.Doc = {};
 
 Util.Doc.JSToDb = function(file) {
-    this.toDb("../"+file, "JSToDb");
+    this.toDb("../"+file, "jsToDb");
 }
 
 Util.Doc.JavadocToDb = function(file) {
-    this.toDb("../"+file, "JavaToDb");
+    this.toDb("../"+file, "javaToDb");
 }
 
 Util.Doc.toDb = function(file, javaFunc) {
