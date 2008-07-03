@@ -22,3 +22,4 @@ content.RegExp.unescape = function(str){
 content.RegExp.literal = function(str, flags){
     return new RegExp(content.RegExp.escape(str), flags);
 };
+
