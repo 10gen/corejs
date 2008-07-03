@@ -16,6 +16,11 @@ catch(e if (e instanceof Exception.Redirect)){
 }
 
 if ( ! user ){
+    if ( request.failto ){
+        var failto = new URL(request.failto).replaceArg('notice', 'invalid username/password').toString();
+        return response.sendRedirectTemporary( failto );
+    }
+    // Else:
     htmlheader("Login");
     print( "<div class='notice'>" + error + "</div>" );
     core.user.html.login( { to: request.to } );

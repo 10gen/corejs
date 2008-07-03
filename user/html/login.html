@@ -2,6 +2,8 @@
 var conf = arguments[0] || {};
 var login = User.findMyLocation();
 var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
+var failTo = conf.failto || "";
+// FIXME: inline styling on request.notice div
 %>
 <script src="/~~/ui/js/md5.js"></script>
 <script>
@@ -23,6 +25,7 @@ var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
     u += "&hash=" + hex_md5( prefix + ":" + hex_md5( thing  ) );
 
     if ( frm.login_remember.checked ) u += "&remember=t";
+    if ( frm.failto.value != "null" ) u += "&failto=" + frm.failto.value;
 
     location.href = u;
     return false;
@@ -35,9 +38,14 @@ var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
   <div class="notice">You are already logged in as <strong><%= user.name %> (<%= user.email %>)</strong>.<br/><br/>If you would like to log in as another user, please <a href="<%= login %>/logout?to=<%= escape( request.getURL() ) %>">log out</a> first.</div>
 </div>
 
+<div ? request.notice >
+  <div style="color: #f00;"><%= content.HTML.escape(request.notice) %></div>
+</div>
+
 <div ? ( ! user ) id="login">
 
     <form id="login_form" method="POST" action="/goaway" onSubmit="return processLoginForm( this , <%= content.HTML.escape(tojson(toURL)) %>)" class="edit login">
+  <input type="hidden" name="failto" value="<%=failTo %>" />
 
         <fieldset class="login">
             <legend>Login</legend>
