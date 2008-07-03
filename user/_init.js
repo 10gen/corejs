@@ -3,6 +3,7 @@ function User(){
 };
 
 core.user.user();
+core.net.email();
 
 User.config = {
     useCaptcha : false
