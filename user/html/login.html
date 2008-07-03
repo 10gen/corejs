@@ -3,7 +3,8 @@ var conf = arguments[0] || {};
 var login = User.findMyLocation();
 var toURL = login + '/doLogin?to=' + escape( conf.to || request.getURL() );
 var failTo = conf.failto || "";
-// FIXME: inline styling on request.notice div
+var css = conf.css;
+if(css) head.addCSS(css);
 %>
 <script src="/~~/ui/js/md5.js"></script>
 <script>
@@ -39,7 +40,7 @@ var failTo = conf.failto || "";
 </div>
 
 <div ? request.notice >
-  <div style="color: #f00;"><%= content.HTML.escape(request.notice) %></div>
+  <div class="error"><%= content.HTML.escape(request.notice) %></div>
 </div>
 
 <div ? ( ! user ) id="login">
