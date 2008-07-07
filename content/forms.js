@@ -24,16 +24,34 @@ Forms.fillInObject = function( prefix , o , req ){
         if ( prefix )
             name = name.substring( prefix.length );
         
-	if ( ! val ) continue;
-	if ( val.lenth == 0 ) continue;
+	if ( ! val ) 
+            continue;
         
 	if ( name == "_id" ) val = ObjectId( val );
 	
-        o[name] = val;
+        Forms._subobject( o , name , val );
     }
     return o;
 };
 
+/**
+* if set is non-null, the value is set.  otherwise just returns
+*/
+Forms._subobject = function( o , name , set ){
+    while ( name.indexOf( "." ) >=0 ){
+        var idx = name.indexOf( "." );
+        o = o[ name.substring( 0 , idx ) ];
+        if ( ! o ){
+            if ( ! set )
+                return null;
+            o = {};
+        }
+        name = name.substring( idx + 1 );
+    }
+    if ( set )
+        o[name] = set;
+    return o[name];
+}
 
 Forms.Form = function( object , prefix ){
     this.object = object;
@@ -46,13 +64,17 @@ Forms.Form.prototype._getOptions = function( options , type ){
     return options;
 }
 
+Forms.Form.prototype._getValue = function( name ){
+    return Forms._subobject( this.object , name );
+}
+
 Forms.Form.prototype.text = function( name , options ){
 
     options = this._getOptions( options , "text" );
     options.name = this.prefix + name;
     
-    if ( this.object[ name ] )
-        options.value = this.object[ name ];
+    if ( this._getValue( name ) )
+        options.value = this._getValue( name  );
     
     return this.input( options );
 };
@@ -71,8 +93,8 @@ Forms.Form.prototype.hidden = function( name , value , options ){
     
     if ( value )
         options.value = value;
-    else if ( this.object[ name ] )
-        options.value = this.object[ name ];
+    else if ( this._getValue( name ) )
+        options.value = this._getValue( name );
     
     return this.input( options );
 };
