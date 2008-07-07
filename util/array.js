@@ -14,17 +14,3 @@ Array.prototype.distinct = function() {
 
 Array.prototype.car = function() { return this[0]; }
 Array.prototype.cdr = function() { return this.slice(1); }
-
-/* like PHP implode (combine into a string) 
-   removed: use Array.join() instead.
-Array.prototype.implode = function(sep) { 
-    var arr = this;
-    if( !arr || arr.length == 0 ) return "";
-    sep = sep || "";
-    var s = arr[0];
-    for( var i = 1; i < arr.length; i++ ) { 
-	s += sep + arr[i];
-    }
-    return s;
-}
-*/
