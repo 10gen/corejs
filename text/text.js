@@ -1,7 +1,9 @@
-// text.js
-
 Text = {
-
+    /** Return a "snippet" of a string, comprising of the first few 
+     *  hundred characters.
+     *  @param {string} s the string to truncate
+     *  @returns {string}
+     */
     snippet: function(s) { 
 	if( !isString(s) )
 	    return s;

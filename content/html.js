@@ -1,3 +1,6 @@
+/** @class HTML content manipulation class
+ * @memberOf content
+ */
 
 content.HTML._entities = [{s: '&', r: "&amp;"},
                           {s: '<', r: "&lt;"},
@@ -5,14 +8,17 @@ content.HTML._entities = [{s: '&', r: "&amp;"},
                           {s: '"', r: "&quot;"},
                           {s: "'", r: "&apos;"}];
 
-// This doesn't touch any "weird" characters like &agrave; &clubs; or &OElig;
-// My feeling is, if these characters got into our content, then we'd probably
-// do best to set a good charset in the Content-Type header and then
-// just pass them through to the client.
-// If we really want to do this, we probably need to implement a
-// convert-to-utf8 function, and I'm not enough of a Unicode wizard to do that.
-// -Ethan
-
+/** Escape questionable characters in JavaScript
+ * <br />
+ * Note: This doesn't touch any "weird" characters like &agrave; &clubs; or &OElig;
+ * My feeling is, if these characters got into our content, then we'd probably
+ * do best to set a good charset in the Content-Type header and then
+ * just pass them through to the client.
+ * If we really want to do this, we probably need to implement a
+ * convert-to-utf8 function, and I'm not enough of a Unicode wizard to do that.
+ * @param {string} str JavaScript string to be escaped
+ * @returns {string} Cleaned string
+ */
 content.HTML.escape_js = function(str){
     for(var i in content.HTML._entities){
         var pair = content.HTML._entities[i];
@@ -21,10 +27,27 @@ content.HTML.escape_js = function(str){
     return str;
 };
 
+/** 
+ * Escape HTML characters.
+ * @function
+ * @param {string} str String to be escaped
+ * @returns {string} Cleaned string
+ */
 content.HTML.escape = escapeHTML;
 
+/**
+ * Escape HTML characters.
+ * @function
+ * @param {string} str String to be escaped
+ * @returns {string} Cleaned string
+ */
 content.HTML.escape_html = content.HTML.escape;
 
+/** 
+ * Unescape HTML characters.
+ * @param {string} str Clean string
+ * @returns {string} Unescaped string
+ */
 content.HTML.unescape_html = function(str){
     for(var i in content.HTML._entities){
         var pair = content.HTML._entities[i];
@@ -33,6 +56,10 @@ content.HTML.unescape_html = function(str){
     return str;
 };
 
+/** Do not replace any questionable characters, just get rid of them.
+ * @param {string} str String to be escaped
+ * @returns {string} Cleaned string
+ */
 content.HTML.strip = function(s){
     s = s.replace(/<.+?>/g, "");
     s = s.replace(/&\w+;/g, "");
@@ -40,8 +67,14 @@ content.HTML.strip = function(s){
     return s;
 };
 
+/** @namespace RSS feed functions.
+ */
 RSS = {};
 
+/** Get rid of potentially dangerous characters from RSS feeds
+ * @param {string} s String to be escaped
+ * @returns {string} Cleaned string
+ */
 RSS.clean = function( s ){
 
     // This is a slightly modified version of the RSS clean function in
