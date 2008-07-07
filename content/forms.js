@@ -54,8 +54,13 @@ Forms._subobject = function( o , name , set ){
         }
         name = name.substring( idx + 1 );
     }
-    if ( set )
+
+    if ( set ){
+        if ( isNumber( o[name] ) )
+            set = parseNumber( set );
         o[name] = set;
+    }
+    
     return o[name];
 }
 
