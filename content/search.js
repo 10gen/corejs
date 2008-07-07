@@ -7,16 +7,32 @@ core.content.html();
 if ( Search && Search._doneInit )
     return;
 
+/** @namespace Database search functions
+*/
 Search = {
 
+    /** Search log
+     * @type log
+     */
     log : log.search ,
+    /** Debug
+     * @type boolean
+     */
     DEBUG : false ,
 
+    /** Search weights */
     _weights : {} ,
     _default : [ { idx : "_searchIndex" , w : 1 } ] ,
 
+    /** Regular expression representing a word.
+     * @type RegExp
+     */
     wordRegex : /[,\. ]*\b[,\. ]*/ ,
 
+    /** Trim a string, convert it to lower case, and get its stem
+     * @param {string} s String to be cleaned
+     * @returns {string} Cleaned string
+     */
     cleanString : function( s ){
 
         if ( ! s.match( /\w/ ) )
@@ -28,6 +44,10 @@ Search = {
         return s;
     } ,
 
+    /** Find the name of the search index
+     * @param {number} [weight] Search term weight
+     * @returns {string} Search index name
+     */
     getIndexName : function( weight ){
         var idx = "_searchIndex";
         if ( weight && weight > 0 && weight != 1 )
@@ -77,6 +97,11 @@ Search = {
 
     } ,
 
+    /** Add a set of words to the search index of an object
+     * @param {Object} obj Target object
+     * @param {string} str String with words to be added
+     * @param {number} weight Weight of the index the words should be added to
+     */
     addToIndex : function( obj, str, weight){
         var idx = Search.getIndexName( weight );
 
@@ -95,6 +120,12 @@ Search = {
         });
     },
 
+    /** Index the fields of an object
+     * @param {Object} obj Target object
+     * @param {number} weight Weight of the index
+     * @param {Object} [options={}] Can include a function "filter" or boolean "stripHTML"
+     * @returns {Object} The object obj
+     */
     index : function( obj, weights, options ){
         var keys = Object.keys(obj);
         for(var i = 0; i < keys.length; i ++){
@@ -103,6 +134,14 @@ Search = {
         return Search.indexSub(obj, obj, weights, options || {} );
     },
 
+    /** Index the fields of an object
+     * @param {Object} top Object to which search terms should be added
+     * @param {Object} obj Target object
+     * @param {number} weight Weight of the index
+     * @param {Object} [options={}] Can include a function "filter" or boolean "stripHTML"
+     * @returns {Object} The object top
+     * @throws {Exception} Weights cannot be null
+     */
     indexSub : function( top , obj , weights, options){
 
         if ( weights == null )
@@ -145,6 +184,10 @@ Search = {
         return top;
     } ,
 
+    /** Split a search string into individual, clean words
+     * @param {string} query Search string
+     * @returns {Array} An array of strings
+     */
     queryToArray : function(queryString){
         var words = [];
 
@@ -158,6 +201,12 @@ Search = {
         return words;
     },
 
+    /** Perform a query on a database collection.
+     * @param {db_collection} collection Collection to be searched
+     * @param {string} query
+     * @param {Object} [options={}] Search options: min, sort, ignoreRelevancy
+     * @returns {Array} An array of results, if successful
+     */
     search : function( table , queryString , options ){
 
         if ( Search.DEBUG ) Search.log( table.getName() + "\t" + queryString );
@@ -200,9 +249,9 @@ Search = {
                         matchCounts[temp] = w;
 
                     max = Math.max( max , matchCounts[temp] );
-                    
+
                     if ( Search.DEBUG ) Search.log( "\t\t " + temp + "\t" + tempObject.title  + "\t" + matchCounts[temp] );
-                    
+
                     if ( ! all.contains( temp ) )
                         all.add( temp );
                 }
@@ -214,7 +263,7 @@ Search = {
 
         if ( Search.DEBUG ){
             Search.log( "matchCounts: ");
-            all.forEach( 
+            all.forEach(
                 function(z){
                     SYSOUT( "\t" + z + "\t" + matchCounts[z] );
                 }
@@ -229,10 +278,10 @@ Search = {
 
                 return 0;
             } );
-        
+
         if ( Search.DEBUG ){
             Search.log( "matchCounts sorted: ");
-            all.forEach( 
+            all.forEach(
                 function(z){
                     SYSOUT( "\t" + z + "\t" + matchCounts[z] );
                 }
@@ -251,6 +300,11 @@ Search = {
         return good;
     },
 
+    /** Given two queries, determine if they are essentially the same
+     * @param {string} query1 First query
+     * @param {string} query2 Second query
+     * @returns {boolean} If the queries are the same
+     */
     match: function(obj, query){
         var qwords = Search.queryToArray(query);
         var owords = Search.queryToArray(obj);
@@ -260,38 +314,51 @@ Search = {
         }
     },
 
+
+    /** Given an object and a search term, find the relevant parts
+     *  of the object.
+     *
+     *  FIXME: Which parts are relevant? For right now, I only return
+     *  JS objects.
+     *   So, if given: {a : ["hi", "yo", "hey"]} and the query "hi", return
+     *   the whole object -- not the array, not either of the strings.
+     *   Search.snippet should return an array of {object: o1, text: "hi"}
+     *   objects.
+     *   Other text processing can happen after that. snippet should
+     *   just search through the object structure to find the text at all
+     * @param {Object} obj Object to be searched
+     * @param {string} query Search query
+     * @param {Array|number} weights Search weights
+     * @returns {Array} Search results
+    */
     snippet: function(obj, query, weights){
-        // snippet: given an object and a search term, find the relevant parts
-        // of the object.
-        //
-        // FIXME: Which parts are relevant? For right now, I only return
-        // JS objects.
-        // So, if given: {a : ["hi", "yo", "hey"]} and the query "hi", return
-        // the whole object -- not the array, not either of the strings.
-        // Search.snippet should return an array of {object: o1, text: "hi"}
-        // objects.
-        // Other text processing can happen after that. snippet should
-        // just search through the object structure to find the text at all
 
         var ary = [];
         Search.snippetSub(obj, obj, query, weights, ary);
         return ary;
     },
 
+    /** explore a structure recursively, as directed by
+     * variable.
+     * The base case we're working towards is to end up with a weight
+     * of a number, versus a single string.
+     * In this case we just test the string.
+
+     *  If we are exploring an array, we just explore each element without
+     * changing the parent. This comes before the base case, because
+     * we can explore arrays in either the base case or other cases.
+
+     * If we're not at an array and weights is not a number,
+     * we explore recursively.
+     * Don't recurse into nulls.
+     * @param {Object} obj Object to search in
+     * @param {Object} parent <tt>obj</tt>'s parent
+     * @param {string} query Search query
+     * @param {Array|number} weights
+     * @param {Array} results Array of search results
+     * @returns {boolean} <tt>false</tt>
+     */
     snippetSub: function(obj, parent, query, weights, results){
-        // snippetSub: explore a structure recursively, as directed by
-        // the weights variable.
-        // The base case we're working towards is to end up with a weight
-        // of a number, versus a single string.
-        // In this case we just test the string.
-        //
-        // If we are exploring an array, we just explore each element without
-        // changing the parent. This comes before the base case, because
-        // we can explore arrays in either the base case or other cases.
-        //
-        // If we're not at an array and weights is not a number,
-        // we explore recursively.
-        // Don't recurse into nulls.
         var ret = false;
 
         if(obj == null){

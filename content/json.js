@@ -1,4 +1,4 @@
-/* JSON.isValid from YUI YAHOO.lang.JSON, code licensed under a BSD license */
+/** @namespace JSON.isValid from YUI YAHOO.lang.JSON, code licensed under a BSD license */
 
 var JSON = {
     /**
