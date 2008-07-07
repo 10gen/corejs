@@ -4,6 +4,12 @@ processRequestNotice = function(){
     }
 };
 
+/** Universal header for html pages.
+ * If global variable <tt>useHeader</tt> is set, it will call that instead.
+ * If local.pieces.header is set, it will call that instead.
+ * If neither is set, it will print a basic header.
+ * @param {string} [title="10gen Application"] Page &lt;title&gt;
+ */
 htmlheader = function(title) {
     processRequestNotice();  // I'm not sure this is the right thing in general
 
@@ -18,6 +24,11 @@ htmlheader = function(title) {
     print('<html><head><title>' + title + '</title></head><body>');
 }
 
+/** Universal footer for html pages.
+ * If global variable <tt>useFooter</tt> is set, it will call that instead.
+ * If local.pieces.footer is set, it will call that instead.
+ * If neither is set, it will print a basic footer.
+ */
 htmlfooter = function() {
     if ( useFooter )
         return useFooter();
@@ -56,14 +67,14 @@ addToNotice = function(key, value){
 
 /**
  *   Function to mask how we add modules so we can change the underlying mechanism ASAP
- * 
- *   @param {String} name - name of module to install.  Currently this is the path from corejs root.  Horrors.
- *   @param {Object} params - paramter object for the specified module
+ *
+ *   @param {String} name Name of module to install.  Currently this is the path from corejs root.  Horrors.
+ *   @param {Object} params Paramter object for the specified module
  */
 addModule = function(name, params) {
     if (!allowModule) {
 	allowModule = {};
     }
-    
+
     allowModule[name] = params || {};
 }
