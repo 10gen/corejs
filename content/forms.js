@@ -27,9 +27,6 @@ Forms.fillInObject = function( prefix , o , req ){
 	if ( ! val ) 
             continue;
         
-	if ( val.lenth == 0 ) 
-            continue;
-        
 	if ( name == "_id" ) val = ObjectId( val );
 	
         Forms._subobject( o , name , val );
