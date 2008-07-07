@@ -1,3 +1,5 @@
+/** URL class for parsing/manipulating URLs.
+ */
 URL = function(s){
     // This class is a representation of a URL. Right now it is mostly
     // intended to support adding/replacement/removal of query args, but it could
@@ -55,7 +57,12 @@ URL = function(s){
         }
     }
 };
-
+/**
+ *  A URL to this site, with the given path.
+ *  Takes the hostname and port from the Request object.
+ *  Don't call with new; bad things happen.
+ *  @param {string} path The path that the URL should have.
+ */
 LocalURL = function(path){
     // Don't call using new, bad things happen
     // Tests not yet written
@@ -65,7 +72,9 @@ LocalURL = function(path){
     u.port = request.getPort();
     return u;
 };
-
+/**
+ *  Stringify a URL.
+ */
 URL.prototype.toString = function(){
     // Generate the string for this URL object.
     if(this.hostname){
@@ -91,32 +100,50 @@ URL.prototype.toString = function(){
     return str;
 };
 
+/**
+ *  Clone a URL.
+ *  Works "the long way", formatting to string and parsing the string.
+ *  @returns a new URL with the same attributes as this one.
+ */
 URL.prototype.clone = function(){
     // Clone a URL object. FIXME: when we get Prototype working, use their
     // Object.clone method.
     return new URL(this.toString());
 };
 
+/**
+ *  Make a new URL composed of this url with an additional query argument.
+ *  Always adds an additional argument, even if one with the same key exists
+ *  already in this URL.
+ *  @returns a new URL.
+ *  @see URL.prototype.replaceArg
+ */
 URL.prototype.addArg = function(key, value){
-    // Add a query arg to this URL.
-    // Be careful! If you create a new URL from the current URL,
-    // and add the same argument, you'll end up with a long list of
-    // query arguments. Please consider replaceArg instead.
-    // @return a new URL, with the additional query argument added.
     var c = this.clone();
     return c._addArg(key, value);
 };
 
+/*
+ *  Internal method to add a query argument to this url.
+ */
 URL.prototype._addArg = function(key, value){
     this.args.push({key: key, value: value});
     return this;
 };
 
+/** Make a new URL composed of this url with many additional query arguments.
+ *  Does not replace previous arguments with the same names.
+ *  @param {Object} obj A mapping of key, value pairs, 
+ *        all of which are added to this URL.
+ *  @returns a new URL.
+ */
 URL.prototype.addArgs = function(obj){
     var c = this.clone();
     return c._addArgs(obj);
 };
 
+/* Internal method to add several query arguments to this url.
+ */
 URL.prototype._addArgs = function(obj){
     for(var key in obj){
         this._addArg(key, obj[key]);
@@ -124,12 +151,16 @@ URL.prototype._addArgs = function(obj){
     return this;
 };
 
+/**
+ *  Create a new URL with a new query argument, replacing the first query 
+ *  argument of the same name if any.
+ *  If there is no query arg with key "key", then just add a key:arg pair at the
+ *  end.
+ *  @returns a new URL.
+ *  @param {string} key The key to add (and replace).
+ *  @param {string} value The value to add with it.
+ */
 URL.prototype.replaceArg = function(key, value){
-    // Replace the first query arg with the key "key" with the value "value".
-    // If there is no query arg with key "key", then just add a key:arg pair at the
-    // end.
-    // @return a new URL, with the old query argument (if any) removed and a new
-    //    one added.
     var c = this.clone();
     return c._replaceArg(key, value);
 };
@@ -146,10 +177,11 @@ URL.prototype._replaceArg = function(key, value){
     return this._addArg(key, value);
 };
 
+/** Create a new URL without the first query argument named by key.
+ *  @returns a new URL with either the same args (if none had the right key) or
+ *         one less arg (if that arg had the same key).
+ */
 URL.prototype.removeArg = function(key){
-    // Remove the first arg with the key "key" from a URL.
-    // @return a new URL with either the same args (if none had the right key) or
-    //         one less arg (if that arg had the same key).
     var c = this.clone();
     c._removeArg(key);
     return c;
@@ -170,12 +202,16 @@ URL.prototype._removeArg = function(key){
     return this;
 };
 
+/** Create a new URL without any of the query arguments this one has.
+ */
 URL.prototype.clearArgs = function(){
     var c = this.clone();
     c._clearArgs();
     return c;
 };
 
+/* Internal method to get rid of the query arguments for this object.
+*/
 URL.prototype._clearArgs = function(){
     this.args = [];
 };
@@ -186,12 +222,22 @@ URL.prototype.replaceQuery = URL.prototype.replaceArg;
 URL.prototype.removeQuery = URL.prototype.removeArg;
 URL.prototype.clearQueries = URL.prototype.clearArgs;
 
+/**
+ *  Create a new URL with the same path as this one, except with the last path
+ *  component different.
+ *  @example
+ *  var u = new URL('/a/b/c');
+ *  var u2 = u.replaceLastPath('d');
+ *  print(u2.toString()); // prints /a/b/d
+ */
 URL.prototype.replaceLastPath = function(s){
     var c = this.clone();
     c._replaceLastPath(s);
     return c;
 };
 
+/* Internal method to replace this object's last path component.
+*/
 URL.prototype._replaceLastPath = function(s){
     var components = this.path.split('/');
     components.pop();
@@ -199,16 +245,27 @@ URL.prototype._replaceLastPath = function(s){
     this.path = components.join('/');
 };
 
+/**
+ *  Create a new URL with a different path.
+ *  @param {string} s the path for the new URL
+ *  @returns a new URL
+ */
 URL.prototype.setPath = function(s){
     var c = this.clone();
     c._setPath(s);
     return c;
 };
 
+/* Internal method to replace the path of this object.
+*/
 URL.prototype._setPath = function(s){
     this.path = s;
 };
 
+
+
+/* I think we don't use this any more.
+*/
 URL.escape_queryargs = function( s , plusIsLiteral ){
     // This temporary function is meant to be roughly equivalent to the JS
     // encodeURIComponent function, which isn't implemented yet in the appserver.
@@ -221,6 +278,8 @@ URL.escape_queryargs = function( s , plusIsLiteral ){
     return escape( s );
 };
 
+/* Used in parsing queryargs for a given URL.
+*/
 URL.unescape_queryargs = function( s, plusIsLiteral ){
     // Analagously to escape_queryargs, support treating + signs as + signs
     // (rather than really as spaces). This doesn't usually come up, because
