@@ -15,34 +15,12 @@ foo.__proto__ = new ModelBase( "foos" );
 
 // ------------
 
-ModelBase = function( collectionName ){
+ModelBase = function( collectionName , cons ){
     this.collectionName = collectionName;
+    this.cons = cons;
+    this._c = db[this.collectionName];
+    this._c.setConstructor( this.cons );
 };
-
-ModelBase.prototype.__defineGetter__( "_c" , 
-                                      function(){
-                                          return db[this.collectionName];
-                                      } );
-    
-
-// constructor stuff
-
-ModelBase.prototype.__defineGetter__( "cons" ,
-                                      function(){
-                                          return this._cons;
-                                      }
-                                    );
-
-
-ModelBase.prototype.__defineSetter__( "cons" ,
-                                      function( cons ){
-                                          this._cons = cons;
-                                          this._c.setConstructor( cons );
-                                          return cons;
-                                      }
-                                    );
-                                          
-
 
 // queries
 
