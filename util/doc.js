@@ -3,7 +3,7 @@ core.core.file();
 Util.Doc = {};
 
 Util.Doc.SrcToDb = function(file) {
-    javaStatic("ed.doc.Generate", "srcToDb", "../"+file);
+    javaStatic("ed.doc.Generate", "srcToDb", file);
 }
 
 Util.Doc.DbToHTML = function(out_dir, version) {
