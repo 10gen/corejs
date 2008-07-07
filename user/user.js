@@ -1,14 +1,11 @@
-/**
- * User
- *   email
- *   url
- *   name
- *   nickname
- *   firstname, lastname (optional)
- * FIXME: use better names for these fields?
- * name -> username, nickname -> displayname
+/** Set a user's password.  Prerequisites: <ul>
+ * <li>There must be a database chosen
+ * <li>The user's email must be set.  If a user's email changes, the password must be rehashed.
+ * <li>The user's name must be set.  If a user's email changes, the password must be rehashed.
+ * </ul>
+ * @param {string} password Unencoded password
+ * @param {string} database Database name
  */
-
 User.prototype.setPassword = function( pass , name ){
     if ( ! name )
         name = db.getName();
@@ -16,6 +13,10 @@ User.prototype.setPassword = function( pass , name ){
     this.pass_ha1_email = md5( this.email + ":" + name + ":" + pass );
 };
 
+/** Determine if the password is correct.
+ * @param {string} password Unencoded password to be checked
+ * @returs {boolean} If the password was correct
+ */
 User.prototype.checkPasswordClearText = function( pass ){
     if ( this.pass_ha1_name == md5( this.name + ":" + db.getName() + ":" + pass ) )
         return true;
@@ -26,6 +27,10 @@ User.prototype.checkPasswordClearText = function( pass ){
     return false;
 };
 
+/** Determine if the password is correct.
+ * @param {string} password Encoded password to be checked
+ * @returs {boolean} If the password was correct
+ */
 User.prototype.checkPasswordDigest = function( pass ){
     if ( this.pass_ha1_name == pass )
          return true;
@@ -34,12 +39,15 @@ User.prototype.checkPasswordDigest = function( pass ){
     return false;
 };
 
+/** Determine if the user has administrative privileges
+ * @returns {boolean} If the user has the "admin" permission
+ */
 User.prototype.isAdmin = function(){
     return this.hasPermission( "admin" );
 };
 
-/**
- *  @return copy of array of permissions. Can be empty.
+/** Get user permissions
+ *  @return {Array} Copy of array of permissions. Can be empty.
  */
 User.prototype.getPermissions = function(){
     if (!this.permissions) {
@@ -49,6 +57,10 @@ User.prototype.getPermissions = function(){
     return this.permissions.slice();
 };
 
+/** Check if a user has the specified permission
+ * @param {string} permission The desired user permission
+ * @returns {boolean} If the user had the permission specified
+ */
 User.prototype.hasPermission = function( perm ){
     if ( ! this.permissions )
         return false;
@@ -56,12 +68,18 @@ User.prototype.hasPermission = function( perm ){
     return this.permissions.contains( perm.toLowerCase() ) || this.permissions.contains( "superadmin" );
 };
 
+/** Add a permission
+ * @param {string} permission Permission to be added
+ */
 User.prototype.addPermission = function( perm ){
     if ( ! this.permissions )
         this.permissions = Array();
     this.permissions.push( perm.toLowerCase() );
 };
 
+/** Remove a permission.
+ * @param {string} permission Permission to be removed.  Fails silently if user didn't have the permission.
+ */
 User.prototype.removePermission = function( perm ){
     if ( ! this.permissions )
         return;
@@ -71,6 +89,9 @@ User.prototype.removePermission = function( perm ){
     this.permissions.splice(i, 1);
 };
 
+/** Returns the nickname, if it exists, otherwise the username
+ * @returns {string} Prettiest name found
+ */
 User.prototype.getDisplayName = function( ){
     return this.nickname || this.name;
 };
@@ -118,6 +139,12 @@ User.prototype.presave = function( ){
     this.uniqueness_hash = md5(this.name + ":" + this.email + ":" + this.nickname);
 };
 
+/** Find a user
+ * @param {string} uname User name or email to use to find a user
+ * @param {Object} [collection="db.users"] The database user collection
+ * @returns {Object} User object
+ * @static
+ */
 User.find = function( thing , theTable ){
     if ( ! theTable )
         theTable = db.users;
@@ -154,12 +181,22 @@ if ( db ){
     db.users.ensureIndex( { permissions : 1 } );
 }
 
+/** Get user status
+ * @param {string} status
+ * @returns {string} If status is "confirmed_email", returns "confirming your email", otherwise return nothing
+ * @static
+ */
 User.statusName = function(status){
     if(status == "confirmed_email")
         return "confirming your email";
 
 };
 
+/** Link to email sent confirmation page
+ * @param {string} status
+ * @param {string} URL to "email confirmation sent" page
+ * @static
+ */
 User.statusLink = function(status){
     if(status == "confirmed_email")
         return new URL(User.findMyLocation()+"confirm_send").toString()
