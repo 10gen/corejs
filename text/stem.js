@@ -10,6 +10,8 @@
 
 // Release 1
 
+// Taken from http://tartarus.org/~martin/PorterStemmer/index-old.html , which
+// is "free of charge for any purpose". This version was adapted by Eliot.
 
 Stem = { 
     step2list : {  
@@ -56,6 +58,11 @@ Stem.mgr0 = "^(" + Stem.C + ")?" + Stem.V + Stem.C ;                    // [C]VC
 Stem.meq1 = "^(" + Stem.C + ")?" + Stem.V + Stem.C + "(" + Stem.V + ")?$" ;  // [C]VC[V] is m=1
 Stem.mgr1 = "^(" + Stem.C + ")?" + Stem.V + Stem.C + Stem.V + Stem.C ;            // [C]VCVC... is m>1
 Stem.s_v = "^(" + Stem.C + ")?" + Stem.v ;                    // vowel in stem
+
+/** Get the stem of a word using the Porter stemming algorithm.
+ *  @param {string} w a word
+ *  @returns {string} the stem of the word
+ */
 
 Stem.stem = function(w) {
     var stem;
@@ -189,9 +196,14 @@ Stem.stem = function(w) {
 
 };
 
-// takes the root of a word and a word to be matched and checks if the 
-// root is a stripped version of the match word
+/** Takes the root of a word and a word to be matched and checks if the 
+ *  root is a stripped version of the match word.
+ *  @param {string} word a stem
+ *  @param {string} m a word
+ *  @returns true if m could be stemmed to word
+ */
 Stem.destem = function(word, m) {
+    /* Note that this doesn't just stem m again .. why?? */
 
     var suffix = "able|ible|al|ial|ed|en|er|est|ful|ic|ing|ion|tion|ation|ition|ity|ty|ive|ative|itive|less|ly|ment|ness|ous|eous|ious|s|es|y";
     var prefix = "anti|de|dis|en|em|fore|in|im|il|ir|inter|mid|mis|non|over|pre|re|semi|sub|super|trans|un|under";
