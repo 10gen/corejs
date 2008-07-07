@@ -1,3 +1,6 @@
+/** @class HTML content manipulation class
+ * @memberOf content
+ */
 
 content.HTML._entities = [{s: '&', r: "&amp;"},
                           {s: '<', r: "&lt;"},
@@ -24,21 +27,23 @@ content.HTML.escape_js = function(str){
     return str;
 };
 
-/** @function
+/** 
  * Escape HTML characters.
+ * @function
  * @param {string} str String to be escaped
  * @returns {string} Cleaned string
  */
 content.HTML.escape = escapeHTML;
 
-/** @function
+/**
  * Escape HTML characters.
+ * @function
  * @param {string} str String to be escaped
  * @returns {string} Cleaned string
  */
 content.HTML.escape_html = content.HTML.escape;
 
-/** @function
+/** 
  * Unescape HTML characters.
  * @param {string} str Clean string
  * @returns {string} Unescaped string
