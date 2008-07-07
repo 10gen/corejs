@@ -48,7 +48,7 @@ function strpos(a,b) {
 function sizeof(a) { return a.length; }
 function count(a) { return a.length; }
 
-function implode(sep, arr) { return arr.implode(sep); }
+function implode(sep, arr) { return arr.split(sep); }
 
 function explode(sep, string, limit) { 
     if( !limit ) return string.split(sep);
