@@ -428,6 +428,11 @@ xml = {
 
     },
 
+    /** Determine if two objects have the same properties.
+     * @param {Object} obj1
+     * @param {Object} obj2
+     * @returns {boolean} If the two objects match
+     */
     match: function(obj, query){
         for(var prop in query){
             var match = false;
@@ -441,6 +446,11 @@ xml = {
         return true;
     },
 
+    /** Determine if one object is a subobject of another.
+     * @param {Object} obj Object to search
+     * @param {Object} query Subobject for which to search
+     * @return {Array} An array of query matches from result
+     */
     find: function(obj, query){
         var results = [];
         if(xml.match(obj, query)) results.push(obj);
@@ -458,10 +468,19 @@ xml = {
     },
 
 
+    /** Create an object from XML using a Sax parser
+     * @oaram {function} handler
+     * @param {string} xml String to be parsed
+     * @return {Object} Parsed object
+     */
     parseSaxFromString: function(handler, xmlString) {
         return javaStatic("ed.js.JSSaxParser", "getParser")(handler, xmlString);
     },
 
+    /** Turn a string into a DOM
+     * @param {string} content String to be converted
+     * @returns {Object} The root node of the DOM
+     */
     parseDomFromString: function( content ) {
         var handler = {
             root: null,
@@ -511,6 +530,11 @@ xml = {
 
         return handler.root;
     },
+
+    /** Turn a json string into an object
+     * @param {string} content
+     * @returns {Object}
+     */
     parseJsonFromString: function( content ){
         var x = xml.parseDomFromString( content );
         return xml.__domToJson(x);
@@ -552,6 +576,11 @@ xml = {
 
 };
 
+/** @constructor A node of XML
+ * @param {string} localName Tag name
+ * @param {string} qName
+ * @param {string} uri
+ */
 xml.Node = function( localName , qName , uri ){
     this.localName = localName;
     this.qName = qName;
@@ -562,6 +591,11 @@ xml.Node = function( localName , qName , uri ){
     this.elements = [];
 };
 
+/** Find all elements with a certain tag
+ * @param {string} tag Tag name
+ * @param {Array} lst Tags that match
+ * @param {Array} The array of matching tags (<tt>lst</tt>)
+ */
 xml.Node.prototype.getAllByTagName = function( tag  , lst ){
     if ( ! lst )
         lst = [];
@@ -576,6 +610,11 @@ xml.Node.prototype.getAllByTagName = function( tag  , lst ){
     return lst;
 };
 
+/** Get a uniquely named tag
+ * @param {string} tag Tag name
+ * @returns {xml_tag} Matching tag or null
+ * @throws {Exception} If more than one tag matches
+ */
 xml.Node.prototype.getSingleChild = function( tag ){
     var n = null;
 
@@ -590,10 +629,17 @@ xml.Node.prototype.getSingleChild = function( tag ){
     return n;
 }
 
+/** Print tag name
+ * @returns {string} Local name
+ */
 xml.Node.prototype.toString = function(){
     return "Node:" + this.localName;
 }
 
+/** Determine if an object has a given property name
+ * @param {Object} obj Object to check
+ * @param {string} prop Property to match
+ */
 function haskey(obj, prop){
     if ( ! isObject( obj ) )
         return false;
