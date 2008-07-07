@@ -123,8 +123,9 @@ URL.prototype.addArg = function(key, value){
     return c._addArg(key, value);
 };
 
-/*
+/**
  *  Internal method to add a query argument to this url.
+ *  @private
  */
 URL.prototype._addArg = function(key, value){
     this.args.push({key: key, value: value});
@@ -142,7 +143,8 @@ URL.prototype.addArgs = function(obj){
     return c._addArgs(obj);
 };
 
-/* Internal method to add several query arguments to this url.
+/** Internal method to add several query arguments to this url.
+ *  @private
  */
 URL.prototype._addArgs = function(obj){
     for(var key in obj){
@@ -165,6 +167,9 @@ URL.prototype.replaceArg = function(key, value){
     return c._replaceArg(key, value);
 };
 
+/** Internal method to replace a query argument.
+ *  @private
+ */
 URL.prototype._replaceArg = function(key, value){
     if(key == null) throw "key is null";
     if(value == null) throw "value is null";
@@ -187,6 +192,10 @@ URL.prototype.removeArg = function(key){
     return c;
 };
 
+/** Internal method to remove an argument
+ *  FIXME: rewrite to use splice()?
+ *  @private
+ */
 URL.prototype._removeArg = function(key){
     var start = false;
     for(var i in this.args){
@@ -210,8 +219,9 @@ URL.prototype.clearArgs = function(){
     return c;
 };
 
-/* Internal method to get rid of the query arguments for this object.
-*/
+/** Internal method to get rid of the query arguments for this object.
+ *  @private
+ */
 URL.prototype._clearArgs = function(){
     this.args = [];
 };
@@ -236,8 +246,9 @@ URL.prototype.replaceLastPath = function(s){
     return c;
 };
 
-/* Internal method to replace this object's last path component.
-*/
+/** Internal method to replace this object's last path component.
+ *  @private
+ */
 URL.prototype._replaceLastPath = function(s){
     var components = this.path.split('/');
     components.pop();
@@ -256,16 +267,18 @@ URL.prototype.setPath = function(s){
     return c;
 };
 
-/* Internal method to replace the path of this object.
-*/
+/** Internal method to replace the path of this object.
+ *  @private
+ */
 URL.prototype._setPath = function(s){
     this.path = s;
 };
 
 
 
-/* I think we don't use this any more.
-*/
+/** I think we don't use this any more.
+ *  @private
+ */
 URL.escape_queryargs = function( s , plusIsLiteral ){
     // This temporary function is meant to be roughly equivalent to the JS
     // encodeURIComponent function, which isn't implemented yet in the appserver.
@@ -278,8 +291,9 @@ URL.escape_queryargs = function( s , plusIsLiteral ){
     return escape( s );
 };
 
-/* Used in parsing queryargs for a given URL.
-*/
+/** Used in parsing queryargs for a given URL.
+ *  @private
+ */
 URL.unescape_queryargs = function( s, plusIsLiteral ){
     // Analagously to escape_queryargs, support treating + signs as + signs
     // (rather than really as spaces). This doesn't usually come up, because
