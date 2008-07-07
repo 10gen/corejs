@@ -1,4 +1,4 @@
-/** URL class for parsing/manipulating URLs.
+/** @class URL class for parsing/manipulating URLs.
  */
 URL = function(s){
     // This class is a representation of a URL. Right now it is mostly
@@ -116,7 +116,7 @@ URL.prototype.clone = function(){
  *  Always adds an additional argument, even if one with the same key exists
  *  already in this URL.
  *  @returns a new URL.
- *  @see URL.prototype.replaceArg
+ *  @see URL#replaceArg
  */
 URL.prototype.addArg = function(key, value){
     var c = this.clone();
