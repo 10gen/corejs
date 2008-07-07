@@ -1,11 +1,20 @@
-/* Auth several different styles of authentication. */
-
 core.user.user();
 
+/** @namespace Several different styles of authentication.
+*/
 Auth = {
 
+    /** Toggle debug.
+     * @type {boolean}
+     */
     debug : false ,
 
+    /** Find a user.
+     * @param {Object} [request] HTTP request
+     * @param {Object} [response] HTTP response
+     * @param {Object} [user] User
+     * @returns {Object} The user object, if found, null otherwise.
+     */
     getUser : function( req , res , uWanted ){
 
         if ( user )
@@ -22,11 +31,23 @@ Auth = {
         return u;
     } ,
 
+    /** Reject a user authentication.
+     * @param {Object} [request] HTTP request
+     * @param {Object} [response] HTTP response
+     * @returns {string} The string "no".  More helpfully, it sets the response code to 401 (unauthorized).
+     */
     reject : function( req , res ){
         return Auth.digest.reject( req || request , res || response , db.getName() );
     } ,
 
+    /** @namespace Basic user authentication.  Sends passwords plaintext.
+     * @deprecated Use cookie authentication instead
+     */
     basic : {
+        /** Try to find and log in a user given an HTTP request.
+         * @param {Object} [request] HTTP request
+         * @returns {Object} The user, if correctly identified, otherwise null
+         */
         getUser : function( req ){
             var auth = req.getHeader("Authorization");
             if ( ! auth )
@@ -56,6 +77,12 @@ Auth = {
             return user;
         }  ,
 
+        /** Reject a user authentication.
+         * @param {Object} [request] HTTP request
+         * @param {Object} [response] HTTP response
+         * @param {string} [username] Username
+         * @returns {string} "no", also sets response code to 401 (unauthorized).
+         */
         reject: function( req , res , name ){
             res.setHeader( "WWW-Authenticate" , "Basic realm=\"" + name + "\"" );
             res.setResponseCode( 401 );
@@ -64,10 +91,17 @@ Auth = {
         }
     } ,
 
+    /** @namespace Digest user authentication.
+     * @deprecated Use cookie authentication instead
+     */
     digest : {
 
-        /**
-         * @param user optional (default to finding based on name)
+        /** Finds and logs in a user.
+         * @param {Object} [request] HTTP request
+         * @param {Object} [response] HTTP response
+         * @param {string} [username] Username
+         * @param {Object} [user] User object.
+         * @returns {Object} If a user is found, the user object, otherwise null.
          */
         getUser : function( req , res , name , user ){
             var auth = req.getHeader("Authorization");
@@ -155,6 +189,12 @@ Auth = {
             return user;
         } ,
 
+        /** Reject a user authentication.
+         * @param {Object} [request] HTTP request
+         * @param {Object} [response] HTTP response
+         * @param {string} [username] Username
+         * @returns {string} "no", also sets response code to 401 (unauthorized).
+         */
         reject : function( req , res , name ){
             var realm = name;
 
@@ -170,8 +210,16 @@ Auth = {
         }
     } ,
 
-    /* cookie-style user authentication */
+    /** @namespace Cookie-style user authentication
+     */
     cookie :  {
+        /** Finds and logs in a user.
+         * @param {Object} request HTTP request
+         * @param {Object} response HTTP response
+         * @param {string} [username] Username (this is not actually used anywhere, but must be left in for backwards compatibility.  It may safely be set to null.)
+         * @param {Object} [user] User object.
+         * @returns {Object} If a user is found, the user object, otherwise null.
+         */
         getUser : function( request , response , name , u ){
             var now = new Date();
 
@@ -245,6 +293,12 @@ Auth = {
             return u;
         } ,
 
+        /** Given a user, logs them in and sets the cookie.
+         * @param {Object} request HTTP request
+         * @param {Object} response HTTP response
+         * @param {Object} username User object
+         * @returns {Object} User object
+         */
         login : function( request , response , u ){
             var now = new Date();
 
@@ -281,11 +335,18 @@ Auth = {
 
         } ,
 
+        /** Reject a user authentication.
+         * @param {Object} [request] HTTP request
+         * @param {Object} [response] HTTP response
+         * @param {string} [username] Username
+         * @returns {string} "no", also sets response code to 401 (unauthorized).
+         */
         reject : function ( req , res , name , args ){
             core.user.html.loginForce(args);
         }
     }
 
 };
+
 
 log.user.auth.level = log.LEVEL.ERROR;
