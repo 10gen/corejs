@@ -7,24 +7,26 @@
  *  canRecurse, and unwind. Also think about overriding emptyString.
  *
  *  URLTree can be used for many purposes. Typically, you call apply() on some
- *  URL, and some object is returned. A good example is the routes system, 
+ *  URL, and some object is returned. A good example is the routes system,
  *  where you get back a path to some object.
  *  The mechanics of this execution path are somewhat involved. We
  *  use the following conventions in this document:
  *
- *  RetType: the type returned by apply. For the routes system, this is a 
+ *  RetType: the type returned by apply. For the routes system, this is a
  *     string. Terminals are transformed into objects of type RetType.
  *  Terminal: the type of a terminal.
- *  RecType: the type of subobjects that are not terminals. This could be 
+ *  RecType: the type of subobjects that are not terminals. This could be
  *     anything; the details of recursively calling apply() are specified by
  *     the user. For the routes system, RecType is the same as the Routes class.
  *  UserData: the type of extra information which is passed through the URLTree.
- *     {@link URLTree#apply} takes a UserData param, and passes it through 
- *     faithfully to terminal, emptyString, and unwind. The routes system 
+ *     {@link URLTree#apply} takes a UserData param, and passes it through
+ *     faithfully to terminal, emptyString, and unwind. The routes system
  *     doesn't use this at all.
- *  IntermediateType: the user specifies how to recurse on a RecType by 
+ *  UserDataAdd: the user can also attach additional data to a subobject using
+ *     the add() method. This data will be passed to unwind and terminal.
+ *  IntermediateType: the user specifies how to recurse on a RecType by
  *     providing a recurse() function; the result of recurse is processed by
- *     this.unwind(). The intent is that after we walk all the way down to a 
+ *     this.unwind(). The intent is that after we walk all the way down to a
  *     leaf in the URLTree, we can reconstruct the path we took to got there.
  *     This means that recurse() can return any object type, as long as unwind()
  *     can convert that type into a RetType instance. But since most recurse()
@@ -57,6 +59,7 @@ Object.extend(Util.URLTree.prototype, {
     /** Add a component to this URLTree object.
      *  @param {string | RegExp} key the path to match against
      *  @param {Terminal | RecType} end what happens when someone looks on key
+     *  @param {UserDataAdd} attached user data associated with this subobject
      */
     add: function( key , end , attachment ){
         var value = this._createValue( key , end , attachment );
@@ -105,17 +108,17 @@ Object.extend(Util.URLTree.prototype, {
 
     /** Step through a URI, calling recurse() when necessary.
      *  The URI is split by path component, and one component is examined.
-     *  At each step, the "this" object is searched for something that could 
+     *  At each step, the "this" object is searched for something that could
      *  match the path component. If a subobject S is found, and S is a RecType,
      *  we call S.apply().
-     *  After the apply method returns, this.unwind() is called, and its 
+     *  After the apply method returns, this.unwind() is called, and its
      *  return value is returned.
      *  If S does not have an apply method, this.terminal() is called with S
      *  as an argument.
      *  You can override this.canRecurse to use different criteria for whether
      *  to call S.apply(), and you can provide a different recurse function
-     *  to 
-     *  @param {function(next, uri, request, extras)} recurse the function 
+     *  to call something else instead of S.apply().
+     *  @param {function(next, uri, request, extras)} recurse the function
      *      called when we get a RecType.
      *  @param {string} uri the URI to step through
      *  @param {Request} request the current global request; we don't use this,
@@ -201,7 +204,7 @@ Object.extend(Util.URLTree.prototype, {
         return null;
     },
 
-    /** Now that we found an object matching a path component, what do we do 
+    /** Now that we found an object matching a path component, what do we do
      *  with it?
      *  @private
      *  @param {function} recurse the function to call if canRecurse()
@@ -221,17 +224,22 @@ Object.extend(Util.URLTree.prototype, {
         if ( isObject( end ) && end.isValue )
             end = value.end;
 
+        var attachment = null;
+        if ( isObject( value ) ){
+            attachment = value.attachment;
+        }
+
         if ( isObject( end ) && this.canRecurse(end) ){
             Util.URLTree.log.debug("Recursing on end");
             var res = recurse( end, uri.substring( 1 + firstPiece.length ) , request , extras );
             if(res == null) res = this.getDefault();
-            res = this.unwind( res, uri, request, firstPiece, key, value, extras);
+            res = this.unwind( res, uri, request, firstPiece, key, attachment, extras);
             return res;
         }
 
         else {
             Util.URLTree.log.debug("Found a terminal");
-            return this.terminal( end, uri , request, firstPiece, key, value, extras );
+            return this.terminal( end, uri , request, firstPiece, key, attachment, extras );
         }
 
         throw "can't handle value: " + end;
@@ -273,10 +281,11 @@ Object.extend(Util.URLTree.prototype, {
     /** Called if canRecurse returned false.
      *  @param {Terminal} end the subobject terminal that we found
      *  @param {string} uri the URI after this point
-     *  @param {string} firstPiece the component that we used to find this 
+     *  @param {string} firstPiece the component that we used to find this
      *     terminal
      *  @param {string | RegExp} key the key that matched the path component
-     *  @param {Node}  value  the value wrapping end XXX not for user use
+     *  @param {UserDataAdd}  value  whatever data was associated to this
+     *     subobject when it was add()ed
      *  @param {UserData}  extras  the user data passed to apply()
      *  @type RetType
      */
@@ -305,10 +314,11 @@ Object.extend(Util.URLTree.prototype, {
      *  @param {IntermediateType} result whatever was returned by recurse
      *  @param {string} uri whatever was left of the URI
      *  @param {Request} request the Request
-     *  @param {string} firstPiece the piece that got us to this RecType 
+     *  @param {string} firstPiece the piece that got us to this RecType
      *      instance
      *  @param {string | RegExp} key the key that matched firstPiece
-     *  @param {Node}  value  XXX why is this here??
+     *  @param {UserDataAdd} value whatever user data was associated with this
+     *      subobject when it was add()ed
      *  @param {UserData} extras the user data passed to apply()
      *  @type  RetType
      */
