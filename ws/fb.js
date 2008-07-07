@@ -142,13 +142,30 @@ Facebook.getLoginLink = function(args) {
 
 /** @class Administrative functions */
 Facebook.Admin = {
-    /** Returns the current allocation limit for your application for the specified integration point. */
+    /** Returns the current allocation limit for your application for the specified integration point.
+     * @param {Object} args Fields:  <ul><li> start_time  int  A Unix time for the start of the range (inclusive).</li>
+     * <li>end_time  int  A Unix time for the end of the range (inclusive). The end_time cannot be more than 30 days after the start_time.</li>
+     * <li>period  int The length of the period, in seconds, during which the metrics were collected. Currently, the only supported periods are 86400 (1 day), 604800 (7-days), and 2592000 (30 days).</li>
+     * <li>metrics  json array  A JSON-encoded list of metrics to retrieve (e.g. ["active_users", "canvas_page_views"]).</li>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * </ul>
+     */
     getAllocation : function(args) {
         if(!args["integration_point_name"]) return Facebook.err.missingField("integration_point_name");
         args["method"] = "admin.getAllocation";
         return Facebook.call(args);
     },
-    /** Returns specified daily metrics for your application, given a date range. */
+    /** Returns specified daily metrics for your application, given a date range.
+     * @param {Object} args <ul><li> start_date  int  A Unix time for the start of the date range (inclusive).</li>
+     * <li> end_date  int  A Unix time for the end of the date range (inclusive).</li>
+     * <li>  metrics  json array  A JSON-encoded list of daily metrics to retrieve (e.g. ["daily_active_users", "canvas_page_views"]).</li>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * </ul>
+     */
     getDailyMetrics : function(args) {
         if(!args["start_date"]) return Facebook.err.missingField("start_date");
         if(!args["end_date"]) return Facebook.err.missingField("end_date");
@@ -156,13 +173,27 @@ Facebook.Admin = {
         args["method"] = "admin.getDailyMetrics";
         return Facebook.call(args);
     },
-    /** Returns values of properties for your applications from the Facebook Developer application. */
+    /** Returns values of properties for your applications from the Facebook Developer application.
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc">Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li>
+     * @param {Object} args <ul><li> properties  json array  A list of property names that you want to view. This list is described on ApplicationProperties.</li></ul>
+     */
     getAppProperties : function(args) {
         if(!args["properties"]) return Facebook.err.missingField("properties");
         args["method"] = "admin.getAppProperties";
         return Facebook.call(args);
     },
-    /** Sets values for properties for your applications in the Facebook Developer application. */
+    /** Sets values for properties for your applications in the Facebook Developer application.
+     * @param {Object} args <ul><li>properties  array A JSON encoded map of property names to new values. This call will fail if values have the wrong type. The full list is described on ApplicationProperties. </li>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> (optional) Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc"> (optional) Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li></ul>
+     */
     setAppProperties : function(args) {
         args["method"] = "admin.setAppProperties";
         return Facebook.call(args);
@@ -171,7 +202,13 @@ Facebook.Admin = {
 
 /** @class Application information functions */
 Facebook.Application = {
-    /** Returns public information about a given application (not necessarily your own). */
+    /** Returns public information about a given application (not necessarily your own).
+     * <ul>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * </ul>
+     */
     getPublicInfo : function(args) {
         args["method"] = "application.getPublicInfo";
         return Facebook.call(args);
@@ -180,18 +217,46 @@ Facebook.Application = {
 
 /** @class Authorization */
 Facebook.Auth = {
-    /** Creates an auth_token to be passed in as a parameter to login.php and then to auth.getSession after the user has logged in. */
+    /** Creates an auth_token to be passed in as a parameter to login.php and then to auth.getSession after the user has logged in.
+     * @param {Object} args field:
+     * <ul>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> (optional) Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc"> (optional) Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li></ul>
+     */
     createToken : function(args) {
         args["method"] = "auth.createToken";
         return Facebook.call(args);
     },
-    /** Returns the session key bound to an auth_token, as returned by auth.createToken or in the callback URL. */
+    /** Returns the session key bound to an auth_token, as returned by auth.createToken or in the callback URL.
+     * @param {Object} args Fields:
+     * <ul>
+     * <li><span class="field_name"> auth_token </span><span class="field_type"> string </span><span class="field_desc"> The token returned by auth.createToken and passed into login.php</span></li>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> (optional) Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc"> (optional) Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li>
+     * <li><span class="field_name"> generate_session_secret </span><span class="field_type"> bool </span><span class="field_desc">(optional) Whether to generate a temporary session secret associated with this session. This is for use only with non-infinite sessions, for applications that want to use a client-side component without exposing the application secret. Note that the app secret will continue to be used for all server-side calls, for security reasons.</span></li>
+     * </ul>
+     */
     getSession : function(args) {
         if(!args["auth_token"]) return Facebook.err.missingField("auth_token");
         args["method"] = "auth.getSession";
         return Facebook.call(args);
     },
-    /** Returns a temporary session secret associated to the current existing session, for use in a client-side component to an application. */
+    /** Returns a temporary session secret associated to the current existing session, for use in a client-side component to an application.
+     * @param {Object} args Fields:
+     * <ul>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> (optional) Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc"> (optional) Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li>
+     * </ul>
+     */
     promoteSession : function(args) {
         args["method"] = "auth.promoteSession";
         return Facebook.call(args);
@@ -200,7 +265,15 @@ Facebook.Auth = {
 
 /** @class Batch jobs */
 Facebook.Batch = {
-    /** Execute a list of individual API calls in a single batch. */
+    /** Execute a list of individual API calls in a single batch.
+     * @param  {Object} args Fields: <ul><li>method_feed  string A JSON encoded array of strings. Each element in the array should contain the full parameters for a method, including method name, sig, etc. Currently, there is a maximum limit of 15 elements in the array.</li>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> (optional) Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc"> (optional) Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li>
+     * </ul>
+     */
     run : function(args) {
         if(!args["method_feed"]) return Facebook.err.missingField("method_feed");
         args["method"] = "batch.run";
@@ -210,13 +283,26 @@ Facebook.Batch = {
 
 /** @class Browser data fetching */
 Facebook.Data = {
-    /** Returns all cookies for a given user and application. */
+    /** Returns all cookies for a given user and application.
+     * @param  {Object} args Fields: <ul>
+     * <li> uid  int  The user from whom to get the cookies. </li>
+     * <li> name  string  (optional) The name of the cookie. If not specified, all the cookies for the given user get returned.</li>
+     * </ul>
+     */
     getCookie : function(args) {
         if(!args["query"]) return Facebook.err.missingField("uids1");
         args["method"] = "data.getCookie";
         return Facebook.call(args);
     },
-    /** Sets a cookie for a given user and application. */
+    /** Sets a cookie for a given user and application.
+     * @param  {Object} args Fields: <ul>
+     * <li> uid  int  The user from whom to get the cookies. </li>
+     * <li> name  string The name of the cookie. </li>
+     * <li> value  string  Value of the cookie. </li>
+     * <li>  expires  int (optional) Time stamp when the cookie should expire. If not specified, the cookie expires after 24 hours. (The time stamp can be longer than 24 hours and currently has no limit)</li>
+     * <li> path  string  (optional) Path relative to the application's callback URL, with which the cookie should be associated. (default value is /)</li>
+     * </ul>
+     */
     setCookie : function(args) {
         if(!args["query"]) return Facebook.err.missingField("uids1");
         args["method"] = "data.setCookie";
@@ -226,7 +312,16 @@ Facebook.Data = {
 
 /** @class Event monitoring */
 Facebook.Events = {
-    /** Returns all visible events according to the filters specified. */
+    /** Returns all visible events according to the filters specified.
+     * @param {Object} args Fields:
+     * <ul>
+     * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
+     * <li><span class="field_name"> sig </span><span class="field_type"> string </span><span class="field_desc"> An MD5 hash of the current request and your secret key, as described in the authentication guide.</span></li>
+     * <li><span class="field_name"> v </span><span class="field_type"> string </span><span class="field_desc"> This must be set to 1.0 to use this version of the API.</span></li>
+     * <li><span class="field_name"> format </span><span class="field_type"> string </span><span class="field_desc"> (optional) Desired response format. Either XML (default) or JSON. </span></li>
+     * <li><span class="field_name"> callback </span><span class="field_type"> string </span><span class="field_desc"> (optional) Name of a function to call. This is primarily to enable cross-domain JavaScript requests using the <script> tag, also known as JSONP, and works with both the XML and JSON formats. The function will be called with the response passed as the parameter.</span></li>
+     * </ul>
+     */
     get : function(args) {
         args["method"] = "events.get";
         return Facebook.call(args);

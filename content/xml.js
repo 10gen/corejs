@@ -1,4 +1,4 @@
-/*
+/**
    e.g.:
 
    xml.to( print, "myobjtype", { name: "foo", x : 3 } );
@@ -13,14 +13,27 @@ core.content.html();
 
 var log = log.content.xml;
 
+/** @namespace XML helper functions
+ */
 xml = {
-
+    /** Print an object in XML
+     * @param {string} name The title
+     * @param {Object} obj Object to be parsed
+     * @returns {string} XML string
+     */
     toString : function( name , obj ){
         var s = "";
         xml.to( function( z ){ s += z; } , name , obj );
         return s;
     } ,
 
+    /** Make an object into XML
+     * @param {function} append Appender function
+     * @param {string} name Title
+     * @param {Object} obj Object to be transformed
+     * @param {number} indent Number of spaces to indent each child
+     * @param {boolean} [isPrettyPrint=true] Use indentation and newlines
+     */
     to : function( append , name , obj , indent , isPrettyPrint ){
         isPrettyPrint = (typeof(isPrettyPrint) == "boolean")? isPrettyPrint : "true";
 
@@ -96,17 +109,32 @@ xml = {
 
     } ,
 
+
+    /** Make an array into XML.
+     * @param {function} append Appender function
+     * @param {string} name Title
+     * @param {Object} obj Object to be transformed
+     * @param {number} indent Number of spaces to indent each child
+     */
     toArray : function( append, name, obj, indent ){
         for( var i=0; i<obj.length; i++ ){
             xml.to(append, null , obj[i], indent);
         }
     } ,
 
+    /** Indent a line.
+     * @param {function} append Appender function
+     * @param {number} indent Number of spaces to indent each child
+     */
     _indent : function( append , indent ){
         for ( var i=0; i<indent; i++ )
             append( " " );
     } ,
 
+    /** Turn a string from XML into an object.
+     * @param {string} s String to be parsed
+     * @returns {Object} JavaScript object
+     */
     fromString : function( s ){
         s = s.replace(/<!--.*?-->/gm, "");
         return xml.from(xml._xmlTokenizerchar(s));
@@ -306,6 +334,12 @@ xml = {
         return f;
     },
 
+    /** Get the JavaScript object represented by an XML string
+     * @param {object} tokenizer A string that has been run through a tokenizer
+     * @returns {object} The object
+     * @throws {Exception} Root is not an element (if the root is not an object)
+     * @throws {Exception} Things outside the root (if there is more than one root-level element)
+     */
     from : function( tokenizer ){
         var i = 0;
 
@@ -394,6 +428,11 @@ xml = {
 
     },
 
+    /** Determine if two objects have the same properties.
+     * @param {Object} obj1
+     * @param {Object} obj2
+     * @returns {boolean} If the two objects match
+     */
     match: function(obj, query){
         for(var prop in query){
             var match = false;
@@ -407,6 +446,11 @@ xml = {
         return true;
     },
 
+    /** Determine if one object is a subobject of another.
+     * @param {Object} obj Object to search
+     * @param {Object} query Subobject for which to search
+     * @return {Array} An array of query matches from result
+     */
     find: function(obj, query){
         var results = [];
         if(xml.match(obj, query)) results.push(obj);
@@ -422,25 +466,34 @@ xml = {
         if(results.length > 0)
             return results;
     },
-    
-    
+
+
+    /** Create an object from XML using a Sax parser
+     * @oaram {function} handler
+     * @param {string} xml String to be parsed
+     * @return {Object} Parsed object
+     */
     parseSaxFromString: function(handler, xmlString) {
         return javaStatic("ed.js.JSSaxParser", "getParser")(handler, xmlString);
     },
-    
+
+    /** Turn a string into a DOM
+     * @param {string} content String to be converted
+     * @returns {Object} The root node of the DOM
+     */
     parseDomFromString: function( content ) {
         var handler = {
             root: null,
             stack : [],
             startElement : function(uri, localName, name, attributes) {
-                
+
                 var node = new xml.Node( localName , name , uri );
-                
+
                 attributes.forEach(function(attr) {
                     node.attributes[attr.qName] = attr;
                 });
-                
-                
+
+
                 if(this.stack.length > 0) {
                     this.stack[this.stack.length - 1].elements.push(node);
                 } else {
@@ -453,7 +506,7 @@ xml = {
             },
             text : function(text) {
                 var textOwner = this.stack[this.stack.length - 1];
-                
+
                 if(textOwner.text.length > 0)
                     textOwner.textString += " " + text;
                 else
@@ -477,6 +530,11 @@ xml = {
 
         return handler.root;
     },
+
+    /** Turn a json string into an object
+     * @param {string} content
+     * @returns {Object}
+     */
     parseJsonFromString: function( content ){
         var x = xml.parseDomFromString( content );
         return xml.__domToJson(x);
@@ -518,6 +576,11 @@ xml = {
 
 };
 
+/** @constructor A node of XML
+ * @param {string} localName Tag name
+ * @param {string} qName
+ * @param {string} uri
+ */
 xml.Node = function( localName , qName , uri ){
     this.localName = localName;
     this.qName = qName;
@@ -528,23 +591,33 @@ xml.Node = function( localName , qName , uri ){
     this.elements = [];
 };
 
+/** Find all elements with a certain tag
+ * @param {string} tag Tag name
+ * @param {Array} lst Tags that match
+ * @param {Array} The array of matching tags (<tt>lst</tt>)
+ */
 xml.Node.prototype.getAllByTagName = function( tag  , lst ){
     if ( ! lst )
         lst = [];
 
     if ( this.localName == tag )
         lst.add( this );
-    
+
     for ( var i=0; i<this.elements.length; i++){
         this.elements[i].getAllByTagName( tag , lst );
     }
-    
+
     return lst;
 };
 
+/** Get a uniquely named tag
+ * @param {string} tag Tag name
+ * @returns {xml_tag} Matching tag or null
+ * @throws {Exception} If more than one tag matches
+ */
 xml.Node.prototype.getSingleChild = function( tag ){
     var n = null;
-    
+
     for ( var i=0; i<this.elements.length; i++){
         if ( this.elements[i].localName == tag ){
             if ( n )
@@ -552,14 +625,21 @@ xml.Node.prototype.getSingleChild = function( tag ){
             n = this.elements[i];
         }
     }
-    
+
     return n;
 }
 
+/** Print tag name
+ * @returns {string} Local name
+ */
 xml.Node.prototype.toString = function(){
     return "Node:" + this.localName;
 }
 
+/** Determine if an object has a given property name
+ * @param {Object} obj Object to check
+ * @param {string} prop Property to match
+ */
 function haskey(obj, prop){
     if ( ! isObject( obj ) )
         return false;

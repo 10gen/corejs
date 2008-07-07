@@ -1,5 +1,4 @@
-/* table.js
-
+/**
 htmltable provides a means to display data from the database in table format automatically,
 with some additional functionality automatically provided such as a simple search user
 interface.
@@ -10,6 +9,7 @@ have reasonable defaults.
 id:             name of the table.  used in the html etc. optional if only one table on the page.
 ns:             database collection object to query
 searchable:     if true, search header provided and supported
+sortable:       boolean: whether indexed cols are sortable
 cols:           array of column specifications
   name:         column name (corresponds to name of member in each database object)
   searchWidth:  width of the search input field in the heading, if using search (depreciated)
