@@ -16,6 +16,8 @@ Util.Doc.DbToHTML = function(out_dir, version) {
         this.DbObjToHTML(d.next(), out_dir);
     }
     
+    db.doc.html.ensureIndex({name:1});
+    
     javaStatic("ed.doc.Generate", "postHTMLGeneration", out_dir);
     
 }
