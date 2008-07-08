@@ -207,9 +207,9 @@ g.add(["file2"]);
 // rename support: FIXME
 // not supported since we converted from status to ls-files and diff-index
 var status = g.status();
-//assert(status.parsed.staged.length == 1);
-//assert(status.parsed.staged[0].oldName == "file1");
-//assert(status.parsed.staged[0].name == "file2");
+assert(status.parsed.staged.length == 1);
+assert(status.parsed.staged[0].oldName == "file1");
+assert(status.parsed.staged[0].name == "file2");
 
 // FIXME: try a push on a branch when another branch is not a local subset
 // obviously we don't support branches at all yet, but you could do a sysexec

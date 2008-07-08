@@ -381,7 +381,7 @@ Object.extend(git.Repo.prototype, {
             // Don't use unmerged; there's no HEAD against which to check merge
             // Do use --stage instead
             // Also use --cached to check what's in the index
-            // (No head, so anything that's been
+            // (No head, so anything that's cached must have been added)
             var ret = this._exec('ls-files -t --deleted --others --killed --modified --exclude-standard --cached --stage');
             ret.parsed = {initial: true};
             this._parseLsFiles(ret, ret.parsed);
@@ -395,6 +395,8 @@ Object.extend(git.Repo.prototype, {
         ret.parsed = this._parseDiffIndex(ret2);
 
         this._parseLsFiles(ret, ret.parsed);
+
+            
 
         return ret;
     },
