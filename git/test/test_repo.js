@@ -21,7 +21,9 @@ var repoAt = function(root){
 
 
 gr_checkStatus = function(spec){
+    var err = this.status().err;
     var info = this.status().parsed;
+    if(err) { log("error getting status: " + err); }
 
     for(var field in spec){
         if(! (field in info) ){
