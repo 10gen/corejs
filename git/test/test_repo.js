@@ -204,8 +204,6 @@ sysexec("mv /tmp/gitrepo/test/file1 /tmp/gitrepo/test/file2");
 g.rm(["file1"]);
 g.add(["file2"]);
 
-// rename support: FIXME
-// not supported since we converted from status to ls-files and diff-index
 var status = g.status();
 assert(status.parsed.staged.length == 1);
 assert(status.parsed.staged[0].oldName == "file1");

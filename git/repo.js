@@ -396,10 +396,46 @@ Object.extend(git.Repo.prototype, {
 
         this._parseLsFiles(ret, ret.parsed);
 
-            
+        var rename = this._exec('diff-index HEAD -M');
+        rename.parsed = this._parseRename(rename);
+
+        if(rename.parsed.renames){
+            var oldStaged = ret.parsed.staged;
+            ret.parsed.staged = [];
+            var renames = {};
+            rename.parsed.renames.forEach(function(z){
+                ret.parsed.staged.push({oldName: z.oldName, name: z.newName});
+                renames[z.oldName] = true;
+                renames[z.newName] = true;
+            });
+            oldStaged.forEach(function(z){
+                if(! renames[z.name])
+                    ret.parsed.staged.push(z);
+            });
+        }
 
         return ret;
     },
+    _parseRename: function(exec){
+        var lines = exec.out.trim().split(/\n/);
+        var info = {};
+        var renames = [];
+        for(var i = 0; i < lines.length; ++i){
+            var line = lines[i];
+            var newName = line.substring(line.lastIndexOf('\t')+1);
+            line = line.substring(0, line.lastIndexOf('\t'));
+            var oldName = line.substring(line.lastIndexOf('\t')+1);
+            line = line.substring(0, line.lastIndexOf('\t'));
+            var status = line.substring(line.lastIndexOf(' ')+1);
+
+            if(status[0] == 'R')
+                renames.push({oldName: oldName, newName: newName});
+        }
+        if (renames.length > 0)
+            info.renames = renames;
+        return info;
+    },
+
     _parseDiffIndex: function(exec){
         var names = {'A': 'new file', 'M': 'modified'};
         var output = exec.out.trim();
