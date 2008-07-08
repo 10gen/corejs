@@ -382,14 +382,14 @@ Object.extend(git.Repo.prototype, {
             // Do use --stage instead
             // Also use --cached to check what's in the index
             // (No head, so anything that's cached must have been added)
-            var ret = this._exec('ls-files -t --deleted --others --killed --modified --exclude-standard --cached --stage');
+            var ret = this._exec('ls-files -t --deleted --others --killed --modified --cached --stage');
             ret.parsed = {initial: true};
             this._parseLsFiles(ret, ret.parsed);
             delete ret.parsed.initial;
             return ret;
         }
 
-        var ret = this._exec("ls-files -t --deleted --others --unmerged --killed --modified --exclude-standard");
+        var ret = this._exec("ls-files -t --deleted --others --unmerged --killed --modified");
 
         var ret2 = this._exec('diff-index HEAD --name-status');
         ret.parsed = this._parseDiffIndex(ret2);
