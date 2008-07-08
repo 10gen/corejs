@@ -373,12 +373,111 @@ Object.extend(git.Repo.prototype, {
         return foo;
     },
     status: function(){
-        var ret = this._exec("status");
+        // We don't actually call status any more; instead, we call a
+        // combination of ls-files and diff-index to figure out what's up.
 
-        ret.parsed = this._parseStatus(ret);
+        var HEAD = this._exec('show-ref -h');
+        if(! HEAD.out){
+            // Don't use unmerged; there's no HEAD against which to check merge
+            // Do use --stage instead
+            // Also use --cached to check what's in the index
+            // (No head, so anything that's been
+            var ret = this._exec('ls-files -t --deleted --others --killed --modified --exclude-standard --cached --stage');
+            ret.parsed = {initial: true};
+            this._parseLsFiles(ret, ret.parsed);
+            delete ret.parsed.initial;
+            return ret;
+        }
+
+        var ret = this._exec("ls-files -t --deleted --others --unmerged --killed --modified --exclude-standard");
+
+        var ret2 = this._exec('diff-index HEAD --name-status');
+        ret.parsed = this._parseDiffIndex(ret2);
+
+        this._parseLsFiles(ret, ret.parsed);
 
         return ret;
     },
+    _parseDiffIndex: function(exec){
+        var names = {'A': 'new file', 'M': 'modified'};
+        var output = exec.out.trim();
+        var lines = output.split(/\n/);
+        var info = {};
+        var staged = [];
+        if(! output) return info;
+        for(var i = 0; i < lines.length; ++i){
+            var filetype = lines[i][0];
+            var filename = lines[i].substring(2);
+
+            staged.push({name: filename, type: names[filetype]});
+        }
+        if(staged.length > 0)
+            info.staged = staged;
+        return info;
+    },
+
+    _parseLsFiles: function(exec, info){
+        // H   cached
+        // M   unmerged
+        // R   removed/deleted
+        // C   modified/changed
+        // K   to be killed
+        // ?   other
+        var output = exec.out.trim();
+        var names = {'H': 'cached', 'M': 'unmerged', 'R': 'deleted',
+            'C': 'changed', 'K': 'to be killed', '?': 'untracked'
+                    };
+        if(info.initial){
+            names.H = 'new file';
+        }
+        var lines = output.split(/\n/);
+        var unmerged = [];
+        var deleted = {};
+        if(! output) return info;
+        for(var i = 0; i < lines.length; ++i){
+            var filetype = lines[i][0];
+            var filename;
+            if(filetype == '?')
+                filename = lines[i].substring(2);
+            else // getting from --stage; huge amount of output
+            filename = lines[i].substring(lines[i].indexOf('\t')+1);
+
+            filetype = names[filetype];
+
+            file = {name: filename};
+            // 'new file' only happens when checking against an empty HEAD
+            if(['deleted', 'changed', 'new file'].contains(filetype))
+                file.type = filetype;
+
+            // We don't want the file to show up twice, as it does in ls-files,
+            // so if the file was previously marked "deleted", and we now see it
+            // is also "changed", we just skip the "changed" part.
+            // files out of "changed" if they're already deleted
+            if(deleted[filename] && filetype == 'changed') continue;
+            if(filetype == 'deleted') deleted[filename] = true;
+
+            // Because gitLocal expects deleted files to show up in 'changed',
+            // with a type of 'deleted':
+            if(filetype == 'deleted') filetype = 'changed';
+
+            // This only happens when checking against an empty HEAD, but:
+            if(filetype == 'new file') filetype = 'staged';
+
+            if(! (filetype in info) ) info[filetype] = [];
+            info[filetype].push(file);
+
+            if(filetype == "unmerged"){
+                unmerged.push(file);
+                continue;
+            }
+
+        }
+
+        if(unmerged.length > 0) info.unmerged = unmerged;
+
+        return info;
+    },
+
     _parseStatus: function(exec){
         var output = exec.out;
         var info = {};
