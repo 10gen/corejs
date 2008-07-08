@@ -169,6 +169,9 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
 
             }
         }
+        
+        if ( value.attachment && value.attachment.extra )
+            Object.extend( request , value.attachment.extra );
 
         return end;
     }
