@@ -1,14 +1,17 @@
 core.ext.getdefault();
 
+/**
+ * Recursively explore an object according to spec.
+ * When you get to a "simple" object *in the spec*, i.e. a string or
+ * number, call:
+ * endfunc(obj, fieldname, specfield, opts, parent).
+ * @param {Object} obj Object to be explored
+ * @param spec A mapping which tells for each field in the object what to do.
+ * @param {function} endfunc Function to perform on "leaves" of the object
+ * @param {Object} [options]
+ * @return {Object} Accumulated results of endfunc in a results object.
+ */
 Ext.explore = function(obj, spec, endfunc, options){
-    // Recursively explore an object according to spec.
-    // When you get to a "simple" object *in the spec*, i.e. a string or
-    // number, call:
-    // endfunc(obj, fieldname, specfield, opts, parent).
-    // spec is a mapping which tells for each field in the object what to do.
-    // Accumulate the results of endfunc in a results object, which is then
-    // returned.
-    // An options argument can also be passed.
     options = options || {};
 
     return Ext.explore.helper(obj, spec, endfunc, options, null, obj);

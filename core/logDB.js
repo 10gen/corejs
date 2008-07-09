@@ -3,10 +3,15 @@
 core.db.db();
 core.core.mail();
 
+/** @class Appends log messages to the _log collection in the database.
+ */
 BasicDBAppender = {};
 
+/** Creates the _logs collection, if not already in existence and an appender.
+ * On fatal log messages, an email is sent to the user, notifying them of the error.
+ */
 BasicDBAppender.create = function(){
-    
+
     try {
         createCollection( "_logs" , {size:1000000, capped:true} );
     }
@@ -15,7 +20,7 @@ BasicDBAppender.create = function(){
         SYSOUT( scope.currentException() );
         return null;
     }
-    
+
     var append = function( loggerName , date , level , msg , throwable , thread ){
         var now = new Date();
         var lvl = level.toString();
@@ -36,6 +41,10 @@ BasicDBAppender.create = function(){
     return javaCreate( "ed.log.JSAppender" , append );
 };
 
+/** Determine if a BasicDBAppender already exists and return it if it does.
+ * @param {log} logger Log being used
+ * @returns {appender} BasicDBAppender appender, if it exists, null otherwise
+ */
 BasicDBAppender.find = function( logger ){
     if ( ! logger )
         return null;
