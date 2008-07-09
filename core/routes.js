@@ -1,52 +1,50 @@
 // routes.js
 
-/**
-
-for usage, for now look ad corejs/core/test/test_routes
-
-==basics==
-* keys are urls
-** routes.wiki
-*** matches /wiki/
-** routes.wiki.abc
-*** /wiki/abc
-
-* value are path to jxp
-** if starts with / its absolute
-** otherwise relative
-
-<prenh>
-routes.wiki.search = "/wiki/doSearch";
-</prenh>
-is equivlant to
-<prenh>
-routes.wiki.search = "doSearch";
-</prenh>
-
-== regex ==
-<prenh>
-* routes.add( /abc/ , "" )
-* routes.add( /abc(\d)/ , "/foo/$0/$1
-</prenh>
-
-
-
-*/
 
 // FIXME: add an setBase method, which means, "all my children live at (e.g.)
 //    /~~/user, so if you got to one of my children, replace how you got to me
 // with /~~/user".
 
+/** Tools to set up routing.  The default routing is to go to whatever file matches the path of the url.
+ * However, this can be overridden to route every url to one file, make certain extensions inaccessible
+ * to the client, or set up different routing schemes for each application.
+ * URLs are referred to as keys.  The paths to files served are referred to as values.  Absolute paths
+ * start with a "/", other paths are relative.
+ * @example routes.wiki matches /wiki/
+ * So, if you set:
+ *     routes.wiki = "/my/wiki/"
+ * If someone goes to www.yoursite.com/wiki, the appserver will serve them the file /my/wiki/index.jxp
+ * @example You can also set subroutes: routes.wiki.abc matches /wiki/abc
+ * @example routes.wiki.search = "/wiki/doSearch";
+ * is equivlant to
+ * routes.wiki.search = "doSearch";
+ * @example Regular expressions can also be used:
+ * routes.add( /abc/ , "" )
+ * routes.add( /abc(\d)/ , "/foo/$0/$1
+ * @class
+ */
 Routes = function(){
     this._regexp = [];
     this._default = null;
 };
 
+/** Routes logging messages are handled by the logger "log.routes"
+ * @type log
+ */
 Routes.log = log.routes;
 Routes.log.level = log.LEVEL.INFO;
 
 // setting up
 
+/** Add a routing pattern
+ * @param {string|RegExp} key Route to match
+ * @param {string} value Path to which key should be routed
+ * @param {Object} attachment Fields: <dl>
+ * <dt>names</dt><dd>An array.  Add the matching pieces of the URI to a request with the form names[0]=match1, ..., names[n-1]=matchn</dd>
+ * <dt>extra</dt><dd>An object to be added to the request</dd>
+ * </dl>
+ * @throws {Exception} If key is not a string or RegExp
+ */
 Routes.prototype.add = function( key , end , attachment){
     var value = this._createValue( key , end , attachment );
 
@@ -63,6 +61,13 @@ Routes.prototype.add = function( key , end , attachment){
     throw "can't handle : " + key;
 };
 
+/** Route all requests to a given value
+ * @param {string} end Path to which all incoming requests should be routed
+ * @param {Object} attachment Fields: <dl>
+ * <dt>names</dt><dd>An array.  Add the matching pieces of the URI to a request with the form names[0]=match1, ..., names[n-1]=matchn</dd>
+ * <dt>extra</dt><dd>An object to be added to the request</dd>
+ * </dl>
+ */
 Routes.prototype.setDefault = function( end , attachment ){
     this._default = this._createValue( null , end , attachment );
 };
@@ -78,12 +83,21 @@ Routes.prototype._createValue = function( key , end , attachment ){
 // main public method
 
 /**
-* returns the root at which the last sub-routes took over
-*/
+ * Returns the root at which the last sub-routes took over
+ * @return The root at which the last sub-routes took over
+ */
 Routes.prototype.currentRoot = function(){
     return currentRoot;
 };
 
+/** Apply this routing to the given request and return the correct file.
+ * Looks for the most specific first.  So, if you have defined a route matching "/x"
+ * and one matching "/x/y/z", the handler for "/x/y/z" will catch a request for "/x/y/z/w/q".
+ * @param {string} uri URI requested
+ * @param {HTTPRequest} request
+ * @param {HTTPResponse} response
+ * @return {string} The path to the file to be served to the client.
+ */
 Routes.prototype.apply = function( uri , request , response ){
 
     Routes.log.debug( "apply\t" + uri );
@@ -169,7 +183,7 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
 
             }
         }
-        
+
         if ( value.attachment && value.attachment.extra )
             Object.extend( request , value.attachment.extra );
 
@@ -187,6 +201,10 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
     throw "can't handle value: " + end;
 };
 
+/** Finds the route to a submodule, if it exists.
+ * @param {Object} submodule The submodule being searched for.
+ * @return {string} The path, if found, otherwise null.
+ */
 Routes.prototype.find = function(submodule){
     if(this == submodule) return '/';
     for(var key in this){
@@ -216,6 +234,10 @@ Routes.prototype.find = function(submodule){
     return null;
 };
 
+/** If the object passed has a route end, return it, otherwise return the object itself.
+ * @param {Object} obj Object to check.
+ * @returns {string|Object} The route end.
+ */
 Routes.prototype.getEnd = function(obj){
     if(obj.isValue) return obj.end;
     return obj;

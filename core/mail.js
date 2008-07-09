@@ -1,4 +1,4 @@
-/** @class Functions for sending and receiving email
+/** @namespace Functions for sending and receiving email
  */
 Mail = {};
 
