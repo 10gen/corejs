@@ -1,7 +1,19 @@
+/** Functions for threads.  These could be used for forums, comments, or anything where there are replies.
+ * @namespace
+ */
 threaded = {};
 core.threaded.data.reply_parent();
 core.threaded.data.reply_children();
 
+/** This replaces ns[clsname] with a wrapper class which, on construction,
+ * calls an initializer of the right reply class and adds some variables to the class of the original ns[clsname].
+ * These include:
+
+ * Reply, which is a wrapper to the original reply class, perhaps
+ * with some other variables added.
+ * getReplies and addReply, which are the methods from the right
+ * reply class.
+ */
 threaded.repliesEnabled = function(ns, clsname, args){
     // This really hairy function has the following goals:
     // * Replace ns[clsname] with a wrapper class which, on construction,

@@ -3,6 +3,9 @@ core.content.html();
 core.content.simple();
 core.net.url();
 
+/** Initializes a generic reply.
+ * @constructor
+ */
 threaded.data.Reply = function(){
     this.ts = new Date();
     this.author = "";
@@ -11,6 +14,10 @@ threaded.data.Reply = function(){
     this.deleted = false;
 };
 
+/** Return a copy of an array of replies sorted based on timestamp.
+ * @param {Array} ary Array of replies.
+ * @return {Array} Sorted array copy.
+ */
 threaded.data.Reply.sort = function(ary){
     ary = ary.filter(function(u){return u});
     return ary.slice().sort( function(a, b) {
@@ -18,6 +25,10 @@ threaded.data.Reply.sort = function(ary){
     });
 };
 
+/** Call a rendering function on this reply.
+ * @param {string} part Can be "threaded.replies", "threaded.replylink", or "threaded.replyform".
+ * @param {Object} options Passed to renderer.  If options.replyable is null and <tt>part</tt> is set to "threaded.replies", options.replyable will be set to this reply's threaded_replyable.
+ */
 threaded.data.Reply.prototype.decoratorsRender = function(part, options){
     part = part || "replies";
     options = options || {};
@@ -43,10 +54,18 @@ threaded.data.Reply.prototype.decoratorsRender = function(part, options){
 
 };
 
+/** Checks if reply is valid.
+ * @param {anytype} r Content/reply to check.
+ * @return {boolean} true
+ */
 threaded.data.Reply.prototype.validateReply = function(r){
     return true;
 };
 
+/** Escape HTML in a reply to guard against cross site scripting attacks and replace newlines with &lt;br /&gt;s.
+ * @param {string} text String to be encoded.
+ * @return {string} Encoded HTML.
+ */
 threaded.data.Reply.prototype.encodeContent = function(txt){
     var s = new content.Simple();
     txt = content.HTML.escape_html(txt);
