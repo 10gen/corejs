@@ -1,1 +1,3 @@
-Util = {};
+
+if ( ! Util )
+    Util = {};
