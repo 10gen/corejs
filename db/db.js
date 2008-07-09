@@ -1,47 +1,54 @@
 // db.js - database helper functions
 
-/* greater than, less than qualifiers.
-
-   example:
-     db.coll.find( { name: gt("m") } );
-
-   gte = greater than or equal (>=)
-   lte = less than or equal
-*/
+/** Greater than qualifier.
+ *  @example db.coll.find( { name: gt("m") } );
+ * @deprecated See ed/db/dbcollection.js
+ */
 function gt( x ){
     return { $gt : x };
 }
+/** Less than qualifier.
+ * @deprecated See ed/db/dbcollection.js
+ */
 function lt( x ){
     return { $lt : x };
 }
 
+/** Greater than or equal to qualifier.
+ * @deprecated See ed/db/dbcollection.js
+ */
 function gte( x ){
     return { $gte : x };
 }
+/** Less than or equal to qualifier.
+ * @deprecated See ed/db/dbcollection.js
+ */
 function lte( x ){
     return { $lte : x };
 }
 
-/* Run the specified database "command" object.
-*/
+/** Run the specified database "command" object.
+ * @deprecated See ed/db/dbcollection.js
+ */
 function _dbCommand( cmdObj ) {
     return db.$cmd.findOne(cmdObj);
 }
 
-/* Create a new collection in the database.  Normally, collection creation is automatic.  You would
+/** Create a new collection in the database.  Normally, collection creation is automatic.  You would
    use this function if you wish to specify special options on creation.
 
    If the collection already exists, no action occurs.
 
    Options:
      size: desired initial extent size for the collection.  Must be <= 1000000000.
-           for fixed size (capped) collections, this size is the total/max size of the 
+           for fixed size (capped) collections, this size is the total/max size of the
            collection.
      capped: if true, this is a capped collection (where old data rolls out).
      max: maximum number of objects if capped (optional).
 
    Example:
      createCollection("movies", { size: 10 * 1024 * 1024, capped:true } );
+ * @deprecated See ed/db/dbcollection.js
 */
 function createCollection(name, options) {
     var cmd = { create: name, capped: options.capped, size: options.size, max: options.max };
@@ -49,8 +56,9 @@ function createCollection(name, options) {
     return res;
 }
 
-/* Delete all indexes on the specified collection.
+/** Delete all indexes on the specified collection.
    alpha: space is not reclaimed
+ * @deprecated See ed/db/dbcollection.js
  */
 function deleteIndexes( collection ) {
     var res = _dbCommand( { deleteIndexes: collection, index: "*" } );
@@ -61,12 +69,13 @@ function deleteIndexes( collection ) {
     return res;
 }
 
-/* Delete one index.
+/** Delete one index.
 
    Name is the name of the index in the system.indexes name field. (Run db.system.indexes.find() to
    see example data.)
 
    alpha: space is not reclaimed
+ * @deprecated See ed/db/dbcollection.js
  */
 function deleteIndex( collection, index ) {
     assert(index);
@@ -78,24 +87,28 @@ function deleteIndex( collection, index ) {
     return res;
 }
 
-/* Validate the data in a collection, returning some stats.
+/** Validate the data in a collection, returning some stats.
+ * @deprecated See ed/db/dbcollection.js
  */
 function validate( collection ) {
     return _dbCommand( { validate: collection } );
 }
 
-/* returns null if an error contacting db */
-function getDbProfilingLevel() { 
+/** returns null if an error contacting db
+ * @deprecated See ed/db/dbcollection.js
+*/
+function getDbProfilingLevel() {
     var res = _dbCommand( { profile: -1 } );
     return res ? res.was : null;
 }
 
-/* Set profiling level for your db.  Profiling gathers stats on query performance.
+/** Set profiling level for your db.  Profiling gathers stats on query performance.
    Default is off, and resets to off on a database restart -- so if you want it on,
    turn it on periodically.
      0=off
      1=log very slow (>100ms) operations
      2=log all
+ * @deprecated See ed/db/dbcollection.js
 */
 function setDbProfilingLevel(p) {
     if( p ) {
@@ -105,8 +118,9 @@ function setDbProfilingLevel(p) {
     return _dbCommand( { profile: p } );
 }
 
-/* drops all rows.  alpha: space not reclaimed.
+/** drops all rows.  alpha: space not reclaimed.
    "collection" is a string
+ * @deprecated See ed/db/dbcollection.js
  */
 function drop( collection )
 {
@@ -119,7 +133,9 @@ function drop( collection )
     return res;
 }
 
-/* Drop free lists. Normally not used. */
+/** Drop free lists. Normally not used.
+ * @deprecated See ed/db/dbcollection.js
+*/
 function clean( collection ) {
     return _dbCommand( { clean: collection } );
 }
@@ -135,7 +151,14 @@ dbutil = {
     }
 };
 
-/* Evaluate a js expression at the database server.
+function _dbEval(jsfunction) {
+    var cmd = { $eval: jsfunction };
+    if( arguments.length > 1 )
+	cmd.args = arguments.slice(1);
+    var res = _dbCommand( cmd );
+    return res;
+}
+/** Evaluate a js expression at the database server.
 
    Useful if you need to touch a lot of data lightly; in such a scenario
    the network transfer of the data could be a bottleneck.  A good example
@@ -149,14 +172,8 @@ dbutil = {
 
    Example:
      print( "count(*): " + dbEval( function(){db.mycoll.find({},{_id:ObjId()}).length();} );
+ * @deprecated See ed/db/dbcollection.js
 */
-function _dbEval(jsfunction) {
-    var cmd = { $eval: jsfunction };
-    if( arguments.length > 1 )
-	cmd.args = arguments.slice(1);
-    var res = _dbCommand( cmd );
-    return res;
-}
 function dbEval(jsfunction) {
     var cmd = { $eval: jsfunction };
     if( arguments.length > 1 )
@@ -169,12 +186,13 @@ _count = function() {
     return db[args[0]].find(args[1]||{}, {_id:ObjId()}).length();
 }
 
-/* count - count # of objects in a collection
+/** count - count # of objects in a collection
 
    Second parameter is optional and specifies condition that must be true for the objects to
    be counted.  Example:
 
      c = count("videos", {active:true});
+ * @deprecated See ed/db/dbcollection.js
  */
 function count(collection, query) {
     return dbEval(_count, collection, query);
@@ -210,7 +228,7 @@ _group = function() {
     return ret;
 }
 
-/* group()
+/** group()
 
    Similar to SQL group by.  For example:
 
@@ -236,6 +254,7 @@ _group = function() {
    Defaults
      cond may be null if you want to run against all rows in the collection
      keyf is a function which takes an object and returns the desired key.  set either key or keyf (not both).
+ * @deprecated See ed/db/dbcollection.js
 */
 function group(parmsObj) {
     var parms = Object.extend({}, parmsObj);
