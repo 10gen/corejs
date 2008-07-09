@@ -1,8 +1,21 @@
 core.core.file();
 
+/** Tools for interacting with the git repository.
+ * Git commands all generate output of the form <tt>{ out : output, err : error_msg, exitValue : exit_value, cmd : git_cmd, parsed : { rev : trimmed_output } }</tt>.
+ * @constructor
+ */
 git.Repo = function(){
 };
 
+/** Get user information for git configuration.
+ * @param {user} user User object for git name and email.
+ * @return {Object} Fields: <dl>
+ * <dt>GIT_AUTHOR_NAME</dt><dd>user.name</dd>
+ * <dt>GIT_COMMITTER_NAME</dt><dd>user.name</dd>
+ * <dt>GIT_AUTHOR_EMAIL</dt><dd>user.email</dd>
+ * <dt>GIT_COMMITTER_EMAIL</dt><dd>user.email</dd>
+ * </dl>
+ */
 git.Repo.getEnv = function(user){
         // We pass this environment on commit and pull commands.
         var env = {};
@@ -16,7 +29,9 @@ git.Repo.getEnv = function(user){
 
 
 
-Object.extend(git.Repo.prototype, {
+Object.extend(git.Repo.prototype,
+              /** @lends git.Repo */
+              {
     _validate: function(files){
         for(var i = 0; i < files.length; i++){
             if(files[i].trim().startsWith('/'))
@@ -39,6 +54,10 @@ Object.extend(git.Repo.prototype, {
         if(as) cmd += " " + as;
         return this._exec( cmd );
     },
+                      /** Get the commit id of the repository HEAD.
+                       * Uses the command: <tt>git rev-parse HEAD</tt>
+                       * @return {Object}  Standard git.Repo output.
+                       */
     getCurrentRev: function(){
         var ref = this._exec( "rev-parse HEAD" );
 
@@ -47,14 +66,20 @@ Object.extend(git.Repo.prototype, {
         ref.parsed = parsed;
         return ref;
     },
-
+                      /** List references in a given repository.
+                       * @param {string} repos Repository in which to look for references
+                       * @return {Object} Standard git.Repo output.
+                       */
     showRef: function(ref){
         var ret =  this._exec( "show-ref " + ref );
         ret.parsed = {rev: ret.out.trim().split(/\s/)[0]};
 
         return ret;
     },
-
+                      /** Return the last commit for a given repository.
+                       * @param {string} repos Repository to use
+                       * @return {Object} Standard git.Repo output.
+                       */
     getCommit: function(rev){
         var ret = this._exec( "log -n 1 "+rev );
         var parsed = {};
@@ -79,6 +104,11 @@ Object.extend(git.Repo.prototype, {
         return ret;
     },
 
+                      /** List, in chronological order, the revisions from one repository to another
+                       * @param {string} from Starting repository
+                       * @param {string} to Ending repository
+                       * @return {Object} Standard git.Repo output.
+                       */
     listRevs: function(from, to){
         // Doesn't include rev:from
         var cmd = "log --first-parent --pretty=oneline "+from+".."+to;
@@ -98,6 +128,9 @@ Object.extend(git.Repo.prototype, {
         return ret;
     },
 
+                      /** Returns the git branch currently in use.
+                       * @return {Object} Standard git.Repo output.
+                       */
     getCurrentBranch: function(){
         var cmd = "branch";
         var ret = this._exec( cmd );
@@ -115,6 +148,9 @@ Object.extend(git.Repo.prototype, {
         return ret;
     },
 
+                      /** Returns the path that the current branch of the working tree is on.
+                       * @return {Object} Standard git.Repo output.
+                       */
     getCurrentHeadSymbolic: function(){
         var cmd = "symbolic-ref HEAD";
         var ret = this._exec( cmd );
@@ -123,6 +159,9 @@ Object.extend(git.Repo.prototype, {
         return ret;
     },
 
+                      /** Push committed changes to the global repository.
+                       * @return {Object} Standard git.Repo output.
+                       */
     push: function(){
         var ret = this._exec( "push" );
         ret.parsed = this._parsePush(ret);
@@ -177,6 +216,10 @@ Object.extend(git.Repo.prototype, {
         return parsed;
     },
 
+                      /** Pull remote changes to the local repository.
+                       * @param {user} user User information for identifying oneself to the git repository
+                       * @return {Object} Standard git.Repo output.
+                       */
     pull: function(u){
         // Pass gitEnv when we are doing a pull.
         // The reason is that when we're doing a pull, we might make a merge
@@ -318,11 +361,18 @@ Object.extend(git.Repo.prototype, {
         return parsed;
     },
 
+                      /** Get remote changes and add them to the local repository without merging.
+                       * @return {Object} Standard git.Repo output.
+                       */
     fetch: function(){
         var cmd = "fetch";
         return this._exec( cmd );
     },
 
+                      /** Add new or modified files to index for inclusion in the next commit.
+                       * @param {Array} files Filenames of files to be added to the index.
+                       * @return {Object} Standard git.Repo output.
+                       */
     add: function(files){
         this._validate(files);
 
@@ -330,6 +380,11 @@ Object.extend(git.Repo.prototype, {
         files.forEach( function( z ){ cmd += " " + z; } );
         return this._exec( cmd );
     },
+                      /** Remove files from the working tree and index.
+                       * @param {Array} files Filenames of files to be removed from the index.
+                       * @param {Object} opts If opts.cached, the --cached option will be used.
+                       * @return {Object} Standard git.Repo output.
+                       */
     rm: function(files, opts){
         opts = opts || {};
         var cmd = "rm ";
@@ -337,6 +392,11 @@ Object.extend(git.Repo.prototype, {
         cmd += files.join(' ');
         return this._exec( cmd );
     },
+                      /** Show a diff between the index and the working tree for one or more files.
+                       * @param {Array} files Filenames of files to be diffed.
+                       * @param {Object} opts If opts.rev is set, the repository opts.rev will be used as the tree to diff against
+                       * @return {Object} Standard git.Repo output.
+                       */
     diff: function(files, opts){
         opts = opts || {};
         this._validate(files);
@@ -359,6 +419,13 @@ Object.extend(git.Repo.prototype, {
         }
         return this._exec( cmd );
     },
+
+                      /** Store the current contents of the index in a new commit along with a log message describing the changes you have made.
+                       * @param {Array} files Filenames of files to be committed.  If files have already been added using git.Repo.add, this parameter is unnecessary.
+                       * @param {string} msg Commit message
+                       * @param {user} user User to whom commit should be attributed
+                       * @return {Object} Standard git.Repo output.
+                       */
     commit: function(files, msg, u){
         if(!msg) throw "git commit needs a message";
         this._validate(files);
@@ -372,6 +439,10 @@ Object.extend(git.Repo.prototype, {
         foo.cmd = cmd;
         return foo;
     },
+
+                      /** Displays paths that have differences between the index file and the current HEAD commit, paths that have differences between the working tree and the index file, and paths in the working tree that are not tracked by git.
+                       * @return {Object} Standard git.Repo output.
+                       */
     status: function(){
         // We don't actually call status any more; instead, we call a
         // combination of ls-files and diff-index to figure out what's up.
@@ -600,6 +671,12 @@ Object.extend(git.Repo.prototype, {
 
         return info;
     },
+                      /** Updates the named paths in the working tree from the index file.  Put another way: changes in checked out files will be overwritten on the next pull.
+                       * @param {Array} files Filenames of files to checked out.
+                       * @param {Object} opts If opts.rev is set, the repository opts.rev will be used as the repository.
+                       * If opts.force is set, proceed even if the index or the working tree differs from HEAD. This is used to throw away local changes.
+                       * @return {Object} Standard git.Repo output.
+                       */
     checkout: function(files, opts){
         opts = opts || {};
         this._validate(files);
@@ -613,6 +690,9 @@ Object.extend(git.Repo.prototype, {
         return ret;
     },
 
+                      /** If it exists, display the merge message.
+                       * @return {Object} Standard git.Repo output.
+                       */
     mergeMessage: function(){
         // .git/MERGE_MSG
         // if it's not there, return null (not merging)
