@@ -1,24 +1,39 @@
-
+/** Trim whitespace from the beginning and end of this string.
+ * @return {string} Trimmed string.
+ */
 String.prototype.trim = function(){
     return this.replace( /(^ *| *$)/ , "" );
 };
 
+/** Gets an HTML element by id, if <tt>e</tt> is a string, otherwise returns <tt>e</tt>.
+ * @param {Object|string} e Element or element id to get.
+ * @returns {Object} HTML element, if found.
+ */
 function getElement( e ){
     if ( typeof(e) == "string" )
         return document.getElementById( e );
     return e;
 };
 
+/** Sets an element's "display" style property to "block".
+ * @param {Object|string} e Element or element id.
+ */
 function showElement( e ){
     e = getElement( e );
     e.style.display = "block";
 }
 
+/** Sets an element's "display" style property to "none".
+ * @param {Object|string} e Element or element id.
+ */
 function hideElement( e ){
     e = getElement( e );
     e.style.display = "none";
 }
 
+/** Gets the correct type of XML request object, based on browser type.
+ * @return {Object|string} XML request object, or the string "no XMLHttpRequest support".
+ */
 function getXMLRequestObject(){
 
     if ( window.XMLHttpRequest )
@@ -30,6 +45,11 @@ function getXMLRequestObject(){
     throw "no XMLHttpRequest support";
 }
 
+/** Sends an HTTP request and waits for it to return.
+ * @param {string} url URL to which to send request.
+ * @param {string} data Text to send with request.
+ * @return {string} The request's response text.
+ */
 function loadDocSync( url , data ){
 
     var req = getXMLRequestObject();
@@ -43,6 +63,13 @@ function loadDocSync( url , data ){
     return d;
 }
 
+/** Sends an HTTP request and does not wait for it to return.
+ * @param {string} url URL to which to send request.
+ * @param {function} handler Function to which to send response.
+ * @param {string} data Text to send with request.
+ * @param {boolean} [passFullRequest] If the full response should be sent to the handler, versus only the response text
+ * @return {string} The request's response.
+ */
 function loadDocAsync( url , handler , data , passFullRequest ){
 
     var req = getXMLRequestObject();
@@ -57,6 +84,12 @@ function loadDocAsync( url , handler , data , passFullRequest ){
     req.send( data );
 }
 
+/** Sends an HTTP request and does not wait for it to return.  When it returns, handle the request's responseXML field.
+ * @param {string} url URL to which to send request.
+ * @param {function} handler Function to which to send response.
+ * @param {string} data Text to send with request.
+ * @return {string} The request's XML response.
+ */
 function loadXMLAsync( url, handler, data ) {
     var req = getXMLRequestObject();
     req.open( data ? "POST" : "GET", url, true );
@@ -70,6 +103,13 @@ function loadXMLAsync( url, handler, data ) {
     req.send( data );
 }
 
+/** Sends an HTTP request and does not wait for it to return.
+ * @param {string} data Text to send with request.
+ * @param {string} url URL to which to send request.
+ * @param {function} handler Function to which to send response.
+ * @return {string} The request's response.
+ * @deprecated Use loadDocAsync instead.
+ */
 function ajax(passData, to, responder, method) {
 
     if ( ! method)
@@ -87,6 +127,10 @@ function ajax(passData, to, responder, method) {
     xmlhttp.send(passData);
 }
 
+/** Gets the class of an element.
+ * @param {Object|string} Element or element id to find.
+ * @return {string} Class.
+ */
 function getCSSClass( e ){
     e = getElement( e );
     if ( e ){
@@ -95,6 +139,10 @@ function getCSSClass( e ){
     return null;
 }
 
+/** Sets the class of an element.
+ * @param {Object|string} Element or element id to find.
+ * @param {string} Class name.
+ */
 function setClass( e , c ){
     e = getElement( e );
     if ( e ){
@@ -102,6 +150,11 @@ function setClass( e , c ){
     }
 }
 
+/** Sets a browser cookie.
+ * @param {string} name Cookie name.
+ * @param {string} value Cookie value.
+ * @param {number} hours Hours from now cookie should expire.
+ */
 function setCookie( name , value , hours ) {
     var expires = "";
 
@@ -114,6 +167,9 @@ function setCookie( name , value , hours ) {
     document.cookie = name + "=" + value + expires + "; path=/";
 }
 
+/** Gets a browser cookie.
+ * @param {string} name Cookie name.
+ */
 function getCookie( name)  {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
@@ -131,6 +187,9 @@ function getCookie( name)  {
     return null;
 }
 
+/** Removes a browser cookie.
+ * @param {string} name Cookie name.
+ */
 function clearCookie(name) {
     getCookie(name,"",-1);
 }
