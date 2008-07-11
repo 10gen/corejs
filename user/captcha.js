@@ -36,6 +36,8 @@ Captcha = {
 		s = s.replace( /[^\w]+/g , "" );
 		s = s.toLowerCase();
 
+                if ( Util.Words.bad.contains( s ) )
+                    continue;
 		if ( s.length >= min && s.length <= max )
 		    return s;
 	    }
