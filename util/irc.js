@@ -1,18 +1,26 @@
 // irc.js
 
-
+/** IRC functions.
+ * @namespace
+ */
 Util.IRC = {};
 
+/** The IRC logger.
+ * @constructor
+ * @param {string} host Hostname of server
+ * @param {string} nick Nickname to use
+ * @param {string} channel Channel to join
+ */
 Util.IRC.Logger = function( host , nick , channel ){
     if ( ! db )
         throw "no db to save logs too :(";
 
     this.host = host;
     this.nick = nick;
-    
+
     if ( ! this.host )
         throw "need host";
-    
+
     if ( ! this.nick )
         throw "need nick";
 
@@ -25,6 +33,9 @@ Util.IRC.Logger = function( host , nick , channel ){
         this._bot.joinChannel( channel );
 };
 
+/** Given a message, this logger timestamps it and saves it to db.ircLogs.
+ * @param {Object} msg Message to be saved.
+ */
 Util.IRC.Logger.prototype.onMessage = function( msg ){
 
     msg.ts = new Date();

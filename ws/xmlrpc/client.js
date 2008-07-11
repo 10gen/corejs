@@ -1,15 +1,15 @@
+core.content.xml();
+
 /**
- * XML-RPC Client
+ * Creates a new XML-RPC Client.
  *
  * Specification: http://www.xmlrpc.com/spec
  *
- * @author Dana Spiegel (dana@10gen.com)
- * @created Feb 05, 2007
- * @updated Feb 05, 2007
+ * @param {string} [host=""] Name of the RPC host
+ * @param {number} [port=80] Port to use
+ * @param {string} [path="/"]
+ * @namespace
 **/
- 
-core.content.xml();
-
 ws.xmlrpc.Client = function(host, port, path) {
     // member variables
     this.host = host || '';
@@ -27,16 +27,19 @@ ws.xmlrpc.Client = function(host, port, path) {
 
 /**
  * Makes an XML-RPC method call to the configured host:port/path
+ * @param {string} methodName Name of the method to call in the request
+ * @param {Array} [parameters] Parameters to pass
+ * @return {string} Response text.
  */
 ws.xmlrpc.Client.prototype.methodCall = function(methodName, parameters) {
-    
+
     if (!methodName) {
         return; // this should really throw an exception
     }
 
     var content = '<?xml version="1.0"?>\n';
     var callObject = { methodName : methodName, params: [] };
-    
+
     if (parameters) {
         // process each passed in parameter in the parameters array, and convert to the proper type
         for (var i in parameters) {
@@ -47,19 +50,19 @@ ws.xmlrpc.Client.prototype.methodCall = function(methodName, parameters) {
             else if (isBool(parameter)) value = { 'boolean': parameter ? 1 : 0 };
             else if (isString(paramter)) value = parameter;
             else value = parameter // this should be base64
-            
+
             callObject.params.push( { _name : "param" , value : value });
         }
     }
     // get the XML for the parameters
     assert( xml , "why is xml null" );
     content += xml.toString( "methodCall" , callObject );
-    
+
     var url = 'http://' + this.host + ':' + this.port + this.path;
     this.xmlHTTPRequest.open("POST", url, this.isAsynchronous);
     this.xmlHTTPRequest.setRequestHeader("Content-Type", this.contentType);
     this.xmlHTTPRequest.send(content);
-    
+
     // handle the response from the server
     // TODO: rewrite this as a switch statement
     this.lastResponseCode = this.xmlHTTPRequest.stats;
@@ -68,7 +71,7 @@ ws.xmlrpc.Client.prototype.methodCall = function(methodName, parameters) {
         return this._processResponse(this.xmlHTTPRequest.responseText);
     } else {
         // there's a lower level issue, so fail
-        log.ws.xmlrpc("Error: " + this.xmlHTTPRequest.status + ': ' + this.xmlHTTPRequest.statusText 
+        log.ws.xmlrpc("Error: " + this.xmlHTTPRequest.status + ': ' + this.xmlHTTPRequest.statusText
             + ' : ' + this.xmlHTTPRequest.header
             + ' : ' + this.xmlHTTPRequest.responseText);
     }
@@ -80,7 +83,7 @@ ws.xmlrpc.Client.prototype._processResponse = function(responseText) {
         this.lastResponse = null;
         return null;
     }
-    
+
     var response = xml.fromString(responseText);
     this.lastResponse = response;
     if (response) {
@@ -88,16 +91,16 @@ ws.xmlrpc.Client.prototype._processResponse = function(responseText) {
             if (response.children[0]._name == 'params') {
                 // we got a valid response
                 this.isLastResponseFault = false;
-    
+
                 // get the contents of the response, which should be a single value
                 var value = response.children[0].children[0].children[0].children[0]
                 this.lastValue = value;
-    
+
                 return {isFault: false, value: value};
             } else if (response.children[0]._name == 'fault') {
                 // we got an XML-RPC fault
                 this.isLastResponseFault = true;
-    
+
                 // get the contents of the response, which should be a faultString and faultValue
                 var value = response.children[0].children[0].children[0]
                 this.lastValue = value;
@@ -108,7 +111,7 @@ ws.xmlrpc.Client.prototype._processResponse = function(responseText) {
             }
         }
     }
-    
+
     // we received no response or an invalid response
     return null;
 };
@@ -121,7 +124,7 @@ ws.xmlrpc.Client.Test = function() {
 
     // test XML-RPC blog ping
     var response = client.methodCall('weblogUpdates.ping', ['Silicon Alley Insider', 'http://www.alleyinsider.com/', 'http://www.alleyinsider.com/2008/2/barack_obama__live_from_seattle']);
-    
+
     if (!response) {
         log.ws.xmlrpc('Got empty response');
     } else {

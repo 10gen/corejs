@@ -636,7 +636,7 @@ xml.Node.prototype.toString = function(){
     return "Node:" + this.localName;
 }
 
-/** Determine if an object has a given property name
+/** Determine if an object has a property with the given name
  * @param {Object} obj Object to check
  * @param {string} prop Property to match
  */

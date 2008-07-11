@@ -38,13 +38,13 @@ var JSON = {
      */
     _INVALID  : /^[\],:{}\s]*$/,
     /**
-     * Four step determination whether a string is valid JSON.  In three steps,
+     * Determines if a string is valid JSON.  In the first three steps,
      * escape sequences, safe values, and properly placed open square brackets
      * are replaced with placeholders or removed.  Then in the final step, the
-     * result of all these replacements is checked for invalid characters.
+     * resulting string is checked for invalid characters.
      * @method isValid
-     * @param str {String} JSON string to be tested
-     * @return {boolean} is the string safe for eval?
+     * @param {string} str JSON string to be tested
+     * @return {boolean} If the string is safe for eval
      * @static
      */
     isValid : function (str) {

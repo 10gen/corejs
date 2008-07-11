@@ -1,63 +1,59 @@
-/**
-htmltable provides a means to display data from the database in table format automatically,
-with some additional functionality automatically provided such as a simple search user
-interface.
-
-Fields in the constructor specification object listed below.  Most fields are optional and
-have reasonable defaults.
-
-id:             name of the table.  used in the html etc. optional if only one table on the page.
-ns:             database collection object to query
-searchable:     if true, search header provided and supported
-sortable:       boolean: whether indexed cols are sortable
-cols:           array of column specifications
-  name:         column name (corresponds to name of member in each database object)
-  searchWidth:  width of the search input field in the heading, if using search (depreciated)
-  heading:      prettier name than 'name' for col heading
-  view:         function that makes the value for the column pretty
-  type:         "boolean" for bool columns.  used by search.
-  queryForm:    user specified function to translate, on a search, what the user typed in the
-                column input field  into db query format.
-                Optional; by default most things entered are converted into a case insensitive
-		regular expression.
-  isLink:       true or false; display this column as a link to the detail for this row.
-  className:    CSS class name for this field
-  searchable:   specifies if specific column is searchable.  defaults to true if table overall
-                is searchable.
-detailUrl:      drill down url prefix.  uses obj id (_id)
-detail:         function which takes object and returns detail url.  when specified, detailUrl
-                is not used.
-filter:         a function, which if specified, returns true if the row from the db should be
-                displayed.  You are generally better off including the condition in the query
-		rather than using this client-side facility.
-rowsPerPage:    number of rows displayed (default: 100)
-currentPage:    current page being displayed (default: 1)
-style:          the url of a stylesheet to be used instead of the default
-
-Example:
-
-var tab = new htmltable(
- {
-  ns : db.posts,
-  cols : [
-    { name: "title", view: function(x){ return "<h1>"+x+"</h1>" },
-    { name: "author" },
-    { name: "ts" },
-    { name: "live", view: function(x){return x?"yes":"no";}, searchable: false }
-  ],
-  detailUrl: "/post_edit?id="
- }
-);
-
-tab.dbview( tab.find().sort({ts:-1}) );
-
-*/
 
 core.content.html2();
 core.net.url();
 core.util.db();
 core.db.db();
 
+/** Creates a new htmltable.
+ * @class htmltable provides a means to display data from the database in table format automatically,
+ * with some additional functionality automatically provided such as a simple search user
+ * interface.
+ * <br /><br />
+ * Fields in the constructor specification object listed below.  Most fields are optional and
+ * have reasonable defaults.
+ * <dl>
+ * <dt>id</dt><dd>             name of the table.  used in the html etc. optional if only one table on the page.</dd>
+ * <dt>ns</dt><dd>             database collection object to query</dd>
+ * <dt>searchable</dt><dd>     if true, search header provided and supported</dd>
+ * <dt>sortable</dt><dd>       boolean: whether indexed cols are sortable</dd>
+ * <dt>cols</dt><dd>           array of column specifications<dl>
+ * <dt>  name</dt><dd>         column name (corresponds to name of member in each database object)</dd>
+ * <dt>  searchWidth</dt><dd>  width of the search input field in the heading, if using search (depreciated)</dd>
+ * <dt>  heading</dt><dd>      prettier name than 'name' for col heading</dd>
+ * <dt>  view</dt><dd>         function that makes the value for the column pretty</dd>
+ * <dt>  type</dt><dd>         "boolean" for bool columns.  used by search.</dd>
+ * <dt>  queryForm</dt><dd>    user specified function to translate, on a search, what the user typed in the column input field  into db query format.
+ *               Optional; by default most things entered are converted into a case insensitive
+ *		regular expression.</dd>
+ * <dt>  isLink</dt><dd>       true or false; display this column as a link to the detail for this row.</dd>
+ * <dt>  className</dt><dd>    CSS class name for this field</dd>
+ * <dt>  searchable</dt><dd>   specifies if specific column is searchable.  defaults to true if table overall is searchable.</dd>
+ * </dd></dl>
+ * <dt>detailUrl</dt><dd>      drill down url prefix.  uses obj id (_id)</dd>
+ * <dt>detail</dt><dd>         function which takes object and returns detail url.  when specified, detailUrl is not used.</dd>
+ * <dt>filter</dt><dd>         a function, which if specified, returns true if the row from the db should be
+ *                displayed.  You are generally better off including the condition in the query
+ *	rather than using this client-side facility.</dd>
+ * <dt>rowsPerPage</dt><dd>    number of rows displayed (default: 100)</dd>
+ * <dt>currentPage</dt><dd>    current page being displayed (default: 1)</dd>
+ * <dt>style</dt><dd>          the url of a stylesheet to be used instead of the default</dd>
+ * </dl>
+ *
+ * @example var tab = new htmltable({
+ *     ns : db.posts,
+ *     cols : [
+ *         { name: "title", view: function(x){ return "<h1>"+x+"</h1>" },
+ *         { name: "author" },
+ *         { name: "ts" },
+ *         { name: "live", view: function(x){return x?"yes":"no";}, searchable: false }
+ *     ],
+ *     detailUrl: "/post_edit?id="
+ * });
+ *
+ * tab.dbview( tab.find().sort({ts:-1}) );
+ *
+ * @param {Object} specs Options for the table, as described above
+ */
 function htmltable(specs) {
     this.specs = specs;
 
@@ -282,11 +278,19 @@ function htmltable(specs) {
         core.content.pieces.tableFooter({page: page, prevPage: prevPage, nextPage: nextPage, totalNumPages: totalNumPages, colspan: th.length});
     };
 
+    /** Perform a search on the table.
+     * @param {Object} [baseQuery={}] Search object.
+     * @param {Object} [baseSort={}] Columns on which to sort results.
+     * @return {db_cursor} Search results.
+     */
     this.find = function(baseQuery, baseSort) {
 	assert(isObject(this.specs.ns));
 	return this.specs.ns.find(this._query(baseQuery||{}), this._fieldsFilter()).sort(this._sort(baseSort));
     };
 
+    /** Print the contents of the given cursor as HTML.
+     * @param {db_cursor} Cursor with collection contents.
+     */
     this.dbview = function(cursor) {
         if(request.style || this.specs.style)
             print('<link type="text/css" rel="stylesheet" href="'+(request.style || this.specs.style)+'" />');
@@ -298,6 +302,9 @@ function htmltable(specs) {
         core.content.pieces.tablejs();
     };
 
+    /** Print an array in a tabular form.
+     * @param {Array} Array to print.
+     */
     this.arrview = function( arr ){
         print("<table>\n");
         this._rows( arr.iterator() );

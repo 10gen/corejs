@@ -1,26 +1,17 @@
 /* amb - for "nondeterministic" programs
 */
 
-function require(x) { 
+/** Check that a given variable is true.
+ * @param {any} x Variable to check.
+ * @throws {Exception} If the variable is false.
+ */
+function require(x) {
     if( !x )
         throw "tryagain";
 }
 
-function amb(f, values) { 
-    for( var i = 0; i<values.length; i++ ) { 
-        try {
-            var res = f(values[i]);
-	    if( res ) return res;
-        } catch(e if e=="tryagain") {
-        }   
-    }
-    return null;
-}
-
-Array.prototype.amb = function(f) { return amb(f,this); };
-
-/* Example
-   Adapted from Structure and Interpretation of Computer Programs
+/** Logical evalutation of expressions.
+ * @example Adapted from Structure and Interpretation of Computer Programs
    Abelson/Sussman/Sussman section 4.3.2
 
 res =  [1,2,3,4,5].amb( function(baker) {
@@ -46,3 +37,16 @@ return [1,2,3,4,5].amb( function(smith) {
 })})})})});
 
 */
+function amb(f, values) {
+    for( var i = 0; i<values.length; i++ ) {
+        try {
+            var res = f(values[i]);
+	    if( res ) return res;
+        } catch(e if e=="tryagain") {
+        }
+    }
+    return null;
+}
+
+Array.prototype.amb = function(f) { return amb(f,this); };
+

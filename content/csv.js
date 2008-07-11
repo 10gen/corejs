@@ -20,6 +20,7 @@ content.CSVContent = function( rawContent ){
 };
 
 /** Class to separate fields on delimiter.  Starts a reader at the first field of the first line.
+ * @constructor
  * @param {string} raw The contents of a csv file as a string
  */
 content.CSVContent.Tokenizer = function( raw ){

@@ -2,7 +2,7 @@
  */
 Forms = {};
 
-/** Create an object from a submitted form.  Assumes a global request object.
+/** Create an object from the name/value pairs in a submitted form.  Assumes a global request object.
 * @param {string} [prefix] prefix of variable names
 * @param {Object} [o="{}"] object to fill in, or creates a new one if null
 * @param {Object} [request] HTTP request
@@ -60,7 +60,7 @@ Forms._subobject = function( o , name , set ){
             set = parseNumber( set );
         o[name] = set;
     }
-    
+
     return o[name];
 }
 
@@ -83,7 +83,7 @@ Forms.Form.prototype._getValue = function( name ){
     return Forms._subobject( this.object , name );
 }
 
-/** Return an HTML text input with a given name and value
+/** Return an HTML text input tag with a given set of attributes
  * @param {string} name Object field/input text name
  * @param {Object} options Form object containing corresponding value
  * @returns {string} HTML input text box
@@ -99,7 +99,7 @@ Forms.Form.prototype.text = function( name , options ){
     return this.input( options );
 };
 
-/** Return a database object's id
+/** Returns this form's _id
  * @returns {objectid|string} If the object has an id, it is returned, otherwise "" is returned
  */
 Forms.Form.prototype.id = function(){
@@ -109,7 +109,7 @@ Forms.Form.prototype.id = function(){
     return this.hidden( "_id" , this.object._id );
 }
 
-/** Set a hidden option.
+/** Create an HTML hidden input tag.
  * @param {string} name Field name
  * @param {string} value Field value
  * @param {Object} [options]
@@ -128,7 +128,7 @@ Forms.Form.prototype.hidden = function( name , value , options ){
     return this.input( options );
 };
 
-/** Create a submit button.
+/** Create an HTML submit button tag.
  * @param {string} name Field name
  * @param {string} value Field value
  * @param {Object} options

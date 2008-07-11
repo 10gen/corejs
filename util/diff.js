@@ -1,5 +1,13 @@
+/** Utilities for diffing and undiffing data structures.
+ * @namespace
+ */
 Util.Diff = {
 
+    /** Diffs two strings.
+     * @param {string} a First string
+     * @param {string} b Second string
+     * @return {string} The difference between <tt>a</tt> and <tt>b</tt>.
+     */
     diffStr : function( a , b ){
         if(a == b) return "";
         // you need a '+""' at the end to convert it from a "native_string" to a "string"
@@ -7,27 +15,51 @@ Util.Diff = {
         return x;
     } ,
 
+    /** Applies a diff to an altered string to return the original string.
+     * @param {string} base Altered string
+     * @param {string} diff String diff
+     * @return {string} The original string
+     */
     applyBackwardsStr : function( base , diff ){
         return javaStatic( "ed.util.DiffUtil" , "applyScript" , base , diff );
     } ,
 
     // diff(3, 5) -> 2
     // applyBackwards(5, 2) -> 3
-
+    /** Diffs two numbers.
+     * @param {number} a First number
+     * @param {number} b Second number
+     * @return {number} The difference between <tt>a</tt> and <tt>b</tt>.
+     */
     diffInt : function( a , b ){
         return b-a;
     } ,
 
+    /** Applies a diff to a number to return the original number.
+     * @param {number} base Altered number
+     * @param {number} diff Numeric diff
+     * @return {number} The original number
+     */
     applyBackwardsInt : function( base, diff ){
         return base-diff;
     } ,
 
     // diffDate takes Date, Date -> number
+    /** Diffs two dates.
+     * @param {number} a First date
+     * @param {number} b Second date
+     * @return {number} The difference between <tt>a</tt> and <tt>b</tt>.
+     */
     diffDate : function( a , b ){
         return b.getTime() - a.getTime();
     },
 
     // applyBackwardsDate takes Date, number -> Date
+    /** Applies a diff to a date to return the original date.
+     * @param {number} base Altered date
+     * @param {number} diff Date diff
+     * @return {number} The original date
+     */
     applyBackwardsDate : function( base, diff ){
         return new Date(base.getTime() - diff);
     },
@@ -58,6 +90,11 @@ Util.Diff = {
         return true;
     },
 
+    /** Diffs two arrays.
+     * @param {Array} a First array
+     * @param {Array} b Second array
+     * @return {Object} The difference between <tt>a</tt> and <tt>b</tt>.  If the nth element of an array changed, this would be expressed as: { "n" : { add : "whatever" } }.
+     */
     diffArray : function( a , b ){
         var newa = Object.extend([], a);
         var newb = Object.extend([], b);
@@ -78,20 +115,33 @@ Util.Diff = {
         for(var i = newa.length; i<newb.length; i++) {
             dArr[i] = {add: newb[i]};
         }
-
         return dArr;
-
     },
 
+    /** Not yet implemented: Apply a diff to an array.
+     * @param {Array} base Array that was diffed
+     * @param {Object} diff An array diff
+     * @return The array with diff applied.
+     */
     applyBackwardsArray : function( base , diff ){
-        throw new Exception("how did you get a diff on an array??");
+        throw new Exception("Not yet implemented");
     },
 
+    /** Diffs two boolean values
+     * @param {boolean} a First boolean value
+     * @param {boolean} b Second boolean value
+     * @return {Object} Description of change if <tt>a != b</tt>.
+     */
     diffBool : function( a, b ) {
         if(a == b) return 0;
         return { add : a, remove: b};
     },
 
+    /** Given two objects of any type, attempt to apply the correct type of diff to them.
+     * @param {any} a First object
+     * @param {any} b Second object
+     * @return {Object} An object decribing any differences between the first and second given objects.
+     */
     diffObj : function( a , b ){
         var d = {};
         var valid_type = ["string", "number", "boolean", "objectid"];
@@ -144,6 +194,11 @@ Util.Diff = {
         return d;
     },
 
+    /** Applys the given diff to a given object.
+     * @param {Object} base the object to which the diff should be applied
+     * @param {Object} diff an object diff
+     * @return {Object} The result of applying the diff to the object
+     */
     applyBackwardsObj : function( base , diff ){
         var res = {};
         for(var prop in base){
@@ -175,6 +230,11 @@ Util.Diff = {
         return res;
     },
 
+    /** Given two variables, diff them
+     * @param {any} a First variable
+     * @param {any} b Second variable
+     * @return {Object} An object describing the differences between the two variables
+     */
     diff : function(a, b){
         var diffy = Util.Diff.diffObj({arg: a}, {arg: b})["arg"];
         if(!diffy) return {};
@@ -188,6 +248,9 @@ Util.Diff = {
 
 };
 
+/** A mapping of variable types to diffing functions
+ * @type Object
+ */
 Util.Diff.diffFunc = { "string" : Util.Diff.diffStr,
                        "number" : Util.Diff.diffInt,
                        "boolean" : Util.Diff.diffBool,

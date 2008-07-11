@@ -2,7 +2,7 @@
  */
 content.RegExp = {};
 
-/** Special characters: \, ^, $, ., *, +, ?, =, !, :, |, /, (, ), [, ], {, and }.
+/** Special characters.  '\', '^', '$', '*', '+', '?', '=', '!', ':', '|', '/', '(', ')', '[', ']', '{', '}', and '.'.
  */
 content.RegExp.special = ['\\', '^', '$', '.', '*', '+', '?', '=', '!', ':',
                           '|', '/', '(', ')', '[', ']', '{', '}'];
@@ -31,7 +31,7 @@ content.RegExp.unescape = function(str){
     return str;
 };
 
-/** Escape a string using certain flags.
+/** Escape special characters in a string using the given flags.
  * @param {string} str String to be escaped
  * @param {string} flags Flags to use in regular expression
  * @returns {string} Escaped string
