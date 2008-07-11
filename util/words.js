@@ -5,7 +5,6 @@ Util.Words.usa = Util.Words.usa || javaStatic( "ed.util.Words" , "getWords" , "e
 
 var wordSet = Class.create(function(){}, {
     initialize: function(ary){
-        log(ary);
         this._cache = cache = {};
         ary.forEach(function(s){ cache[s] = true; });
     },
