@@ -7,7 +7,7 @@ core.core.mail();
  */
 BasicDBAppender = {};
 
-/** Creates the _logs collection, if not already in existence and an appender.
+/** Creates the _logs collection, if not already in existence, and an appender.
  * On fatal log messages, an email is sent to the user, notifying them of the error.
  */
 BasicDBAppender.create = function(){

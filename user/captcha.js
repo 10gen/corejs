@@ -11,6 +11,7 @@ Captcha = {
     DEBUG : false ,
 
     /** Create captcha content
+     * @type namespace
      * @namespace Create captcha content
      */
     words : {
@@ -116,6 +117,7 @@ Captcha = {
     } ,
 
     /** Using the database to save and check captchas
+     * @type namespace
      * @namespace Using the database to save and check captchas
      */
     db : {

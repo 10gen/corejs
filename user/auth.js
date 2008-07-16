@@ -5,11 +5,11 @@ core.user.user();
 Auth = {
 
     /** Toggle debug.
-     * @type {boolean}
+     * @type boolean
      */
     debug : false ,
 
-    /** Find a user.
+    /** Attempts to find and authenticate a user.
      * @param {Object} [request] HTTP request
      * @param {Object} [response] HTTP response
      * @param {Object} [user] User
@@ -41,6 +41,7 @@ Auth = {
     } ,
 
     /** Basic user authentication.  Sends passwords plaintext.
+     * @type namespace
      * @namespace Basic user authentication.  Sends passwords plaintext.
      * @deprecated Use cookie authentication instead
      */
@@ -93,6 +94,7 @@ Auth = {
     } ,
 
     /** Digest user authentication.
+     * @type namespace
      * @namespace Digest user authentication.
      * @deprecated Use cookie authentication instead
      */
@@ -213,14 +215,15 @@ Auth = {
     } ,
 
     /** Cookie-style user authentication
+     * @type namespace
      * @namespace Cookie-style user authentication
      */
     cookie :  {
         /** Finds and logs in a user.
          * @param {Object} request HTTP request
          * @param {Object} response HTTP response
-         * @param {string} [username] Username (this is not actually used anywhere, but must be left in for backwards compatibility.  It may safely be set to null.)
-         * @param {Object} [user] User object.
+         * @param {string} [name] name of the database to use (this is not actually used anywhere, but must be left in for backwards compatibility.  It may safely be set to null.)
+         * @param {Object} [user] user object.
          * @returns {Object} If a user is found, the user object, otherwise null.
          */
         getUser : function( request , response , name , u ){

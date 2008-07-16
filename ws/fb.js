@@ -6,17 +6,25 @@
 
 /** @class Facebook Developer API */
 Facebook = {
-    /** Set this to the secret key Facebook assigns you */
+    /** Set this to the secret key Facebook assigns you
+     * @type string
+     */
     secret_key : "ced4191148da846e833a74674dbf32fb",
-    /** Set this to the API key Facebook assigns you */
+    /** Set this to the API key Facebook assigns you
+     * @type string
+     */
     api_key : "eb17c23417bd37e9c00592037393ee13",
 
-    /** The Facebook REST server */
+    /** The Facebook REST server.  Value is "http://api.facebook.com/restserver.php".
+     * @type string
+     */
     server : "http://api.facebook.com/restserver.php",
     /** The API version */
     v : "1.0",
 
-    /** Format of the message returned by the server.  Defaults to "XML".  Also can be set to "JSON" */
+    /** Format of the message returned by the server.  Defaults to "XML".  Also can be set to "JSON"
+     * @type string
+     */
     format : "XML"
     //errHandler : myFunc
 };
@@ -58,7 +66,7 @@ Facebook.getSig = function(args) {
 /** Get an ID for a call
  * Every call to the Facebook API is required to have a unique identifier that is larger than the
  * previous call's identifier.  Facebook suggests using the time in ms.
-* return {number}
+ * @return {number}
  */
 Facebook.getCallId = function() {
     return (new Date()).getTime();
@@ -140,8 +148,7 @@ Facebook.getLoginLink = function(args) {
     (args.canvas ? "&canvas="+args.canvas : "");
 };
 
-/** @class Administrative functions */
-Facebook.Admin = {
+Facebook.REST = {
     /** Returns the current allocation limit for your application for the specified integration point.
      * @param {Object} args Fields:  <ul><li> start_time  int  A Unix time for the start of the range (inclusive).</li>
      * <li>end_time  int  A Unix time for the end of the range (inclusive). The end_time cannot be more than 30 days after the start_time.</li>
@@ -197,11 +204,8 @@ Facebook.Admin = {
     setAppProperties : function(args) {
         args["method"] = "admin.setAppProperties";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Application information functions */
-Facebook.Application = {
     /** Returns public information about a given application (not necessarily your own).
      * <ul>
      * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
@@ -212,11 +216,8 @@ Facebook.Application = {
     getPublicInfo : function(args) {
         args["method"] = "application.getPublicInfo";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Authorization */
-Facebook.Auth = {
     /** Creates an auth_token to be passed in as a parameter to login.php and then to auth.getSession after the user has logged in.
      * @param {Object} args field:
      * <ul>
@@ -261,10 +262,7 @@ Facebook.Auth = {
         args["method"] = "auth.promoteSession";
         return Facebook.call(args);
     },
-};
 
-/** @class Batch jobs */
-Facebook.Batch = {
     /** Execute a list of individual API calls in a single batch.
      * @param  {Object} args Fields: <ul><li>method_feed  string A JSON encoded array of strings. Each element in the array should contain the full parameters for a method, including method name, sig, etc. Currently, there is a maximum limit of 15 elements in the array.</li>
      * <li><span class="field_name"> api_key </span><span class="field_type"> string </span><span class="field_desc"> The application key associated with the calling application.</span></li>
@@ -278,11 +276,8 @@ Facebook.Batch = {
         if(!args["method_feed"]) return Facebook.err.missingField("method_feed");
         args["method"] = "batch.run";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Browser data fetching */
-Facebook.Data = {
     /** Returns all cookies for a given user and application.
      * @param  {Object} args Fields: <ul>
      * <li> uid  int  The user from whom to get the cookies. </li>
@@ -307,11 +302,8 @@ Facebook.Data = {
         if(!args["query"]) return Facebook.err.missingField("uids1");
         args["method"] = "data.setCookie";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Event monitoring */
-Facebook.Events = {
     /** Returns all visible events according to the filters specified.
      * @param {Object} args Fields:
      * <ul>
@@ -331,11 +323,8 @@ Facebook.Events = {
         if(!args["eid"]) return Facebook.err.missingField("eid");
         args["method"] = "events.getMembers";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Facebook markup language controls */
-Facebook.FBML = {
     /** Fetches and re-caches the image stored at the given URL. */
     refreshImgSrc : function(args) {
         if(!args["url"]) return Facebook.err.missingField("url");
@@ -354,11 +343,8 @@ Facebook.FBML = {
         if(!args["fbml"]) return Facebook.err.missingField("fbml");
         args["method"] = "fbml.setRefHandle";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Feed functions */
-Facebook.Feed = {
     /** Publishes a News Feed story to the user corresponding to the session_key parameter. */
     publishStoryToUser : function(args) {
         if(!args["title"]) return Facebook.err.missingField("title");
@@ -376,21 +362,15 @@ Facebook.Feed = {
         if(!args["title_template"]) return Facebook.err.missingField("title_template");
         args["method"] = "feed.publishTemplatizedAction";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Facebook's MySQL-like db interface */
-Facebook.FQL = {
     /** Evaluates an FQL (Facebook Query Language) query. */
     query : function(args) {
         if(!args["query"]) return Facebook.err.missingField("query");
         args["method"] = "fql.query";
         return Facebook.call(args);
-    }
-}
+    },
 
-/** @class Accessing friend information */
-Facebook.Friends = {
     /** Returns whether or not each pair of specified users is friends with each other. */
     areFriends : function(args) {
         if(!args["uids1"]) return Facebook.err.missingField("uids1");
@@ -412,11 +392,8 @@ Facebook.Friends = {
     getLists : function(args) {
         args["method"] = "friends.getLists";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Group-related functions */
-Facebook.Groups = {
     /** Returns all visible groups according to the filters specified. */
     get : function(args) {
         args["method"] = "groups.get";
@@ -427,11 +404,8 @@ Facebook.Groups = {
         if(!args["gid"]) return Facebook.err.missingField("gid");
         args["method"] = "groups.getMembers";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Marketplace functions */
-Facebook.Marketplace = {
     /** Create or modify a listing in Marketplace. */
     createListing : function(args) {
         if(!args["listing_id"]) return Facebook.err.missingField("listing_id");
@@ -466,11 +440,8 @@ Facebook.Marketplace = {
         if(!args["query"]) return Facebook.err.missingField("query");
         args["method"] = "marketplace.search";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Notifications */
-Facebook.Notifications = {
     /** Returns information on outstanding Facebook notifications for current session user. */
     get : function(args) {
         args["method"] = "notifications.get";
@@ -489,11 +460,8 @@ Facebook.Notifications = {
         if(!args["subject"]) return Facebook.err.missingField("subject");
         args["method"] = "notifications.sendEmail";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Pages */
-Facebook.Pages = {
     /** Returns all visible pages to the filters specified. */
     getInfo : function(args) {
         if(!args["fields"]) return Facebook.err.missingField("fields");
@@ -514,11 +482,8 @@ Facebook.Pages = {
     isFan : function(args) {
         args["method"] = "pages.isFan";
         return Facebook.call(args);
-    }
-};
+    },
 
-/** @class Photos */
-Facebook.Photos = {
     /** Adds a tag with the given information to a photo. */
     addTag : function(args) {
         if(!args["pid"]) return Facebook.err.missingField("pid");
@@ -562,10 +527,7 @@ Facebook.Photos = {
         args["method"] = "photos.upload";
         return Facebook.call(args);
     },
-};
 
-/** @class Profile */
-Facebook.Profile = {
     /** Sets the FBML for a user's profile, including the content for both the profile box and the profile actions. */
     getFBML : function(args) {
         args["method"] = "profile.getFBML";
@@ -576,10 +538,7 @@ Facebook.Profile = {
         args["method"] = "profile.setFBML";
         return Facebook.call(args);
     },
-};
 
-/** @class Facebook */
-Facebook.Users = {
     /** Returns a wide array of user-specific information for each user identifier passed, limited by the view of the current user. */
     getInfo : function(args) {
         if(!args[uids]) return Facebook.err.missingField("uids");
