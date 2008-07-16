@@ -10,6 +10,8 @@ Util.Doc = {};
  * @param {string} file Name of the file or directory for which to generate documentation
  */
 Util.Doc.srcToDb = function(file) {
+    db.doc.code.drop();
+    javaStatic("ed.doc.Generate", "connectToDb");
     javaStatic("ed.doc.Generate", "srcToDb", file);
 }
 
