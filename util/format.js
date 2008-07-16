@@ -1,10 +1,14 @@
 core.content.html();
 
+/**
+ * Transform an object full of k:v pairs to a string full of "k=\"v\""
+ * elements (for embedding as attributes in an HTML element).
+ *
+ * Useful after you've removed all the excess parameters for your function.
+ * @param {Object} obj Object to be parsed
+ * @return {string} A space-separated string of key/value pairs
+ */
 Util.format_htmlattr = function(obj){
-    // Transform an object full of k:v pairs to a string full of "k=\"v\""
-    // elements (for embedding as attributes in an HTML element).
-    //
-    // Useful after you've removed all the excess parameters for your function.
     var s = "";
     var first = false;
     var keypair = function(key, value){
@@ -24,6 +28,10 @@ Util.format_htmlattr = function(obj){
     return s;
 };
 
+/** Transform an object full of k:v pairs in to a &amp;-separated string of key=value pairs.
+ * @param {Object} obj Object to be parsed.
+ * @return {string} URL query string.
+ */
 Util.format_queryargs = function(obj){
     var s = "";
     for(var prop in obj){

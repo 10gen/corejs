@@ -15,9 +15,6 @@ Search = {
      * @type log
      */
     log : log.search ,
-    /** Debug
-     * @type boolean
-     */
     DEBUG : false ,
 
     /** Search weights */
