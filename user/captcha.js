@@ -10,7 +10,8 @@ Captcha = {
      */
     DEBUG : false ,
 
-    /** @namespace Create captcha content
+    /** Create captcha content
+     * @namespace Create captcha content
      */
     words : {
         /** Find a real word from the English dictionary
@@ -93,7 +94,8 @@ Captcha = {
         return Captcha.USE.valid( id , res );
     } ,
 
-    /** @namespace Hashing the captcha
+    /** Hashing the captcha
+     * @namespace Hashing the captcha
      */
     hash : {
         /** Adds a cookie to the repsonse with the name "cid" and an md5 encoding of the captcha word
@@ -113,7 +115,8 @@ Captcha = {
         }
     } ,
 
-    /** @namespace Using the database to save and check captchas
+    /** Using the database to save and check captchas
+     * @namespace Using the database to save and check captchas
      */
     db : {
         /** Add a captcha word to the db.  About 1% of the time this is called, all images six hours or older
@@ -141,6 +144,7 @@ Captcha = {
         /** Check if a user correctly identified the captcha.
          * @param {string} id The object id of the captcha's database entry
          * @param {string} res User's captcha response text
+         * @return {boolean} If the user correctly identified the captcha
          */
         valid : function( id , res ){
 

@@ -40,7 +40,8 @@ Auth = {
         return Auth.digest.reject( req || request , res || response , db.getName() );
     } ,
 
-    /** @namespace Basic user authentication.  Sends passwords plaintext.
+    /** Basic user authentication.  Sends passwords plaintext.
+     * @namespace Basic user authentication.  Sends passwords plaintext.
      * @deprecated Use cookie authentication instead
      */
     basic : {
@@ -91,7 +92,8 @@ Auth = {
         }
     } ,
 
-    /** @namespace Digest user authentication.
+    /** Digest user authentication.
+     * @namespace Digest user authentication.
      * @deprecated Use cookie authentication instead
      */
     digest : {
@@ -210,7 +212,8 @@ Auth = {
         }
     } ,
 
-    /** @namespace Cookie-style user authentication
+    /** Cookie-style user authentication
+     * @namespace Cookie-style user authentication
      */
     cookie :  {
         /** Finds and logs in a user.

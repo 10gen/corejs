@@ -73,6 +73,10 @@ threaded.data.Reply.prototype.encodeContent = function(txt){
     return txt;
 };
 
+/** Add a reply.
+ * @param {Object} [args={}]
+ * @return {boolean} true
+ */
 threaded.data.Reply.prototype.decoratorsHandle = function(args){
     var ret = false;
     args = args || {};
@@ -95,11 +99,18 @@ threaded.data.Reply.prototype.decoratorsHandle = function(args){
     return ret;
 };
 
+/** Use either the default or a user-passed function to render the replies.
+ * @param {Object} options Any rendering options
+ * @param {Object} pieces If pieces.reply is a function, pass it this reply to render
+ */
 threaded.data.Reply.prototype.render = function(options, pieces){
     pieces = pieces || core.threaded.html;
     pieces.reply(this, options);
 };
 
+/** Initializes a given reply with 0 posts.
+ * @param {Object} obj Reply to initialize.
+ */
 threaded.data.Reply.initialize = function(obj){
     obj.threaded_numPosts = 0;
 };
