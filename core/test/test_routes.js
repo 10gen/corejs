@@ -53,7 +53,7 @@ routes.wiki.add( /.*\.gif/ , "~~/wiki/$0" );
 assert( "/wiki/~~/wiki/a/2.gif" == routes.apply( "/wiki/a/2.gif" ) );
 
 routes.wiki.add( /\/?(.*)/ , "/~~/wiki/" , { names : [ "name" ] } );
-request = {};
+request = javaStatic( "ed.net.httpserver.HttpRequest" , "getDummy" , "/" );
 assert( "/~~/wiki/" == routes.apply( "/wiki/abc" , request ) );
 assert( request.name == "abc" );
 
@@ -63,7 +63,7 @@ routes = new Routes();
 routes.wiki = new Routes();
 
 routes.wiki.add( /(\w+)\/(\w+)/ , "/~~/wiki/" , { names : [ "action" , "value" ] } );
-request = {};
+request = javaStatic( "ed.net.httpserver.HttpRequest" , "getDummy" , "/" );
 assert( "/~~/wiki/" == routes.apply( "/wiki/do/4" , request ) );
 assert( request.action == "do" );
 assert( request.value == "4" );
