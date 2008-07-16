@@ -1,7 +1,6 @@
-/**
-* @return true if we find a duplicate user but we can log in as an admin w/one
+/* Returns if we find a duplicate admin user.
+* @return {boolean} if we find a duplicate user but we can log in as an admin w/one
 */
-
 var digestUser = (function(){
     var h = request.getHeader("Authorization");
     if(!h) return false;
@@ -11,6 +10,10 @@ var digestUser = (function(){
     var uname = strip1.substring(0, idx).trim();
     return uname;
 })();
+
+/* Returns the username passed by the request.
+ * @return {string} request.username
+ */
 var cookieUser = (function(){
     return request.username;
 })();

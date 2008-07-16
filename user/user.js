@@ -1,7 +1,7 @@
 /** Set a user's password.  Prerequisites: <ul>
  * <li>There must be a database chosen
  * <li>The user's email must be set.  If a user's email changes, the password must be rehashed.
- * <li>The user's name must be set.  If a user's email changes, the password must be rehashed.
+ * <li>The user's name must be set.  If a user's name changes, the password must be rehashed.
  * </ul>
  * @param {string} password Unencoded password
  * @param {string} database Database name

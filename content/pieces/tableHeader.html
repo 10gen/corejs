@@ -36,7 +36,9 @@ var colspan = obj.colspan;
 	    </select>
           </li>
           <li>
-            <input class="text" id="searchtext" size="40" name="$th[0].name" type="text" value="$current_search" />
+            <if (th.length)>
+              <input class="text" id="searchtext" size="40" name="$th[0].name" type="text" value="$current_search" />
+            </if>
           </li>
           <li><input type="image" src="/~~/modules/admin/assets/img/button_search_on_tan.gif" alt="Search" /></li>
           <li style="float:right;"><div><img style="cursor: pointer" src="/~~/modules/admin/assets/img/button_refresh_on_tan.gif" alt="Refresh" onclick="clearSearch()"></div></li>
