@@ -128,6 +128,55 @@ Forms.Form.prototype.hidden = function( name , value , options ){
     return this.input( options );
 };
 
+/**
+ * @param choices.  array.  
+ * if its of strings or numbers, assumes names and values are the same
+ * if objects, looks for name and value
+ * if name missing, calls toString
+ * if value missing, tries _id.  if missing uses name for name and value
+*/
+Forms.Form.prototype.select = function( name , value , choices , options ){
+
+    var html = "<select name='" + name + "' ";
+
+    if ( options ){
+        for ( var key in options ){
+            html += " " + key;
+            var val = options[key];
+            if ( val )
+                html += "=\"" + val + "\" ";
+        }
+    }
+    html += ">";
+    for ( var i=0; i<choices.length; i++ ){
+        var c = choices[i];
+        
+        var name;
+        var val;
+        
+        if ( c == null || isString( c ) || isNumber( c ) ){
+            name = c;
+            val = c;
+        }
+        else if ( isObject( c ) && c.name ){
+            name = c.name;
+            val = c.value || ( c._id || c.name );
+        }
+        else {
+            name = c.toString();
+            val = c.toString();
+        }
+        html += "<option value='" + val + "' ";
+        if ( value == c )
+            html += " selected ";
+        html += " >";
+        html += name;
+        html += "</option>";
+    }
+    html += "</select>";
+    return html;
+}
+
 /** Create a submit button.
  * @param {string} name Field name
  * @param {string} value Field value
