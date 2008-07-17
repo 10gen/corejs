@@ -3,6 +3,9 @@ SERVER_HOSTNAME = javaStatic( "java.net.InetAddress" , "getLocalHost" ).getHostN
 
 function mapUrlToJxpFileCore( uri , request , response ){
 
+    if ( uri.startsWith( "/~~/f/" ) )
+        return "/~~/f.jxp";
+
     // webdav
     var ua = request.getHeader( "User-Agent" );
     if ( ua &&
