@@ -4,7 +4,9 @@ core.core.file();
  * Only programs in corejs can call Java functions.
  * @namespace
  */
-Util.Doc = {};
+Util.Doc = {
+    inProgress : false
+};
 
 Util.Doc.initialize = function() {
     javaStatic("ed.doc.Generate", "initialize");
@@ -14,12 +16,14 @@ Util.Doc.initialize = function() {
  * @param {string} file Name of the file or directory for which to generate documentation
  */
 Util.Doc.srcToDb = function(file) {
+    this.inProgress = true;
     javaStatic("ed.doc.Generate", "connectToDb");
     javaStatic("ed.doc.Generate", "srcToDb", file);
 }
 
 Util.Doc.javaSrcsToDb = function() {
     javaStatic("ed.doc.Generate", "javaSrcsToDb");
+    this.inProgress = false;
 }
 
 
@@ -28,6 +32,7 @@ Util.Doc.javaSrcsToDb = function() {
  * @param {string} version Version of the documentation being generated
  */
 Util.Doc.dbToHTML = function(out_dir, version) {
+    this.inProgress = true;
     javaStatic("ed.doc.Generate", "connectToDb");
 
     // put any global variables in the db
@@ -46,6 +51,7 @@ Util.Doc.dbToHTML = function(out_dir, version) {
     javaStatic("ed.doc.Generate", "postHTMLGeneration", out_dir);
 
     db.doc.html.ensureIndex({name:1});
+    this.inProgress = false;
 }
 
 /** Generates an html file from a db.doc object
