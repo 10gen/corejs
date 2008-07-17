@@ -6,6 +6,10 @@ core.core.file();
  */
 Util.Doc = {};
 
+Util.Doc.initialize = function() {
+    javaStatic("ed.doc.Generate", "initialize");
+}
+
 /** Given a source file or directory, generate documentation and store it in db.doc
  * @param {string} file Name of the file or directory for which to generate documentation
  */
@@ -14,11 +18,18 @@ Util.Doc.srcToDb = function(file) {
     javaStatic("ed.doc.Generate", "srcToDb", file);
 }
 
+Util.Doc.javaSrcsToDb = function() {
+    javaStatic("ed.doc.Generate", "javaSrcsToDb");
+}
+
+
 /** Generate html files from db.doc and store them in db.doc.html.
  * @param {string} out_dir Location to store temporary output files
  * @param {string} version Version of the documentation being generated
  */
 Util.Doc.dbToHTML = function(out_dir, version) {
+    javaStatic("ed.doc.Generate", "connectToDb");
+
     // put any global variables in the db
     javaStatic("ed.doc.Generate", "globalToDb");
 
