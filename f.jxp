@@ -31,8 +31,10 @@ if ( ! file && request.extra ){
 	file = cursor.next();
     else {
         var cursor = db._files.find( { aliases : request.extra } ).sort( { uploadDate : -1 } ).limit(1);
-        if ( cursor.hasNext() )
+        if ( cursor.hasNext() ){
 	    file = cursor.next();
+            return response.sendRedirectTemporary( "/~~/f/" + file.filename );
+        }
     }
 }
 
