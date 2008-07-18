@@ -46,7 +46,6 @@
  *  print( u.apply( null, '/foo/bar', null, null ) ); // prints 'hihi'
  */
 
-
 Util.URLTree = function(){
     this._regexp = [];
     this._default = null;

@@ -10,10 +10,9 @@ var cacheScaled = false;
 
 log.f.level = log.LEVEL.ERROR;
 
+request.applyServletParams( /~~\/f\/(.*)/ , [ "extra" ] );
+
 var id = request.id;
-if ( ! id )
-    request.applyServletParams( /f\/(\w+)/ , [ "id" ] );
-id = request.id;
 
 log.f.debug( id );
 
@@ -24,6 +23,19 @@ if ( ! file && request.name ){
     var cursor = db._files.find( { filename : request.name } ).sort( { uploadDate : -1 } ).limit(1);
     if ( cursor.hasNext() )
 	file = cursor.next();
+}
+
+if ( ! file && request.extra ){
+    var cursor = db._files.find( { filename : request.extra } ).sort( { uploadDate : -1 } ).limit(1);
+    if ( cursor.hasNext() )
+	file = cursor.next();
+    else {
+        var cursor = db._files.find( { aliases : request.extra } ).sort( { uploadDate : -1 } ).limit(1);
+        if ( cursor.hasNext() ){
+	    file = cursor.next();
+            return response.sendRedirectTemporary( "/~~/f/" + file.filename );
+        }
+    }
 }
 
 if ( ! file ){

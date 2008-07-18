@@ -177,8 +177,9 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
                     throw "something is wrong";
 
                 for ( var i=0; i<names.length; i++ ){
-                    if ( r[i+1] )
-                        request[ names[i] ] = r[i+1];
+                    if ( r[i+1] ){
+                        request.addParameter( names[i] , r[i+1] );
+                    }
                 }
 
             }

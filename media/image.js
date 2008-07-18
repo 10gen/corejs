@@ -1,6 +1,6 @@
 // image.js
 
-/** Instantiate this file object.
+/** Instantiates an image from a file.
  * @constructor
  * @param {file} file A file
  * @throws {Exception} If file type cannot be recognized by ed.js.JSFile or file is null
@@ -63,6 +63,7 @@ Media.Image.prototype.scaleToMaxSize = function( maxWidth , maxHeight ){
  * return the image unaltered.  At least one of the parameters must be specified.
  * @param {number} x desired width
  * @param {number} y desired height
+ * @param {number} grow unused
  * @return {JSFile} The scaled image.
  */
 Media.Image.prototype.scaleToSize = function( x , y , grow ){

@@ -104,9 +104,9 @@ Object.extend(git.Repo.prototype,
         return ret;
     },
 
-                      /** List, in chronological order, the revisions from one repository to another
-                       * @param {string} from Starting repository
-                       * @param {string} to Ending repository
+                      /** List, in chronological order, the changes between revisions
+                       * @param {string} from Starting revision
+                       * @param {string} to Ending revision
                        * @return {Object} Standard git.Repo output.
                        */
     listRevs: function(from, to){
