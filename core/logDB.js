@@ -1,6 +1,5 @@
 // logDB.js
 
-core.db.db();
 core.core.mail();
 
 /** @class Appends log messages to the _log collection in the database.
@@ -13,7 +12,7 @@ BasicDBAppender = {};
 BasicDBAppender.create = function(){
 
     try {
-        createCollection( "_logs" , {size:1000000, capped:true} );
+        db.createCollection( "_logs" , {size:1000000, capped:true} );
     }
     catch ( e ){
         SYSOUT( "error creating _logs db - db logging off" );

@@ -3,7 +3,7 @@ User.Confirmation = function(user){
     this.user = user;
 };
 
-core.db.db();
+core.db.dbutil();
 dbutil.associate(User.Confirmation, db.users.confirmations);
 db.users.confirmations.setConstructor(User.Confirmation);
 

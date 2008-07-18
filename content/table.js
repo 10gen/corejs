@@ -2,7 +2,6 @@
 core.content.html2();
 core.net.url();
 core.util.db();
-core.db.db();
 
 /** Creates a new htmltable.
  * @class htmltable provides a means to display data from the database in table format automatically,
@@ -241,7 +240,7 @@ function htmltable(specs) {
         }
 
         var table = { rows: rows };
-        totalNumPages = Math.floor((count(this.specs.ns.getName()) - 1) / rowsPerPage) + 1;
+        totalNumPages = Math.floor((this.specs.ns.count() - 1) / rowsPerPage) + 1;
         if(currentPage > totalNumPages && totalNumPages > 0)
             currentPage = totalNumPages;
 
