@@ -10,17 +10,27 @@
  * to the client, or set up different routing schemes for each application.
  * URLs are referred to as keys.  The paths to files served are referred to as values.  Absolute paths
  * start with a "/", other paths are relative.
+ *
+ * A route can also specify how to compute "paramaters" for its JXP. To do this,
+ * use the <tt>attachment</tt> parameter to add.
+ *
  * @example routes.wiki matches /wiki/
  * So, if you set:
  *     routes.wiki = "/my/wiki/"
  * If someone goes to www.yoursite.com/wiki, the appserver will serve them the file /my/wiki/index.jxp
  * @example You can also set subroutes: routes.wiki.abc matches /wiki/abc
  * @example routes.wiki.search = "/wiki/doSearch";
- * is equivlant to
+ * is equivalent to
  * routes.wiki.search = "doSearch";
  * @example Regular expressions can also be used:
  * routes.add( /abc/ , "" )
- * routes.add( /abc(\d)/ , "/foo/$0/$1
+ * routes.add( /abc(\d)/ , "/foo/$0/$1" )
+ * @example Using attachment:
+ * routes.add( /abc(\d)/ , "index", { names: ["number"] } );
+ * // incoming requests for /abc1 will call index with request.number = "1"
+ * routes.add( /abca{3,}/, "index", { extra: { lotsOfA : "yes" } } );
+ * // incoming requests for /abcaaaaa will call index with
+ * // request.lotsOfA = "yes"
  * @class
  */
 Routes = function(){
