@@ -20,7 +20,7 @@
  * routes.wiki.search = "doSearch";
  * @example Regular expressions can also be used:
  * routes.add( /abc/ , "" )
- * routes.add( /abc(\d)/ , "/foo/$0/$1
+ * routes.add( /abc(\d)/ , "/foo/$0/$1")
  * @class
  */
 Routes = function(){
