@@ -4,7 +4,7 @@ User.Reset = function(user){
     this.hash = md5(new Date().toString());
 };
 
-core.db.db();
+core.db.dbutil();
 dbutil.associate(User.Reset, db.users.resets);
 db.users.resets.setConstructor(User.Reset);
 

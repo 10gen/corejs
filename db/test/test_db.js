@@ -1,5 +1,5 @@
 db = connect("test");
-core.db.db();
+core.db.dbutil();
 
 Class = function(){
     this.a = 4;
