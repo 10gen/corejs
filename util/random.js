@@ -20,13 +20,19 @@
  */
 var foo = {};
 
-/** Seeds a random number generator.
+/** Seeds and returns a Java random number generator.  
+ * See Java's java.util.Random documentation for more info.
+ * 
  * @param {number} seed The seed to use
  * @return {random_generator} A seed random number generator.
  * @name random.getRandom
+ *
+ * Example: 
+ *   var r = core.util.random().getRandom(42);
+ *   r.nextInt();
  */
 foo.getRandom = function(seed) {
-    return javaCreate("java.util.Random", seed);
+    return javaCreate("java.util.Random", seed || 0);
 };
 
 return foo;
