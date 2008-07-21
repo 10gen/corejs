@@ -44,7 +44,7 @@ if ( ! user ){
     return;
 }
 
-if( User.requirements.confirmed_email && user && ! user.isAdmin() && ! user.hasPermission("confirmed_email")){
+if( User.requirements.confirmed_email && User.requirements.confirmed_email.length && user && ! user.isAdmin() && ! user.hasPermission("confirmed_email")){
     core.user.confirm_send();
 }
 
