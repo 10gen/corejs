@@ -81,4 +81,4 @@ assert(news == s);
 var x = [{_name: "elem", $: "<int>"},
     {_name: "elem", $: "whee", _props: {attr: '"hi"\'yep'}}];
 var s = strip(xml.toString("ctest", x));
-assert(s == "<ctest><elem>&lt;int&gt;</elem><elemattr='&quot;hi&quot;&apos;yep'>whee</elem></ctest>");
+assert(s == "<ctest><elem>&lt;int&gt;</elem><elemattr='&quot;hi&quot;&#39;yep'>whee</elem></ctest>");

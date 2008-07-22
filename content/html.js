@@ -22,7 +22,7 @@ content.HTML._entities = [{s: '&', r: "&amp;"},
                           {s: '<', r: "&lt;"},
                           {s: '>', r: "&gt;"},
                           {s: '"', r: "&quot;"},
-                          {s: "'", r: "&apos;"}];
+                          {s: "'", r: "&#39;"}];
 
 /** Escape questionable characters in JavaScript
  * <br />
