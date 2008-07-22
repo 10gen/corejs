@@ -68,12 +68,13 @@ Util.Doc.dbToHTML = function(out_dir, version) {
     while(d.hasNext()) {
         this.dbObjToHTML(d.next(), out_dir);
     }
-    db.doc.html.drop();
-    db.doc.html.resetIndexCache();
+    //    db.doc.html.drop();
+    //    db.doc.html.resetIndexCache();
 
     javaStatic("ed.doc.Generate", "postHTMLGeneration", out_dir);
 
-    db.doc.html.ensureIndex({name:1});
+    db.doc.ensureIndex({name : 1});
+    //    db.doc.html.ensureIndex({name:1});
     this.inProgress = false;
 }
 
