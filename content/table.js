@@ -1,13 +1,13 @@
 
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -256,13 +256,14 @@ function htmltable(specs) {
         }
 
         var table = { rows: rows };
-        totalNumPages = Math.floor((this.specs.ns.count() - 1) / rowsPerPage) + 1;
+        if(this.specs.totalNumRows == null) this.specs.totalNumRows = this.specs.ns.count();
+        totalNumPages = Math.floor((this.specs.totalNumRows - 1) / rowsPerPage) + 1;
         if(currentPage > totalNumPages && totalNumPages > 0)
             currentPage = totalNumPages;
 
         var start = (currentPage - 1)*rowsPerPage;
         if(table.rows.length > rowsPerPage)
-            table.rows = table.rows.splice(start, rowsPerPage);
+            table.rows = table.rows.slice(start, start+rowsPerPage);
 
         table.totalNumPages = totalNumPages;
         table.currentPage = currentPage;
@@ -290,7 +291,16 @@ function htmltable(specs) {
         var nextPage = (table.currentPage == table.totalNumPages) ? null : parseInt(table.currentPage) + 1;
 
         core.content.pieces.tableBody({table:table, th:th, fields: colnames});
-        core.content.pieces.tableFooter({page: page, prevPage: prevPage, nextPage: nextPage, totalNumPages: totalNumPages, colspan: th.length});
+
+        // get the search query in k/v form
+        var kvpair = [];
+        for(var q in this.specs.query) {
+            var name = q;
+            var qstr = this.specs.query[q]+"";
+            var val = qstr.substring(1, qstr.length-2);
+            kvpair.push({"name" : name, "value" : val });
+        }
+        core.content.pieces.tableFooter({page: page, prevPage: prevPage, nextPage: nextPage, totalNumPages: totalNumPages, colspan: th.length, query : kvpair, currentPage : table.currentPage});
     };
 
     /** Perform a search on the table.
@@ -300,7 +310,20 @@ function htmltable(specs) {
      */
     this.find = function(baseQuery, baseSort) {
 	assert(isObject(this.specs.ns));
-	return this.specs.ns.find(this._query(baseQuery||{}), this._fieldsFilter()).sort(this._sort(baseSort));
+        this.specs.query = this._query(baseQuery||{});
+	var cursor = this.specs.ns.find(this.specs.query, this._fieldsFilter()).sort(this._sort(baseSort));
+        if(this.filter) {
+            var cursor2 = this.specs.ns.find(this.specs.query);
+            this.specs.totalNumRows = 0;
+            while( cursor2.hasNext() ) {
+                if(!this.filter(cursor2.next()) ) continue;
+                this.specs.totalNumRows++;
+            }
+        }
+        else {
+            this.specs.totalNumRows = cursor.count();
+        }
+        return cursor;
     };
 
     /** Print the contents of the given cursor as HTML.
