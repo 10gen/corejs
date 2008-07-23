@@ -200,7 +200,7 @@ testing.Client.prototype.withPermission = function(perm, f){
     user.addPermission(perm);
 
     // I can't count 24 zeroes! You must be mad.
-    user._id = ['0000', '0000', '0000', '0000', '0000', '0001'].join('');
+    user._id = ObjectId(['0000', '0000', '0000', '0000', '0000', '0001'].join(''));
 
     var val = this.execute(f);
 
