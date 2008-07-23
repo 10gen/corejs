@@ -40,10 +40,9 @@ BasicDBAppender.create = function(){
         var now = new Date();
         var lvl = level.toString();
         msg = msg.toString();
-        if(lvl == "FATAL") {
+        if(lvl == "FATAL" && mail) {
             m = new Mail.Message( "Fatal Log Message", msg );
             m.addRecipient(  user.email , "to" );
-            mail = Mail.SMTP.gmail("10gen.auto@gmail.com", "jumpy171");
             m.send( mail );
         }
         var obj = LogUtil.createObject( loggerName , date , lvl , msg , LogUtil.prettyStackTrace( throwable ) , thread.toString() );
