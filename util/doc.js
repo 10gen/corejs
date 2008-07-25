@@ -1,12 +1,12 @@
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +21,14 @@ core.core.file();
  * @namespace
  */
 Util.Doc = {
+    /** Semaphore raised while documentation is being generated.
+     * @type boolean
+     */
     inProgress : false
 };
 
+/** Initializes variables used for documentation.
+ */
 Util.Doc.initialize = function() {
     javaStatic("ed.doc.Generate", "initialize");
 }
@@ -37,6 +42,8 @@ Util.Doc.srcToDb = function(file) {
     javaStatic("ed.doc.Generate", "srcToDb", file);
 }
 
+/** Takes the list of Java sources and creates database documentation objects for them.
+ */
 Util.Doc.javaSrcsToDb = function() {
     javaStatic("ed.doc.Generate", "javaSrcsToDb");
     this.inProgress = false;
@@ -61,12 +68,13 @@ Util.Doc.dbToHTML = function(out_dir, version) {
     while(d.hasNext()) {
         this.dbObjToHTML(d.next(), out_dir);
     }
-    db.doc.html.drop();
-    db.doc.html.resetIndexCache();
+    //    db.doc.html.drop();
+    //    db.doc.html.resetIndexCache();
 
     javaStatic("ed.doc.Generate", "postHTMLGeneration", out_dir);
 
-    db.doc.html.ensureIndex({name:1});
+    db.doc.ensureIndex({name : 1});
+    //    db.doc.html.ensureIndex({name:1});
     this.inProgress = false;
 }
 
