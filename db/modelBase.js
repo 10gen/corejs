@@ -36,6 +36,7 @@ ModelBase = function( collectionName , cons ){
     this._c = db[this.collectionName];
     this._c.setConstructor( this.cons );
 };
+ModelBase.prototype._dontEnum = true;
 
 /** Return an object from the collection that matches a given _id.
  * @param {string} key ObjectId for which to search.
