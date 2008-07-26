@@ -86,7 +86,7 @@ Routes.prototype.add = function( key , end , attachment){
         return;
     }
 
-    throw "can't handle : " + key;
+    throw "can't handle [" + key + "] type [" + typeof key + "]"; 
 };
 
 /** Route all requests to a given value
