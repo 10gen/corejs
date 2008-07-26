@@ -54,6 +54,8 @@ Routes = function(){
     this._default = null;
 };
 
+Routes.prototype._dontEnum = true;
+
 /** Routes logging messages are handled by the logger "log.routes"
  * @type log
  */
