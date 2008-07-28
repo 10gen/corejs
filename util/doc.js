@@ -52,9 +52,8 @@ Util.Doc.javaSrcsToDb = function() {
 
 /** Generate html files from db.doc and store them in db.doc.html.
  * @param {string} out_dir Location to store temporary output files
- * @param {string} version Version of the documentation being generated
  */
-Util.Doc.dbToHTML = function(out_dir, version) {
+Util.Doc.dbToHTML = function(out_dir) {
     this.inProgress = true;
     javaStatic("ed.doc.Generate", "connectToDb");
 
@@ -63,18 +62,14 @@ Util.Doc.dbToHTML = function(out_dir, version) {
 
     javaStatic("ed.doc.Generate", "setupHTMLGeneration", out_dir);
 
-    var d = db.doc.find({version : version});
+    var d = db.doc.find();
 
     while(d.hasNext()) {
         this.dbObjToHTML(d.next(), out_dir);
     }
-    //    db.doc.html.drop();
-    //    db.doc.html.resetIndexCache();
 
     javaStatic("ed.doc.Generate", "postHTMLGeneration", out_dir);
-
     db.doc.ensureIndex({name : 1});
-    //    db.doc.html.ensureIndex({name:1});
     this.inProgress = false;
 }
 
@@ -86,9 +81,3 @@ Util.Doc.dbObjToHTML = function(obj, out_dir) {
     javaStatic("ed.doc.Generate", "toHTML", tojson(obj._index), out_dir);
 }
 
-/** Sets the documentation version.
- * @param {string} version The name of the version
- */
-Util.Doc.setVersion = function(version) {
-    javaStatic("ed.doc.Generate", "setVersion", version);
-}
