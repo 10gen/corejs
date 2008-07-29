@@ -165,7 +165,8 @@ Routes.prototype.apply = function( uri , request , response ){
             return this.finish( uri , request , response , firstPiece , key , this[ key ] );
     }
 
-    if(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this){
+    if(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this &&
+       !(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this.__proto__)){
         key = firstPiece.substring( 0, firstPiece.indexOf('.'));
         return this.finish(uri , request , response , firstPiece, key, this[key]);
     }
