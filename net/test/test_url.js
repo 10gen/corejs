@@ -31,6 +31,13 @@ assert(u.toString() == 'http://localhost:8080/a/b/c/?hi=there&you=money');
 u = u.addArg('you', 'sunny');
 assert(u.toString() == 'http://localhost:8080/a/b/c/?hi=there&you=money&you=sunny');
 
+s = 'https://localhost';
+u = new URL(s);
+assert(u.scheme === 'https');
+assert(u.hostname === 'localhost');
+assert(u.port === undefined);
+assert(u.path === undefined);
+
 s = 'localhost:8080/bugs/';
 u = new URL(s);
 
