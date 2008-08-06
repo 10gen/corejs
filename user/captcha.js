@@ -95,20 +95,38 @@ Captcha = {
      * @returns {boolean} Whether or not the input was valid
      */
     valid : function( request ){
+        var problem = Captcha.problem( request );
+        if( problem == null )
+            return true;
+
+        return false;
+    } ,
+
+    /**
+     *  Checks if the response to a given captcha was valid.
+     *  @param {Request} request the HTTP request
+     *  @return {boolean} null if no problems, or the string describing the
+     *    first problem found with the request
+     */
+    problem : function( request ){
         if ( ! request )
-            return false;
+            return "No request given";
 
         var id = request.getCookie( "cid" );
         if ( Captcha.DEBUG ) SYSOUT( " captcha id : " + id );
-        if ( ! id )
-            return false;
+        if ( ! id ){
+            return "Missing cookie: make sure cookies are enabled.";
+        }
 
         var res = request.captcha;
         if ( Captcha.DEBUG ) SYSOUT( " captcha res : " + res );
         if ( ! res )
-            return false;
+            return "Couldn't find entered word";
 
-        return Captcha.USE.valid( id , res );
+        if( ! Captcha.USE.valid( id , res ) )
+            return "Response was incorrect : " + res;
+
+        return null;
     } ,
 
     /** Hashing the captcha

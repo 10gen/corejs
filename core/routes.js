@@ -54,6 +54,8 @@ Routes = function(){
     this._default = null;
 };
 
+Routes.prototype._dontEnum = true;
+
 /** Routes logging messages are handled by the logger "log.routes"
  * @type log
  */
@@ -84,7 +86,7 @@ Routes.prototype.add = function( key , end , attachment){
         return;
     }
 
-    throw "can't handle : " + key;
+    throw "can't handle [" + key + "] type [" + typeof key + "]"; 
 };
 
 /** Route all requests to a given value
@@ -163,7 +165,8 @@ Routes.prototype.apply = function( uri , request , response ){
             return this.finish( uri , request , response , firstPiece , key , this[ key ] );
     }
 
-    if(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this){
+    if(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this &&
+       !(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this.__proto__)){
         key = firstPiece.substring( 0, firstPiece.indexOf('.'));
         return this.finish(uri , request , response , firstPiece, key, this[key]);
     }

@@ -31,6 +31,8 @@ URL = function(s){
     this.args = [];
     this.path = "";
     this.anchor = "";
+    
+    var has_path = null;
 
     if(s.indexOf('://') == -1){
         this.scheme = 'http';
@@ -44,6 +46,9 @@ URL = function(s){
                                             this.hostname.length);
         this.hostname = this.hostname.substring(0, this.hostname.indexOf(':'));
     }
+    if (s.indexOf('/') !== -1) {
+        has_path = true;
+    }
     s = s.substring(s.indexOf('/'), s.length);
 
     // Parse the anchor, path and query args (if any).
@@ -56,9 +61,9 @@ URL = function(s){
         s = s.substring(0, s.indexOf('#'));
     }
     if(s.indexOf('?') == -1){
-        this.path = s;
+        this.path = has_path && s;
     } else {
-        this.path = s.substring(0, s.indexOf('?'));
+        this.path = has_path && s.substring(0, s.indexOf('?'));
         s = s.substring(s.indexOf('?')+1, s.length);
         var ary = s.split('&');
         if ( ary && ary.length > 0 ){

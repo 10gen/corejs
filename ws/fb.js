@@ -20,11 +20,11 @@ Facebook = {
     /** Set this to the secret key Facebook assigns you
      * @type string
      */
-    secret_key : "ced4191148da846e833a74674dbf32fb",
+    secret_key : "",
     /** Set this to the API key Facebook assigns you
      * @type string
      */
-    api_key : "eb17c23417bd37e9c00592037393ee13",
+    api_key : "",
 
     /** The Facebook REST server.  Value is "http://api.facebook.com/restserver.php".
      * @type string

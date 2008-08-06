@@ -194,6 +194,15 @@ function htmltable(specs) {
                     hasIsLink = true;
             } );
 
+        // paging
+        if(this.specs.totalNumRows == null) this.specs.totalNumRows = this.specs.ns.count();
+        totalNumPages = Math.floor((this.specs.totalNumRows - 1) / rowsPerPage) + 1;
+        if(currentPage > totalNumPages && totalNumPages > 0)
+            currentPage = totalNumPages;
+
+        var start = (currentPage - 1)*rowsPerPage;
+        if(dbResult.count() > rowsPerPage)
+            dbResult.skip(start).limit(rowsPerPage);
 
         var rows = [];
         var knut = 0;
@@ -256,14 +265,6 @@ function htmltable(specs) {
         }
 
         var table = { rows: rows };
-        if(this.specs.totalNumRows == null) this.specs.totalNumRows = this.specs.ns.count();
-        totalNumPages = Math.floor((this.specs.totalNumRows - 1) / rowsPerPage) + 1;
-        if(currentPage > totalNumPages && totalNumPages > 0)
-            currentPage = totalNumPages;
-
-        var start = (currentPage - 1)*rowsPerPage;
-        if(table.rows.length > rowsPerPage)
-            table.rows = table.rows.slice(start, start+rowsPerPage);
 
         table.totalNumPages = totalNumPages;
         table.currentPage = currentPage;
@@ -312,7 +313,7 @@ function htmltable(specs) {
 	assert(isObject(this.specs.ns));
         this.specs.query = this._query(baseQuery||{});
 	var cursor = this.specs.ns.find(this.specs.query, this._fieldsFilter()).sort(this._sort(baseSort));
-        if(this.filter) {
+        if(this.filter != null) {
             var cursor2 = this.specs.ns.find(this.specs.query);
             this.specs.totalNumRows = 0;
             while( cursor2.hasNext() ) {

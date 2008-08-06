@@ -155,3 +155,11 @@ assert(null == routes.find( new Routes() ));
 
 routes.add(/.+/, "yo");
 assert(null == routes.find( new Routes() ));
+
+assert( routes.find( routes.add ) == null );
+
+var myr2 = new Routes();
+
+myr2.add(/.+/, 'yo');
+
+assert( myr2.apply( '/add' ) == 'yo' );
