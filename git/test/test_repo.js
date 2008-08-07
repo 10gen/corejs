@@ -28,6 +28,7 @@ sysexec("mkdir -p /tmp/gitrepo/test");
 var repoAt = function(root){
     var s = scopeWithRoot(root);
     s.eval("core.git.repo()");
+    s.makeThreadLocal();
     git.Repo.prototype.checkStatus = gr_checkStatus;
     git.Repo.prototype.dumpFile = gr_dumpFile;
     var g = new git.Repo();
@@ -139,7 +140,7 @@ assert(startCommit == g3.getCurrentRev().parsed.rev);
 
 g.dumpFile("file1", "hi there\n");
 
-assert(g.diff([]).out.match(/\n\+hi there\n/));
+assert(g.diff([]).out.match(/\n\+hi there\n/), g.diff([]).out );
 
 log.git.tests.debug(tojson(g.commit(["file1"], "test commit 2", u)));
 
