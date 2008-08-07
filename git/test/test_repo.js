@@ -27,12 +27,15 @@ sysexec("mkdir -p /tmp/gitrepo/test");
 
 var repoAt = function(root){
     var s = scopeWithRoot(root);
-    s.eval("core.git.repo()");
-    s.makeThreadLocal();
-    git.Repo.prototype.checkStatus = gr_checkStatus;
-    git.Repo.prototype.dumpFile = gr_dumpFile;
-    var g = new git.Repo();
+    s.setGlobal( true );
+    
+    var g = s.eval("core.git.repo(); new git.Repo()");
+
+    //var g = new git.Repo();
     g.root = root;
+
+    g.checkStatus = gr_checkStatus;
+    
     return g;
 };
 
@@ -94,11 +97,6 @@ gr_checkStatus = function(spec){
     return true;
 };
 
-var gr_dumpFile = function(file, contents){
-    var f = File.create(contents);
-    f.writeToLocalFile(this.root + "/" + file);
-};
-
 var g = repoAt("/tmp/gitrepo/test");
 
 g._init();
@@ -138,7 +136,7 @@ assert(startCommit == g3.getCurrentRev().parsed.rev);
 
 // Commit "upstream"
 
-g.dumpFile("file1", "hi there\n");
+assert.eq( g.dumpFile("file1", "hi there\n") , "/tmp/gitrepo/test/file1" );
 
 assert(g.diff([]).out.match(/\n\+hi there\n/), g.diff([]).out );
 
@@ -197,6 +195,10 @@ g.commit(["file1"], "revise with howdy", u);
 g3.dumpFile("file1", "yo there\n");
 var pull = g3.pull(u);
 
+assert( pull , "pull" );
+assert( pull.parsed , "pull.parsed" );
+assert( pull.parsed.failed , "pull.parsed.failed" );
+assert( pull.parsed.failed.notuptodate , "pull.parsed.failed.notuptodate" );
 assert(pull.parsed.failed.notuptodate == "file1");
 
 g3.commit(["file1"], "revise with yo", u);
