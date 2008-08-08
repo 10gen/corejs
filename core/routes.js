@@ -192,41 +192,44 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
     if ( ! end )
         return null;
 
-    if ( isString( end ) ){
+    if ( key instanceof RegExp ){
 
-        if ( key instanceof RegExp ){
+        if ( isString( end ) )
             end = uri.replace( key , end );
 
-            if ( value.attachment && value.attachment.names ){
-
-                var names = value.attachment.names;
-                var r = key.exec( uri );
-
-                if ( ! r )
-                    throw "something is wrong";
-
-                for ( var i=0; i<names.length; i++ ){
-                    if ( r[i+1] ){
-                        request.addParameter( names[i] , r[i+1] );
-                    }
+        if ( value.attachment && value.attachment.names ){
+            
+            var names = value.attachment.names;
+            var r = key.exec( uri );
+            
+            if ( ! r )
+                throw "something is wrong";
+            
+            for ( var i=0; i<names.length; i++ ){
+                if ( r[i+1] ){
+                    request.addParameter( names[i] , r[i+1] );
                 }
-
             }
         }
-
-        if ( value.attachment && value.attachment.extra )
-            Object.extend( request , value.attachment.extra );
-
-        return end;
+        
     }
+     
+    if ( value.attachment && value.attachment.extra )
+        Object.extend( request , value.attachment.extra );
+    
+    if ( isString( end ) )
+        return end;
 
-    if ( isObject( end ) && end.apply ){
+    if ( this.isRoutes( end ) ){
         var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response ) || "";
         if ( ! ( res && res.startsWith( "/" ) ) )
             res =  "/" + firstPiece + "/" + res;
         res = res.replace( /\/+/g , "/" );
         return res;
     }
+
+    if ( isFunction( end ) )
+        return end;
 
     throw "can't handle value: " + end;
 };
@@ -240,15 +243,16 @@ Routes.prototype.find = function(submodule){
     for(var key in this){
         if( key.startsWith( "_" ) )
             continue;
-        if(this[key] == null){
+
+        if( this[key] == null ){
             log.warn("Invalid route : " + key);
             continue;
         }
 
-        if(this[key] == submodule){
+        if( this[key] == submodule )
             return '/' + key;
-        }
-        if(isObject(this.getEnd(this[key]))){
+        
+        if ( this.isRoutes( this.getEnd(this[key] ) ) ){
             var f = this.getEnd(this[key]).find(submodule);
             if(f)
                 return '/' + key + f;
@@ -272,3 +276,8 @@ Routes.prototype.getEnd = function(obj){
     if(obj.isValue) return obj.end;
     return obj;
 };
+
+
+Routes.prototype.isRoutes = function( end  ){
+    return isObject( end ) && end.apply && end.find && end.isRoutes;
+}
