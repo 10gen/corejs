@@ -158,14 +158,14 @@ Object.extend(Util.URLTree.prototype, {
 
         var firstPiece = uri.replace( /^\/?([^\/\\\?&=#]+)\b.*/ , "$1" );
 
-        // currentRoot stuff
-        if ( true ) {
-            if ( ! currentRoot )
-                currentRoot = "";
-            if ( lastPiece ){
-                currentRoot += "/" + lastPiece;
+        // currentRoot stuff -- routes specific -- this probably shouldn't be here
+        if ( false ) {
+            if ( ! this.currentRoot )
+                this.currentRoot = "";
+            if ( this.lastPiece ){
+                this.currentRoot += "/" + this.lastPiece;
             }
-            lastPiece = firstPiece;
+            this.lastPiece = firstPiece;
         }
 
         for ( var key in this ){
