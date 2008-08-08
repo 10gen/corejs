@@ -163,3 +163,12 @@ var myr2 = new Routes();
 myr2.add(/.+/, 'yo');
 
 assert( myr2.apply( '/add' ) == 'yo' );
+
+
+var fr = new Routes();
+var myfunc = function(){ print("a"); };
+fr.add( /r(\w+)/ , myfunc , { names : [ "eliot" ] } );
+
+request = javaStatic( "ed.net.httpserver.HttpRequest" , "getDummy" , "/ra" );
+assert( isFunction( fr.apply( "ra" , request ) ) );
+assert.eq( "a" , request.eliot );
