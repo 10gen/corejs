@@ -96,8 +96,15 @@ if ( file.contentType && file.contentType.match( /image/ ) ){
 
 }
 
-if ( file.track )
-    db._files.update( { _id : file._id }  , { $inc  : { downloads : 1 } } );
+if ( file.track ){
+    if ( file.downloads == null ){
+        file.downloads = 1;
+        db._files.save( file );
+    }
+    else {
+        db._files.update( { _id : file._id }  , { $inc  : { downloads : 1 } } );
+    }
+}
 
 
 response.sendFile( file );
