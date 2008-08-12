@@ -222,6 +222,8 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
 
     if ( this.isRoutes( end ) ){
         var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response ) || "";
+        if ( ! isString( res ) )
+            return res;
         if ( ! ( res && res.startsWith( "/" ) ) )
             res =  "/" + firstPiece + "/" + res;
         res = res.replace( /\/+/g , "/" );
@@ -262,7 +264,7 @@ Routes.prototype.find = function(submodule){
     // Regexps??  ---
     for(var i = 0; i < this._regexp.length; i++){
         var value = this._regexp[i];
-        if ( isObject(value.end) && value.end.find(submodule) )
+        if ( isObject(value.end) && value.end.find && value.end.find(submodule) )
             throw "find returned regex -- help!!";
     }
     return null;
