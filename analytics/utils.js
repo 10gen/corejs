@@ -94,6 +94,7 @@ if ( ! Analytics._utilsInit ){
 	    coll.ensureIndex( { time : 1 } );
 	    coll.ensureIndex( idx );
 
+            if( String(tojson(key)).match(/slide/i) ) log('got a slider ' + tojson(r) );
             coll.update( key , op , Analytics.dbOptions );
         }
     };
