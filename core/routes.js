@@ -115,7 +115,7 @@ Routes.prototype._createValue = function( key , end , attachment ){
  * @return The root at which the last sub-routes took over
  */
 Routes.prototype.currentRoot = function(){
-    return currentRoot;
+    return __routes_global_currentRoot;
 };
 
 /** Apply this routing to the given request and return the correct file.
@@ -145,14 +145,14 @@ Routes.prototype.apply = function( uri , request , response ){
     // currentRoot stuff
     if ( true ) {
 
-        if ( ! currentRoot )
-            currentRoot = "";
+        if ( ! __routes_global_currentRoot )
+            __routes_global_currentRoot = "";
 
-        if ( lastPiece ){
-            currentRoot += "/" + lastPiece;
+        if ( __routes_global_lastPiece ){
+            __routes_global_currentRoot += "/" + __routes_global_lastPiece;
         }
 
-        lastPiece = firstPiece;
+        __routes_global_lastPiece = firstPiece;
     }
 
 
