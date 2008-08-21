@@ -228,6 +228,8 @@ User.fixURL = function(url){
     return 'http://'+url;
 };
 
+User.prototype._dontEnum = true;
+
 log.user.level = log.LEVEL.ERROR;
 
 return 0;
