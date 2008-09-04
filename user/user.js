@@ -23,8 +23,14 @@
  * @param {string} database Database name
  */
 User.prototype.setPassword = function( pass , name ){
-    if ( ! name )
+
+    if ( ! name ){
         name = db.getName();
+        var idx = name.indexOf( ":" );
+        if ( idx > 0 )
+            name = name.substring( 0 , idx );
+    }
+
     this.pass_ha1_name = md5( this.name + ":" + name + ":" + pass );
     this.pass_ha1_email = md5( this.email + ":" + name + ":" + pass );
 };
