@@ -91,3 +91,41 @@ cursor = SQL.executeQuery( db , "select a , b from basicSelect1" );
 assert.eq( 1 , cursor.length() );
 assert.eq( 1 , cursor[0].a );
 assert.eq( 2 , cursor[0].b );
+
+db.basicSelect1.save( { a : 3 , b : 4 } );
+
+cursor = SQL.executeQuery( db , "select * from basicSelect1" );
+assert.eq( 2 , cursor.length() );
+
+cursor = SQL.executeQuery( db , "select * from basicSelect1 where a = 1" );
+assert.eq( 1 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 2 , cursor[0].b );
+
+cursor = SQL.executeQuery( db , "select * from basicSelect1 where a = 3" );
+assert.eq( 1 , cursor.length() );
+assert.eq( 3 , cursor[0].a );
+assert.eq( 4 , cursor[0].b );
+
+cursor = SQL.executeQuery( db , "select * from basicSelect1 where a = 0" );
+assert.eq( 0 , cursor.length() );
+
+cursor = SQL.executeQuery( db , "select a from basicSelect1 order by a" );
+assert.eq( 2 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 3 , cursor[1].a );
+
+cursor = SQL.executeQuery( db , "select a from basicSelect1 order by a asc" );
+assert.eq( 2 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 3 , cursor[1].a );
+
+cursor = SQL.executeQuery( db , "select a from basicSelect1 order by a desc" );
+assert.eq( 2 , cursor.length() );
+assert.eq( 3 , cursor[0].a );
+assert.eq( 1 , cursor[1].a );
+
+cursor = SQL.executeQuery( db , "select a from basicSelect1 where a > 0 order by a desc" );
+assert.eq( 2 , cursor.length() );
+assert.eq( 3 , cursor[0].a );
+assert.eq( 1 , cursor[1].a );
