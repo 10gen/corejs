@@ -17,6 +17,14 @@
 core.db.sql();
 
 assert( isNumber( SQL._parseToNumber( "5" ) ) );
+assert.eq( "=5" , SQL._parseToNumber( "=5" ) );
+
+assert( isAlpha( "a" ) );
+assert( ! isAlpha( "1" ) );
+assert( isDigit( "1" ) );
+assert( ! isDigit( "a" ) );
+assert( ! isAlpha( "=" ) );
+assert( ! isDigit( "=" ) );
 
 t = new SQL.Tokenizer( "clicked = 1 " );
 assert( "clicked" == t.nextToken() );
@@ -27,6 +35,13 @@ assert( null == t.nextToken() );
 
 t = new SQL.Tokenizer( "clicked=1 " );
 assert( "clicked" == t.nextToken() );
+assert.eq( "=" , t.nextToken() );
+assert( 1 == t.nextToken() );
+assert( ! t.hasMore() );
+assert( null == t.nextToken() );
+
+t = new SQL.Tokenizer( "clicked2=1 " );
+assert.eq( "clicked2" , t.nextToken() );
 assert( "=" == t.nextToken() );
 assert( 1 == t.nextToken() );
 assert( ! t.hasMore() );
@@ -50,3 +65,29 @@ assert( f.clicked == 1 );
 f = SQL.parseWhere( "clicked = 1 and z = 3" );
 assert( f.clicked == 1 );
 assert( f.z == 3 );
+
+// ---- executeQuery testing ----
+
+db = connect( "test_sql" );
+db.basicSelect1.drop();
+db.basicSelect1.save( { a : 1 , b : 2 } );
+
+cursor = SQL.executeQuery( db , "select * from basicSelect1" );
+assert.eq( 1 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 2 , cursor[0].b );
+
+cursor = SQL.executeQuery( db , "select b from basicSelect1" );
+assert.eq( 1 , cursor.length() );
+assert.eq( null , cursor[0].a );
+assert.eq( 2 , cursor[0].b );
+
+cursor = SQL.executeQuery( db , "select a  from basicSelect1" );
+assert.eq( 1 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( null , cursor[0].b );
+
+cursor = SQL.executeQuery( db , "select a , b from basicSelect1" );
+assert.eq( 1 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 2 , cursor[0].b );
