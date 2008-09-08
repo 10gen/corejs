@@ -65,3 +65,4 @@ function amb(f, values) {
 }
 
 Array.prototype.amb = function(f) { return amb(f,this); };
+Array.prototype.dontEnum( "amb" );

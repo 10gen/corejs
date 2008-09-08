@@ -115,7 +115,7 @@ Routes.prototype._createValue = function( key , end , attachment ){
  * @return The root at which the last sub-routes took over
  */
 Routes.prototype.currentRoot = function(){
-    return currentRoot;
+    return __routes_global_currentRoot;
 };
 
 /** Apply this routing to the given request and return the correct file.
@@ -145,14 +145,14 @@ Routes.prototype.apply = function( uri , request , response ){
     // currentRoot stuff
     if ( true ) {
 
-        if ( ! currentRoot )
-            currentRoot = "";
+        if ( ! __routes_global_currentRoot )
+            __routes_global_currentRoot = "";
 
-        if ( lastPiece ){
-            currentRoot += "/" + lastPiece;
+        if ( __routes_global_lastPiece ){
+            __routes_global_currentRoot += "/" + __routes_global_lastPiece;
         }
 
-        lastPiece = firstPiece;
+        __routes_global_lastPiece = firstPiece;
     }
 
 
@@ -192,41 +192,46 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
     if ( ! end )
         return null;
 
-    if ( isString( end ) ){
+    if ( key instanceof RegExp ){
 
-        if ( key instanceof RegExp ){
+        if ( isString( end ) )
             end = uri.replace( key , end );
 
-            if ( value.attachment && value.attachment.names ){
-
-                var names = value.attachment.names;
-                var r = key.exec( uri );
-
-                if ( ! r )
-                    throw "something is wrong";
-
-                for ( var i=0; i<names.length; i++ ){
-                    if ( r[i+1] ){
-                        request.addParameter( names[i] , r[i+1] );
-                    }
+        if ( value.attachment && value.attachment.names ){
+            
+            var names = value.attachment.names;
+            var r = key.exec( uri );
+            
+            if ( ! r )
+                throw "something is wrong";
+            
+            for ( var i=0; i<names.length; i++ ){
+                if ( r[i+1] ){
+                    request.addParameter( names[i] , r[i+1] );
                 }
-
             }
         }
-
-        if ( value.attachment && value.attachment.extra )
-            Object.extend( request , value.attachment.extra );
-
-        return end;
+        
     }
+     
+    if ( value.attachment && value.attachment.extra )
+        Object.extend( request , value.attachment.extra );
+    
+    if ( isString( end ) )
+        return end;
 
-    if ( isObject( end ) && end.apply ){
+    if ( this.isRoutes( end ) ){
         var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response ) || "";
+        if ( ! isString( res ) )
+            return res;
         if ( ! ( res && res.startsWith( "/" ) ) )
             res =  "/" + firstPiece + "/" + res;
         res = res.replace( /\/+/g , "/" );
         return res;
     }
+
+    if ( isFunction( end ) )
+        return end;
 
     throw "can't handle value: " + end;
 };
@@ -240,15 +245,16 @@ Routes.prototype.find = function(submodule){
     for(var key in this){
         if( key.startsWith( "_" ) )
             continue;
-        if(this[key] == null){
+
+        if( this[key] == null ){
             log.warn("Invalid route : " + key);
             continue;
         }
 
-        if(this[key] == submodule){
+        if( this[key] == submodule )
             return '/' + key;
-        }
-        if(isObject(this.getEnd(this[key]))){
+        
+        if ( this.isRoutes( this.getEnd(this[key] ) ) ){
             var f = this.getEnd(this[key]).find(submodule);
             if(f)
                 return '/' + key + f;
@@ -258,7 +264,7 @@ Routes.prototype.find = function(submodule){
     // Regexps??  ---
     for(var i = 0; i < this._regexp.length; i++){
         var value = this._regexp[i];
-        if ( isObject(value.end) && value.end.find(submodule) )
+        if ( isObject(value.end) && value.end.find && value.end.find(submodule) )
             throw "find returned regex -- help!!";
     }
     return null;
@@ -272,3 +278,8 @@ Routes.prototype.getEnd = function(obj){
     if(obj.isValue) return obj.end;
     return obj;
 };
+
+
+Routes.prototype.isRoutes = function( end  ){
+    return isObject( end ) && end.apply && end.find && end.isRoutes;
+}

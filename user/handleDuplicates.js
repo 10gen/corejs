@@ -14,6 +14,8 @@
 *    limitations under the License.
 */
 
+core.user.auth();
+
 /* Returns if we find a duplicate admin user.
 * @return {boolean} if we find a duplicate user but we can log in as an admin w/one
 */

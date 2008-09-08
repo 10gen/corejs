@@ -27,6 +27,10 @@ Array.prototype.distinct = function() {
 					     }
     return true;
 }
+Array.prototype.dontEnum( "distinct" );
 
 Array.prototype.car = function() { return this[0]; }
+Array.prototype.dontEnum( "car" );
+
 Array.prototype.cdr = function() { return this.slice(1); }
+Array.prototype.dontEnum( "cdr" );

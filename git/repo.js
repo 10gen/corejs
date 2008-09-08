@@ -443,6 +443,7 @@ Object.extend(git.Repo.prototype,
                        * @return {Object} Standard git.Repo output.
                        */
     commit: function(files, msg, u){
+        print( scope.getRoot() );
         if(!msg) throw "git commit needs a message";
         this._validate(files);
         var cmd = "git commit -F - ";
@@ -716,4 +717,10 @@ Object.extend(git.Repo.prototype,
         if(!f.exists()) return null;
         return f.asString();
     },
+
 });
+
+git.Repo.prototype.dumpFile = function(file, contents){
+    var f = File.create(contents);
+    return f.writeToLocalFile(file);
+};
