@@ -338,14 +338,14 @@ Auth = {
             var remember = request.remember;
 
             var secs = 0;
-            if ( remember ) {
-                secs = 7 * 24 * 60 * 60;
-            }
-            else {
-                secs = 1 * 24 * 60 * 60;
-            }    
-            
-            var expires = new Date( now.getTime() + ( secs * 1000 ) );
+            if ( remember )
+                secs = 7 * 86400;
+
+            var expires = null;
+            if ( remember )
+                expires = new Date( now.getTime() + ( secs * 1000 ) );
+            else
+                expires = new Date( now.getTime() + ( 86400 * 1000 ) );
 
             u.tokens.push( { hash : myHash , expires : expires } );
             db.users.save( u );
