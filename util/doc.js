@@ -49,6 +49,11 @@ Util.Doc.javaSrcsToDb = function() {
     this.inProgress = false;
 }
 
+Util.Doc.toDb = function( file ) {
+    Util.Doc.initialize();
+    Util.Doc.srcToDb( file );
+    Util.Doc.javaSrcsToDb();
+}
 
 /** Generate html files from db.doc and store them in db.doc.html.
  * @param {string} out_dir Location to store temporary output files
