@@ -1,12 +1,12 @@
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -337,15 +337,15 @@ Auth = {
             var myHash = md5( Math.random() );
             var remember = request.remember;
 
-            var secs = 0;
-            if ( remember ) {
-                secs = 7 * 24 * 60 * 60;
-            }
-            else {
-                secs = 1 * 24 * 60 * 60;
-            }    
-            
-            var expires = new Date( now.getTime() + ( secs * 1000 ) );
+            var secs = -1;
+            if ( remember )
+                secs = 7 * 86400;
+
+            var expires = null;
+            if ( remember )
+                expires = new Date( now.getTime() + ( secs * 1000 ) );
+            else
+                expires = new Date( now.getTime() + ( 86400 * 1000 ) );
 
             u.tokens.push( { hash : myHash , expires : expires } );
             db.users.save( u );
