@@ -47,6 +47,20 @@ User.requirements = {
     confirmed_email: [],
 };
 
+User.getSiteName = function( name ){
+    if ( ! name ){
+        if ( ! db )
+            throw "no db defined";
+        name = db.getName();
+    }
+    
+    var idx = name.indexOf( ":" );
+    if ( idx > 0 )
+        name = name.substring( 0 , idx );
+    
+    return name;
+}
+
 /** Default user functions location, used as a prefix for login, registration, user editing, etc.
  * @default "/~~/user"
  * @type string

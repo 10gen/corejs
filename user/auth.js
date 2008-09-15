@@ -36,9 +36,9 @@ Auth = {
         if ( user )
             return user;
 
-        var u = Auth.digest.getUser( req || request , res || response , db.getName() , uWanted );
+        var u = Auth.digest.getUser( req || request , res || response , User.getSiteName() , uWanted );
         if ( ! u )
-            u = Auth.cookie.getUser( req || request , res || response , db.getName() , uWanted );
+            u = Auth.cookie.getUser( req || request , res || response , User.getSiteName() , uWanted );
 
         if ( ! u )
             return null;
@@ -53,7 +53,7 @@ Auth = {
      * @returns {string} The string "no".  More helpfully, it sets the response code to 401 (unauthorized).
      */
     reject : function( req , res ){
-        return Auth.digest.reject( req || request , res || response , db.getName() );
+        return Auth.digest.reject( req || request , res || response , User.getSiteName() );
     } ,
 
     /** Basic user authentication.  Sends passwords plaintext.

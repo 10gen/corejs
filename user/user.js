@@ -23,14 +23,10 @@
  * @param {string} database Database name
  */
 User.prototype.setPassword = function( pass , name ){
-
     if ( ! name ){
-        name = db.getName();
-        var idx = name.indexOf( ":" );
-        if ( idx > 0 )
-            name = name.substring( 0 , idx );
+        name = User.getSiteName();
     }
-
+    
     this.pass_ha1_name = md5( this.name + ":" + name + ":" + pass );
     this.pass_ha1_email = md5( this.email + ":" + name + ":" + pass );
 };
@@ -40,10 +36,10 @@ User.prototype.setPassword = function( pass , name ){
  * @returs {boolean} If the password was correct
  */
 User.prototype.checkPasswordClearText = function( pass ){
-    if ( this.pass_ha1_name == md5( this.name + ":" + db.getName() + ":" + pass ) )
+    if ( this.pass_ha1_name == md5( this.name + ":" + User.getSiteName() + ":" + pass ) )
         return true;
 
-    if ( this.pass_ha1_email == md5( this.email + ":" + db.getName() + ":" + pass ) )
+    if ( this.pass_ha1_email == md5( this.email + ":" + User.getSiteName() + ":" + pass ) )
         return true;
 
     return false;
