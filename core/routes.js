@@ -221,7 +221,10 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
         return end;
 
     if ( this.isRoutes( end ) ){
-        var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response ) || "";
+        var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response );
+		if ( res === null ) {
+			return null;
+		}
         if ( ! isString( res ) )
             return res;
         if ( ! ( res && res.startsWith( "/" ) ) )
