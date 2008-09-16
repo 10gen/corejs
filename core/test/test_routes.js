@@ -215,5 +215,5 @@ assert(null === routes.apply('/sub/'));
 assert('/sub/nothing' === routes.apply('/sub/something'));
 assert(null === routes.apply('/sub/random'));
 assert(null === routes.apply('/sub/subest/'));
-//assert('/sub/subest/west' === routes.apply('/sub/subest/east'));
+assert('/sub/subest/west' === routes.apply('/sub/subest/east'));
 assert(null === routes.apply('/sub/subest/random'));
