@@ -198,3 +198,22 @@ routes.sub.setDefault('ha');
 assert('/sub/ha' === routes.apply('/sub/'));
 assert('/sub/nothing' === routes.apply('/sub/something'));
 assert('/sub/ha' === routes.apply('/sub/random'));
+
+// Test three level subroutes
+
+routes = new Routes();
+routes.sub = new Routes();
+routes.sub.subest = new Routes();
+routes.add('up', 'down');
+routes.sub.add('something', 'nothing');
+routes.sub.subest.add('east', 'west');
+
+assert(null === routes.apply('/'));
+assert(null === routes.apply('/foo'));
+assert('down' === routes.apply('/up'));
+assert(null === routes.apply('/sub/'));
+assert('/sub/nothing' === routes.apply('/sub/something'));
+assert(null === routes.apply('/sub/random'));
+assert(null === routes.apply('/sub/subest/'));
+//assert('/sub/subest/west' === routes.apply('/sub/subest/east'));
+assert(null === routes.apply('/sub/subest/random'));
