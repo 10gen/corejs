@@ -3,13 +3,13 @@
 
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -86,7 +86,7 @@ Routes.prototype.add = function( key , end , attachment){
         return;
     }
 
-    throw "can't handle [" + key + "] type [" + typeof key + "]"; 
+    throw "can't handle [" + key + "] type [" + typeof key + "]";
 };
 
 /** Route all requests to a given value
@@ -198,25 +198,25 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
             end = uri.replace( key , end );
 
         if ( value.attachment && value.attachment.names ){
-            
+
             var names = value.attachment.names;
             var r = key.exec( uri );
-            
+
             if ( ! r )
                 throw "something is wrong";
-            
+
             for ( var i=0; i<names.length; i++ ){
                 if ( r[i+1] ){
                     request.addParameter( names[i] , r[i+1] );
                 }
             }
         }
-        
+
     }
-     
+
     if ( value.attachment && value.attachment.extra )
         Object.extend( request , value.attachment.extra );
-    
+
     if ( isString( end ) )
         return end;
 
@@ -253,7 +253,7 @@ Routes.prototype.find = function(submodule){
 
         if( this[key] == submodule )
             return '/' + key;
-        
+
         if ( this.isRoutes( this.getEnd(this[key] ) ) ){
             var f = this.getEnd(this[key]).find(submodule);
             if(f)
