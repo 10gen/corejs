@@ -15,7 +15,6 @@
 */
 
 /** Functions to get statistics about memory usage and threads.
- * @namespace
  */
 Stats = {};
 

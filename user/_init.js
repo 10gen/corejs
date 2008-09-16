@@ -22,6 +22,8 @@
  * $ u.addPermission("admin");
  * $ db.users.save(u);
  * </pre>
+ *
+ * @docmodule CoreJS.User.user
  */
 function User(){
 

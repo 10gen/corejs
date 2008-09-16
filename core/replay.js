@@ -27,6 +27,7 @@
  * @param {string} server Server name
  * @param {number} [port=80] Port to connect to.
  * @param {string} [hostname=server]
+ * @docmodule CoreJS.Core.replay
  */
 
 

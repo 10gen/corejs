@@ -47,6 +47,18 @@ function hideElement( e ){
     e.style.display = "none";
 }
 
+/** Toggles an element's "display" style property between "block" and "none".
+ * @param {Object|string} e Element or element id.
+ */
+function toggleElement ( e ) {
+    var e = getElement( e );
+	if ( e.style.display == "none" ) {
+	  e.style.display = "block";
+	} else {
+	  e.style.display = "none";
+	 }
+}
+
 /** Gets the correct type of XML request object, based on browser type.
  * @return {Object|string} XML request object, or the string "no XMLHttpRequest support".
  */

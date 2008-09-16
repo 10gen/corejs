@@ -29,6 +29,10 @@
 // Taken from http://tartarus.org/~martin/PorterStemmer/index-old.html , which
 // is "free of charge for any purpose". This version was adapted by Eliot.
 
+/*
+   @class
+   @docmodule CoreJS.Text.stem
+ */
 Stem = { 
     step2list : {  
         ational : "ate" , 

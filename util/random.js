@@ -17,6 +17,7 @@
 /** Seeded random number generator
  * @namespace
  * @name random
+ * @docmodule CoreJS.Util.random
  */
 var foo = {};
 

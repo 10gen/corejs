@@ -18,6 +18,7 @@
 
 /** IRC functions.
  * @namespace
+ * @docmodule CoreJS.Util.irc
  */
 Util.IRC = {};
 

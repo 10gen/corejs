@@ -60,6 +60,7 @@
  *  u.foo.terminal = terminal;
  *  u.unwind = function(result){ return result+result; };
  *  print( u.apply( null, '/foo/bar', null, null ) ); // prints 'hihi'
+ * @docmodule CoreJS.Util.urltree
  */
 
 Util.URLTree = function(){
