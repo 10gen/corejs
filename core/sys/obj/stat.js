@@ -15,8 +15,6 @@
 */
 
 /** Functions to get statistics about memory usage and threads.
- * @namespace
- * @docmodule CoreJS.Core.sys.obj.stats
  */
 Stats = {};
 

@@ -19,7 +19,7 @@ core.core.file();
 /** The interface between docgen module and the appserver.
  * Only programs in corejs can call Java functions.
  * @namespace
- * @docmodule CoreJS.Util.util.doc
+ * @docmodule CoreJS.Util.doc
  */
 Util.Doc = {
     /** Semaphore raised while documentation is being generated.
