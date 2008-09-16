@@ -17,6 +17,7 @@
 core.user.user();
 
 /** @namespace Several different styles of authentication.
+ * @docmodule CoreJS.User.auth
 */
 Auth = {
 
@@ -60,6 +61,7 @@ Auth = {
      * @type namespace
      * @namespace Basic user authentication.  Sends passwords plaintext.
      * @deprecated Use cookie authentication instead
+     * @docmodule CoreJS.User.auth.basic
      */
     basic : {
         /** Try to find and log in a user given an HTTP request.
@@ -113,6 +115,7 @@ Auth = {
      * @type namespace
      * @namespace Digest user authentication.
      * @deprecated Use cookie authentication instead
+     * @docmodule CoreJS.User.auth.digest
      */
     digest : {
 
@@ -233,6 +236,7 @@ Auth = {
     /** Cookie-style user authentication
      * @type namespace
      * @namespace Cookie-style user authentication
+     * @docmodule CoreJS.User.auth.cookie
      */
     cookie :  {
         /** Finds and logs in a user.

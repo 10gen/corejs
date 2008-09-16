@@ -18,6 +18,7 @@
 core.util.words();
 
 /** @namespace Check for an organic life form.
+     * @docmodule CoreJS.User.captcha
  */
 Captcha = {
 
@@ -29,6 +30,7 @@ Captcha = {
     /** Create captcha content
      * @type namespace
      * @namespace Create captcha content
+     * @docmodule CoreJS.User.captcha.words
      */
     words : {
         /** Find a real word from the English dictionary
@@ -131,6 +133,7 @@ Captcha = {
 
     /** Hashing the captcha
      * @namespace Hashing the captcha
+     * @docmodule CoreJS.User.captcha.hash
      */
     hash : {
         /** Adds a cookie to the repsonse with the name "cid" and an md5 encoding of the captcha word
@@ -153,6 +156,7 @@ Captcha = {
     /** Using the database to save and check captchas
      * @type namespace
      * @namespace Using the database to save and check captchas
+     * @docmodule CoreJS.User.captcha.db
      */
     db : {
         /** Add a captcha word to the db.  About 1% of the time this is called, all images six hours or older

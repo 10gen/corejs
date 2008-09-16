@@ -18,6 +18,7 @@
 
 /** IRC functions.
  * @namespace
+ * @docmodule CoreJS.Util.util.irc
  */
 Util.IRC = {};
 
@@ -26,6 +27,7 @@ Util.IRC = {};
  * @param {string} host Hostname of server
  * @param {string} nick Nickname to use
  * @param {string} channel Channel to join
+ * @docmodule CoreJS.Util.util.irc.logger
  */
 Util.IRC.Logger = function( host , nick , channel ){
     if ( ! db )

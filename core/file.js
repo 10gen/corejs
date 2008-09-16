@@ -14,12 +14,15 @@
 *    limitations under the License.
 */
 
-/* local source code filesystem access
+/** local source code filesystem access
 
    Normally you want to put your files in the database -- see f.jxp
 
    Note: subject to change, temp implementation.
-*/
+
+ * @class
+ * @docmodule CoreJS.Core.file
+ */
 
 File = {};
 
