@@ -3,13 +3,13 @@
 
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -87,7 +87,7 @@ Routes.prototype.add = function( key , end , attachment){
         return;
     }
 
-    throw "can't handle [" + key + "] type [" + typeof key + "]"; 
+    throw "can't handle [" + key + "] type [" + typeof key + "]";
 };
 
 /** Route all requests to a given value
@@ -127,7 +127,7 @@ Routes.prototype.currentRoot = function(){
  * @param {HTTPResponse} response
  * @return {string} The path to the file to be served to the client.
  */
-Routes.prototype.apply = function( uri , request , response ){
+Routes.prototype.apply = function( uri , request , response , prefix ){
 
     Routes.log.debug( "apply\t" + uri );
 
@@ -142,6 +142,7 @@ Routes.prototype.apply = function( uri , request , response ){
         uri = "/" + uri;
 
     var firstPiece = uri.replace( /^\/?([^\/\\\?&=#]+)\b.*/ , "$1" );
+	prefix = prefix ? prefix + "/" + firstPiece : firstPiece;
 
     // currentRoot stuff
     if ( true ) {
@@ -163,26 +164,26 @@ Routes.prototype.apply = function( uri , request , response ){
             continue;
 
         if ( key == firstPiece )
-            return this.finish( uri , request , response , firstPiece , key , this[ key ] );
+            return this.finish( uri , request , response , firstPiece , key , this[ key ] , prefix);
     }
 
     if(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this &&
        !(firstPiece.substring( 0 , firstPiece.indexOf('.') ) in this.__proto__)){
         key = firstPiece.substring( 0, firstPiece.indexOf('.'));
-        return this.finish(uri , request , response , firstPiece, key, this[key]);
+        return this.finish(uri , request , response , firstPiece, key, this[key] , prefix);
     }
 
     for ( var i=0; i<this._regexp.length; i++ ){
         var value = this._regexp[i];
         if ( value.key.test( uri ) )
-            return this.finish( uri , request , response , firstPiece , value.key , value );
+            return this.finish( uri , request , response , firstPiece , value.key , value , prefix);
     }
 
     Routes.log.debug( "\t using default\t" + this._default );
-    return this.finish( uri , request , response , firstPiece , null , this._default );
+    return this.finish( uri , request , response , firstPiece , null , this._default , prefix);
 };
 
-Routes.prototype.finish = function( uri , request , response , firstPiece , key , value ){
+Routes.prototype.finish = function( uri , request , response , firstPiece , key , value , prefix ){
     if ( ! value )
         return null;
 
@@ -199,34 +200,37 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
             end = uri.replace( key , end );
 
         if ( value.attachment && value.attachment.names ){
-            
+
             var names = value.attachment.names;
             var r = key.exec( uri );
-            
+
             if ( ! r )
                 throw "something is wrong";
-            
+
             for ( var i=0; i<names.length; i++ ){
                 if ( r[i+1] ){
                     request.addParameter( names[i] , r[i+1] );
                 }
             }
         }
-        
+
     }
-     
+
     if ( value.attachment && value.attachment.extra )
         Object.extend( request , value.attachment.extra );
-    
+
     if ( isString( end ) )
         return end;
 
     if ( this.isRoutes( end ) ){
-        var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response ) || "";
+        var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response , prefix );
+		if ( res === null ) {
+			return null;
+		}
         if ( ! isString( res ) )
             return res;
         if ( ! ( res && res.startsWith( "/" ) ) )
-            res =  "/" + firstPiece + "/" + res;
+            res = "/" + prefix + "/" + res;
         res = res.replace( /\/+/g , "/" );
         return res;
     }
@@ -254,7 +258,7 @@ Routes.prototype.find = function(submodule){
 
         if( this[key] == submodule )
             return '/' + key;
-        
+
         if ( this.isRoutes( this.getEnd(this[key] ) ) ){
             var f = this.getEnd(this[key]).find(submodule);
             if(f)
