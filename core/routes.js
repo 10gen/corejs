@@ -63,6 +63,103 @@ Routes.prototype._dontEnum = true;
 Routes.log = log.routes;
 Routes.log.level = log.LEVEL.INFO;
 
+/**
+ * If no global "routes" is already defined, then create a new Routes object and
+ * push it to the global scope as "routes". Return the new object.
+ *
+ * If the global "routes" already exists then create a new Routes object and add
+ * it as a subroutes of "routes". Return the new object. The path for the
+ * subroutes is taken from the directory structure.
+ *
+ * If a subroutes (or the routes object itself) already exists for this path,
+ * it wil be overwritten.
+ *
+ * @return A new routes object
+ */
+Routes.prototype.create = function() {
+	/*
+	 * return the application scope, given one of it's descendant scopes
+	 */
+	var app_scope = function(the_scope) {
+		var index = the_scope.toString().indexOf('AppContext');
+		if (index != -1) {
+			return the_scope;
+		}
+		return app_scope(the_scope.getParent());
+	};
+
+	/*
+	 * return the path of the currently running site's root as a String
+	 */
+	var app_path = function(the_scope) {
+		var app_scope_string = app_scope(the_scope).toString();
+		var index = app_scope_string.indexOf('AppContext');
+		return app_scope_string.substring(index + 'AppContext'.length + 1, -1);
+	};
+
+	/*
+	 * return the path where the file that called routes is located as a String
+	 */
+	var calling_path = function(the_scope) {
+		var scope_string = the_scope.toString();
+
+		if (scope_string.indexOf('routes.js') !== -1) {
+			return calling_path(the_scope.getParent());
+		}
+
+		var index = scope_string.indexOf('compiled script for');
+
+		if (index !== -1) {
+			return scope_string.substring(index + 'compiled script for'.length + 1, scope_string.lastIndexOf('/'));
+		}
+
+		return calling_path(the_scope.getParent());
+	};
+
+	/*
+	 * return the path where the file that called routes is located,
+	 * relative to the site's root. return as an array of directory names.
+	 */
+	var routes_path = function(the_scope) {
+		// get the path of the calling file relative to the site's path
+		var ap = app_path(the_scope);
+		var cp = calling_path(the_scope);
+		var remainder = cp.substring(ap.length);
+
+		// convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
+		if (remainder === "") {
+			return [];
+		}
+		return remainder.split("/");
+	};
+
+	// actually set up the new routes object
+
+	var new_routes = new Routes();
+
+	if (routes === undefined) {
+		var as = app_scope(scope);
+
+		as.set('routes', new_routes);
+	} else {
+		var path = routes_path(scope);
+
+		if (path.length === 0) {
+			routes = new Routes();
+			return routes;
+		}
+
+		var parent_routes = routes;
+		for (var i = 0; i < path.length - 1; i += 1) {
+			parent_routes = parent_routes[path[i]];
+		}
+
+		parent_routes[path[path.length - 1]] = new_routes;
+	}
+
+	return new_routes;
+};
+
 // setting up
 
 /** Add a routing pattern
