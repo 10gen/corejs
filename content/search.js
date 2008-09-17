@@ -24,6 +24,7 @@ if ( Search && Search._doneInit )
     return;
 
 /** @namespace Database search functions
+ * @docmodule core.content.search
 */
 Search = {
 

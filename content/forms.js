@@ -15,6 +15,7 @@
 */
 
 /** @class HTML form handling
+ * @docmodule core.content.forms 
  */
 Forms = {};
 
@@ -83,6 +84,7 @@ Forms._subobject = function( o , name , set ){
 /** @constructor Create a form corresponding to a given object and prefix
  * @param {Object} object
  * @param {string} [prefix=""]
+ * @docmodule core.content.forms
  */
 Forms.Form = function( object , prefix ){
     this.object = object;

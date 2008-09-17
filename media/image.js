@@ -20,6 +20,7 @@
  * @constructor
  * @param {file} file A file
  * @throws {Exception} If file type cannot be recognized by ed.js.JSFile or file is null
+ * @docmodule core.media.image
  */
 Media.Image = function( file ){
     if ( file == null )

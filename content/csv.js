@@ -15,10 +15,12 @@
 */
 
 /** @class Methods for dealing with comma-separated-value files
+ * @docmodule core.content.csv
  */
 
 /** @constructor Parses a csv into an array of lines in preparation for further processing
  * @param {string} raw The contents of a csv file as a string
+ * @docmodule core.content.csv
  */
 content.CSVContent = function( rawContent ){
     var t = new content.CSVContent.Tokenizer( rawContent );
@@ -38,6 +40,7 @@ content.CSVContent = function( rawContent ){
 /** Class to separate fields on delimiter.  Starts a reader at the first field of the first line.
  * @constructor
  * @param {string} raw The contents of a csv file as a string
+ * @docmodule core.content.csv
  */
 content.CSVContent.Tokenizer = function( raw ){
     this.raw = raw;

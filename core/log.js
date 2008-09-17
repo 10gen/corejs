@@ -17,7 +17,7 @@
 */
 
 /** @namespace Logging utilities
- * @docmodule CoreJS.Core.log
+ * @docmodule core.core.log
  */
 LogUtil = {};
 

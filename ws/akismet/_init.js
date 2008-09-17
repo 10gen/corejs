@@ -1,5 +1,5 @@
 /** Akismet functionality.
  * @namespace
- * @docmodule CoreJS.WS.akismet
+ * @docmodule core.ws.akismet
  */
 ws.akismet = Object();

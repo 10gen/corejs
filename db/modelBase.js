@@ -29,6 +29,7 @@
  * @constructor
  * @param {string} collection The name of a collection
  * @param {function} constructor Constructor for the collection
+ * @docmodule core.db.modelbase
  */
 ModelBase = function( collectionName , cons ){
     this.collectionName = collectionName;

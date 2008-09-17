@@ -15,6 +15,7 @@
 */
 
 /** @class Common regular expression manipulation functions.
+ * @docmodule core.content.regexp
  */
 content.RegExp = {};
 

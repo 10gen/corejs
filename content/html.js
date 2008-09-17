@@ -14,8 +14,7 @@
 *    limitations under the License.
 */
 
-/** @class HTML content manipulation class
- * @memberOf content
+/** HTML content manipulation class
  */
 
 content.HTML._entities = [{s: '&', r: "&amp;"},
@@ -83,7 +82,7 @@ content.HTML.strip = function(s){
     return s;
 };
 
-/** @namespace RSS feed functions.
+/**  RSS feed functions.
  */
 RSS = {};
 

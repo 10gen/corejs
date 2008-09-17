@@ -1,9 +1,8 @@
-/** @class Web content
+/**  Web content
  */
 content = new Object();
 
-/** @class HTML content manipulation class
- * @memberOf content
+/**  HTML content manipulation class
  */
 content.HTML = {};
 

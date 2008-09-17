@@ -19,7 +19,7 @@
 core.core.mail();
 
 /** @class Appends log messages to the _log collection in the database.
- * @docmodule CoreJS.Core.logdb
+ * @docmodule core.core.logdb
  */
 BasicDBAppender = {};
 

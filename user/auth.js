@@ -17,7 +17,7 @@
 core.user.user();
 
 /** @namespace Several different styles of authentication.
- * @docmodule CoreJS.User.auth
+ * @docmodule core.user.auth
 */
 Auth = {
 

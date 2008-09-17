@@ -24,7 +24,7 @@
 /**
     Creates a new TriggermailClient object for using the Triggermail API.
     @class Triggermail API client.
-  * @docmodule CoreJS.WS.triggermail
+  * @docmodule core.ws.triggermail
  */
 ws.impl.triggermail.TriggermailClient = function(apiKey, secret) {
     // member variables

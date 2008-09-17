@@ -15,7 +15,7 @@
 */
 
 /** @namespace Functions for sending and receiving email
- * @docmodule CoreJS.Core.mail
+ * @docmodule core.core.mail
  */
 Mail = {};
 
@@ -34,7 +34,7 @@ Mail.recipientTypesJava = [ javaStaticProp( "javax.mail.Message:RecipientType" ,
 /** @constructor Message creation and sending functions
  * @param {string} subject Email subject line.
  * @param {string} content Email message content.
- * @docmodule CoreJS.Core.mail.message
+ * @docmodule core.core.mail.message
  */
 Mail.Message = function( subject , content ){
     this.subject = subject;
@@ -95,7 +95,7 @@ Mail.Message.prototype.send = function( smtp ){
  * @param {string} password Email password
  * @param {boolean} [ssl=false] If ssl should be used
  * @param {number} [port] Port to use.  Default is 465 or 25, depending on whether ssl is on or off.
- * @docmodule CoreJS.Core.mail.smtp
+ * @docmodule core.core.mail.smtp
  */
 Mail.SMTP = function( addr , server , username , password , ssl , port ){
 
@@ -154,7 +154,7 @@ Mail.SMTP.gmail = function( username , password ){
  * @param {string} password Email password
  * @param {boolean} ssl If ssl should be used
  * @param {number} port Port to use.
- * @docmodule CoreJS.Core.mail.imap
+ * @docmodule core.core.mail.imap
  */
 Mail.IMAP = function( addr , server , username , password , ssl , port ){
 

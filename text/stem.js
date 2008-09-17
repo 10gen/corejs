@@ -31,7 +31,7 @@
 
 /*
    @class
-   @docmodule CoreJS.Text.stem
+   @docmodule core.text.stem
  */
 Stem = { 
     step2list : {  

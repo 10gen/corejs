@@ -16,7 +16,6 @@
 */
 
 /** Convert SQL queries to 10gen database queries 
- * @namespace
  */
 SQL = {};
 
@@ -217,7 +216,6 @@ SQL.executeQuery = function( mydb , sql ){
 
 /** Initializes an sql expression tokenizer
  * @param {string} sql SQL query
- * @constructor
  */
 SQL.Tokenizer = function( sql ){
     this.sql = sql;

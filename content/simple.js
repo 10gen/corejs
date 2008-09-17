@@ -16,7 +16,6 @@
 
 /** Simple text format processor, suitable for handling text from
  *  blog posts, etc.
- * @constructor
 */
 content.Simple = function(){
 

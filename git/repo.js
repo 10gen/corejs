@@ -19,6 +19,7 @@ core.core.file();
 /** Tools for interacting with the git repository.
  * Git commands all generate output of the form <tt>{ out : output, err : error_msg, exitValue : exit_value, cmd : git_cmd, parsed : { rev : trimmed_output } }</tt>.
  * @constructor
+ * @docmodule core.git.repo
  */
 git.Repo = function(){
 };

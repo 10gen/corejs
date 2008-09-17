@@ -18,7 +18,7 @@
 core.util.words();
 
 /** @namespace Check for an organic life form.
-     * @docmodule CoreJS.User.captcha
+     * @docmodule core.user.captcha
  */
 Captcha = {
 

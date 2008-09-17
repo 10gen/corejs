@@ -48,7 +48,7 @@
  * // incoming requests for /abcaaaaa will call index with
  * // request.lotsOfA = "yes"
  * @class
- * @docmodule CoreJS.Core.routes
+ * @docmodule core.core.routes
  */
 Routes = function(){
     this._regexp = [];

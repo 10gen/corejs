@@ -20,7 +20,7 @@ core.net.url();
 core.util.db();
 
 /** Creates a new htmltable.
- * @class htmltable provides a means to display data from the database in table format automatically,
+ * htmltable provides a means to display data from the database in table format automatically,
  * with some additional functionality automatically provided such as a simple search user
  * interface.
  * <br /><br />

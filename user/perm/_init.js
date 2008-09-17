@@ -3,7 +3,7 @@ core.util.urltree();
  *  Grants or denies permission to access URLs.
  *  The interface for a permission object is the method allowed(user, request[, uri]).
  *  This method returns true or false.
- * @docmodule CoreJS.User.perm
+ * @docmodule core.user.perm
  */
 User.Perm = Class.create(Util.URLTree, {
     /**

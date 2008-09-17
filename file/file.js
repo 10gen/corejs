@@ -19,7 +19,6 @@
  * contains multiple useful static functions
  * @author Dana Spiegel dana@10gen.com
  * @namespace
- * @docmodule CoreJS.Core.file
  */
 file.File = function() {};
 

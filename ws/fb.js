@@ -16,7 +16,7 @@
 
 
 /** @class Facebook Developer API 
-*   @docmodule CoreJS.WS.facebook
+*   @docmodule core.ws.facebook
 */
 Facebook = {
     /** Set this to the secret key Facebook assigns you

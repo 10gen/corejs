@@ -29,7 +29,7 @@ core.content.html();
 
 var log = log.content.xml;
 
-/** @namespace XML helper functions
+/**  XML helper functions
  */
 xml = {
     /** Print an object in XML
@@ -592,7 +592,7 @@ xml = {
 
 };
 
-/** @constructor A node of XML
+/**  A node of XML
  * @param {string} localName Tag name
  * @param {string} qName
  * @param {string} uri

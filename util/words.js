@@ -18,7 +18,7 @@
 
 /** Dictionary functions.
  * @namespace
- * @docmodule CoreJS.Util.words
+ * @docmodule core.util.words
  */
 Util.Words = Util.Words || {};
 

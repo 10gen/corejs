@@ -14,7 +14,7 @@
 *    limitations under the License.
 */
 
-/** @namespace JSON.isValid from YUI YAHOO.lang.JSON, code licensed under a BSD license */
+/** .isValid from YUI YAHOO.lang.JSON, code licensed under a BSD license */
 
 var JSON = {
     /**

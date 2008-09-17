@@ -15,6 +15,7 @@
 */
 
 /** @class URL class for parsing/manipulating URLs.
+ * @docmodule core.net.url
  */
 URL = function(s){
     // This class is a representation of a URL. Right now it is mostly

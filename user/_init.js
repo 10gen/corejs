@@ -23,7 +23,7 @@
  * $ db.users.save(u);
  * </pre>
  *
- * @docmodule CoreJS.User.user
+ * @docmodule core.user.user
  */
 function User(){
 

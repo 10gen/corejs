@@ -25,7 +25,7 @@ core.content.xml();
  * @param {number} [port=80] Port to use
  * @param {string} [path="/"]
  * @namespace
- * @docmodule CoreJS.WS.xmlrpc.client
+ * @docmodule core.ws.xmlrpc
 **/
 ws.xmlrpc.Client = function(host, port, path) {
     // member variables

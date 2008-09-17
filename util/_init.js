@@ -2,6 +2,6 @@
 if ( ! Util )
     /** General programming utilities.
      * @namespace
-     * @docmodule CoreJS.Util.util
+     * @docmodule core.util.util
      */
     Util = {};

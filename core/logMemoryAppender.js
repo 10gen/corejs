@@ -18,7 +18,7 @@
 
 /** Appender for logs in RAM.  These log messages are also saved to the _logs collection.
  * @class
- * @docmodule CoreJS.Core.logmem
+ * @docmodule core.core.logmem
  */
 MemoryAppender = {};
 

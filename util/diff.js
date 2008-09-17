@@ -16,7 +16,7 @@
 
 /** Utilities for diffing and undiffing data structures.
  * @namespace
- * @docmodule CoreJS.Util.diff
+ * @docmodule core.util.diff
  */
 Util.Diff = {
 

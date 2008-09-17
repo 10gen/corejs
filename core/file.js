@@ -21,7 +21,7 @@
    Note: subject to change, temp implementation.
 
  * @class
- * @docmodule CoreJS.Core.file
+ * @docmodule core.core.file
  */
 
 File = {};

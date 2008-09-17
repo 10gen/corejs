@@ -26,6 +26,7 @@ mylog.level = log.LEVEL.DEBUG;
  * @param {JSFile} file Video file.
  * @throws {Exception} If file is null or if the file type is not recognized by ed.js.JSFile.
  * @constructor
+ * @docmodule core.media.video
  */
 Media.Video = function( file ){
     if ( file == null )
