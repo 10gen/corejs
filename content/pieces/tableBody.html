@@ -39,7 +39,7 @@ var fields = obj.fields;
 </if>
 <if (table.rows.length != 0)>
   <forin i table.rows>
-    <tr class="white-main">
+    <tr id="tblRow<%= i %>" class="white-main" onmouseover="addClass( 'tblRow<%= i %>' , 'row_highlight' ); " onmouseout="removeClass( 'tblRow<%= i %>' , 'row_highlight' ); ">
       <td class="left">&nbsp;</td>
       <if (fields)>
         <forin j fields>

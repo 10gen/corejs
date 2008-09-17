@@ -161,11 +161,13 @@ table.htmltable tr.white-bottom th.right, table.htmltable tr.white-bottom td.rig
 	background: #e7e4d6 url(img/mwbox_botright.gif) no-repeat right top;
 }
 
+tr.row_highlight {
+	background-color: #eff6ff;
+}
 
 table.htmltable tr.white-main th, table.htmltable tr.white-main td {
 	margin: 0;
 	padding: 0 1.5em 0 0;
-	background-color: #ffffff;
 	font-size: 11px;
 	line-height: 2em;
 }
@@ -342,7 +344,7 @@ table.htmltable tr.white-main td.glm a {
 table.htmltable tr.white-main td.left {
 	padding: 0;
 	width: 14px;
-	background-image: url(img/mwbox_left.gif);
+	background-image: url(img/mwbox_left.png);
 	background-repeat: repeat-y;
 	border-top: 0px;
 }
@@ -351,7 +353,7 @@ table.htmltable tr.white-main td.left {
 table.htmltable tr.white-main td.right {
 	padding: 0;
 	width: 14px;
-	background-image: url(img/mwbox_right.gif);
+	background-image: url(img/mwbox_right.png);
 	repeat: repeat-y;
 	border-top: 0px;
 }
@@ -464,4 +466,8 @@ table.htmltable {
 
 tr.white-main td {
     white-space: nowrap;
+}
+
+tr.white-main-yel {
+	background-color:yellow;
 }

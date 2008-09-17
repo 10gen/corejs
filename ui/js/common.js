@@ -59,6 +59,16 @@ function toggleElement ( e ) {
 	 }
 }
 
+/** Style some part of an element.
+ * @param {Object|string} e Element or element id.
+ * @param {string} part Property to send with request.
+ * @param {string} v Text Value to send with request.
+ */
+function styleElement ( e , part, v ) {
+    var e = getElement( e );
+	e.style[part] = v;
+}
+
 /** Gets the correct type of XML request object, based on browser type.
  * @return {Object|string} XML request object, or the string "no XMLHttpRequest support".
  */
@@ -176,6 +186,37 @@ function setClass( e , c ){
     if ( e ){
         e.className = c;
     }
+}
+
+/** Adds a class to an element.
+ * @param {Object|string} Element or element id to find.
+ * @param {string} Class name.
+ */
+function addClass( e, c ){
+	e = getElement( e );
+	var cname = e.className;
+	var classes = cname.split(/\s+/);
+	for(var i = 0; i < classes.length; i++){
+		if(classes[i] == c) return;
+	}
+	e.className = e.className + ' ' + c;
+}
+
+/** Removes a class from an element.
+ * @param {Object|string} Element or element id to find.
+ * @param {string} Class name.
+ */
+function removeClass( e, c ){
+	e = getElement( e );
+	var cname = e.className;
+	var classes = cname.split(/\s+/);
+	for(var i = 0; i < classes.length; i++){
+		if(classes[i] == c){
+			classes[i] = '';
+			break;
+		}
+	}
+	e.className = classes.join(' ');
 }
 
 /** Sets a browser cookie.
