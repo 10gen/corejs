@@ -150,18 +150,18 @@ Routes.prototype.create = function() {
 		if (cp.indexOf(ap) !== -1) {
 			remainder = cp.substring(ap.length);
 		} else {
-			if (cp.indexOf('/') === 0) {
-				remainder = cp.substring(1);
-			} else {
-				remainder = cp;
-			}
+			remainder = cp;
 		}
 
 		// convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
 		if (remainder === "") {
 			return [];
 		}
-		return remainder.split("/");
+		var to_return =  remainder.split("/");
+		if (to_return[0] === "") {
+			return to_return.slice(1);
+		}
+		return (to_return);
 	};
 
 	// actually set up the new routes object
