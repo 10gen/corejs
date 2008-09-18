@@ -130,8 +130,12 @@ Routes.prototype.create = function() {
 	 */
 	var routes_path = function(the_scope) {
 		// get the path of the calling file relative to the site's path
-		var ap = app_path(the_scope);
-		var cp = calling_path(the_scope);
+		try {
+			var ap = app_path(the_scope);
+			var cp = calling_path(the_scope);
+		} catch (e) {
+			throw (e + " :: " + the_scope.debug());
+		}
 
 		var remainder = cp.substring(ap.length);
 
