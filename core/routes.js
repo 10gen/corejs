@@ -150,7 +150,11 @@ Routes.prototype.create = function() {
 		if (cp.indexOf(ap) !== -1) {
 			remainder = cp.substring(ap.length);
 		} else {
-			remainder = cp;
+			if (cp.indexOf('/') === 0) {
+				remainder = cp.substring(1);
+			} else {
+				remainder = cp;
+			}
 		}
 
 		// convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
@@ -181,7 +185,6 @@ Routes.prototype.create = function() {
 			parent_routes = parent_routes[path[i]];
 		}
 
-		throw tojson(path);
 		parent_routes[path[path.length - 1]] = new_routes;
 	}
 
