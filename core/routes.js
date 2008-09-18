@@ -185,7 +185,6 @@ Routes.prototype.create = function() {
 			parent_routes = parent_routes[path[i]];
 		}
 
-		throw tojson(path);
 		parent_routes[path[path.length - 1]] = new_routes;
 	}
 
