@@ -50,9 +50,6 @@
  * @class
  * @docmodule core.core.routes
  */
-
-core.ext.asstring();
-
 Routes = function(){
     this._regexp = [];
     this._default = null;
@@ -137,7 +134,15 @@ Routes.prototype.create = function() {
 			var ap = app_path(the_scope);
 			var cp = calling_path(the_scope);
 		} catch (e) {
-			throw (e + " :: " + Ext.asString(the_scope.debug));
+			function scope_stack(stack, a_scope) {
+				if (a_scope) {
+					stack += a_scope.toString() + " :: ";
+					return scope_stack(stack, a_scope.getParent());
+				}
+				return stack + "end";
+			}
+
+			throw (e + " => " + scope_stack("", the_scope));
 		}
 
 		var remainder = cp.substring(ap.length);
