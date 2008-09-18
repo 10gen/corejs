@@ -112,15 +112,16 @@ Routes.prototype.create = function() {
 		var scope_string = the_scope.toString();
 
 		if (scope_string.indexOf('routes.js') !== -1) {
-			return calling_path(the_scope.getParent());
+			// we want the path of the parent scope to the routes.js scope
+			scope_string = the_scope.getParent().toString();
+
+			var scope_path = scope_string.substring(scope_string.lastIndexOf(':') + 1);
+			if (scope_path.indexOf('/') === -1) {
+				return '';
+			} else {
+				return scope_path.substring(0, scope_path.lastIndexOf('/'));
+			}
 		}
-
-		var index = scope_string.indexOf('compiled script for');
-
-		if (index !== -1) {
-			return scope_string.substring(index + 'compiled script for'.length + 1, scope_string.lastIndexOf('/'));
-		}
-
 		return calling_path(the_scope.getParent());
 	};
 
@@ -142,10 +143,15 @@ Routes.prototype.create = function() {
 				return stack + "end";
 			}
 
-			throw (e + " => " + scope_stack("", the_scope));
+			throw (e + " => " + scope_stack("", the_scope) + " ||| " + ap + " :: " + cp);
 		}
 
-		var remainder = cp.substring(ap.length);
+		var remainder;
+		if (cp.indexOf(ap) !== -1) {
+			remainder = cp.substring(ap.length);
+		} else {
+			remainder = cp;
+		}
 
 		// convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
 		if (remainder === "") {
