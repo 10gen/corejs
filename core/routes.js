@@ -81,6 +81,10 @@ Routes.prototype.create = function() {
 	 * return the application scope, given one of it's descendant scopes
 	 */
 	var app_scope = function(the_scope) {
+		if (!the_scope) {
+			throw "cannot find app scope from a null scope";
+		}
+
 		var index = the_scope.toString().indexOf('AppContext');
 		if (index != -1) {
 			return the_scope;
@@ -101,6 +105,10 @@ Routes.prototype.create = function() {
 	 * return the path where the file that called routes is located as a String
 	 */
 	var calling_path = function(the_scope) {
+		if (!the_scope) {
+			throw "cannot find calling path for a null scope";
+		}
+
 		var scope_string = the_scope.toString();
 
 		if (scope_string.indexOf('routes.js') !== -1) {
@@ -122,8 +130,15 @@ Routes.prototype.create = function() {
 	 */
 	var routes_path = function(the_scope) {
 		// get the path of the calling file relative to the site's path
-		var ap = app_path(the_scope);
-		var cp = calling_path(the_scope);
+		try {
+			var ap = app_path(the_scope);
+			var cp = calling_path(the_scope);
+		} catch (e) {
+			// Should never get here. Just print some debugging info.
+			print(e);
+			print(the_scope.debug());
+		}
+
 		var remainder = cp.substring(ap.length);
 
 		// convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
