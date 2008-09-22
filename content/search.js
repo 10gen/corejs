@@ -279,7 +279,7 @@ Search = {
             Search.log( "matchCounts: ");
             all.forEach(
                 function(z){
-                    SYSOUT( "\t" + z + "\t" + matchCounts[z] );
+                    Search.log( "\t" + z + "\t" + matchCounts[z] );
                 }
             );
         }
@@ -297,7 +297,7 @@ Search = {
             Search.log( "matchCounts sorted: ");
             all.forEach(
                 function(z){
-                    SYSOUT( "\t" + z + "\t" + matchCounts[z] );
+                    Search.log( "\t" + z + "\t" + matchCounts[z] );
                 }
             );
         }
@@ -306,6 +306,7 @@ Search = {
         all.forEach( function( z ){
             if ( matchCounts[z] == max || good.length < min ){
                 var id = ObjectId( z );
+                if( table.findOne( id ) == null ) Search.log.error( "couldn't find " + id + " even though it came up in the search!" );
                 good.add( table.findOne( id ) );
                 return;
             }
