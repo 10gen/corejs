@@ -306,8 +306,10 @@ Search = {
         all.forEach( function( z ){
             if ( matchCounts[z] == max || good.length < min ){
                 var id = ObjectId( z );
-                if( table.findOne( id ) == null ) Search.log.error( "couldn't find " + id + " even though it came up in the search!" );
-                good.add( table.findOne( id ) );
+                var obj = table.findOne( id );
+                if( obj == null ) Search.log.error( "couldn't find " + id + " even though it came up in the search!" );
+                else
+                    good.add( obj );
                 return;
             }
         } );
