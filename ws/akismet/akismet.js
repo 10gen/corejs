@@ -48,9 +48,10 @@ ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent
     this.xmlHTTPRequest.setRequestHeader("Content-Type", this.contentType);
     this.xmlHTTPRequest.setRequestHeader("User-Agent", ws.akismet.USER_AGENT);
 
-    content = 'blog=' + escape(this.blogUri);
+    var content = 'blog=' + escape(this.blogUri);
+    content += '&key=' + escape(this.apiKey);
     content += '&user_ip=' + escape(userIp);
-    content += '&user_agent=' + escape(ws.akismet.USER_AGENT);
+    content += '&user_agent=' + escape(userAgent || ws.akismet.USER_AGENT);
     content += '&comment_author=' + escape(commentAuthor);
     content += '&comment_type=comment';
     content += '&comment_content=' + escape(commentContent);
@@ -64,7 +65,10 @@ ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent
     if (this.xmlHTTPRequest.status == 200) {
         // got a valid method response, so process it
         log.ws.akismet.debug('Got Response: ' + this.xmlHTTPRequest.responseText);
-        return this.xmlHTTPRequest.responseText == 'true';
+        if( this.xmlHTTPRequest.responseText == 'invalid' ){
+            log.ws.akismet.debug( 'Failed due to ' +this.xmlHTTPRequest.headers['X-akismet-debug-help']);
+        }
+        return this.xmlHTTPRequest.responseText == 'valid';
     } else {
         // there's a lower level issue, so fail
         log.ws.akismet.ERROR("Error: " + this.xmlHTTPRequest.status + ': ' + this.xmlHTTPRequest.statusText);
@@ -72,7 +76,7 @@ ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent
 };
 
 /** Sends a request to the akismet host to verify the api key
- * @return {boolean} If the api key is valid.
+ * @return {boolean} true if the api key is valid.
  */
 ws.akismet.Akismet.prototype.verifyKey = function() {
     var url = 'http://' + ws.akismet.HOST + '/verify-key';
@@ -82,7 +86,7 @@ ws.akismet.Akismet.prototype.verifyKey = function() {
     this.xmlHTTPRequest.setRequestHeader("Content-Type", this.contentType);
     this.xmlHTTPRequest.setRequestHeader("User-Agent", ws.akismet.USER_AGENT);
 
-    content = 'blog=' + escape(this.blogUri);
+    var content = 'blog=' + escape(this.blogUri);
     content += '&key=' + escape(this.apiKey);
 
     log.ws.akismet.debug('Request Content: ' + content);
@@ -106,7 +110,7 @@ ws.akismet.Akismet.prototype.verifyKey = function() {
  * @param {string} userAgent Submitter's user agent
  * @param {string} commentAuthor Submitter's name
  * @param {string} commentContent The text of the comment
- * @return {boolean} If the comment is valid
+ * @return {boolean} true if the comment is valid
  */
 ws.akismet.Akismet.prototype.commentCheck = function(userIp, userAgent, commentAuthor, commentContent) {
     return this.__remoteMethod('comment-check', userIp, userAgent, commentAuthor, commentContent);
@@ -117,7 +121,7 @@ ws.akismet.Akismet.prototype.commentCheck = function(userIp, userAgent, commentA
  * @param {string} userAgent Submitter's user agent
  * @param {string} commentAuthor Submitter's name
  * @param {string} commentContent The text of the comment
- * @return {boolean} If akismet successful processed the request
+ * @return {boolean} true if akismet successful processed the request
  */
 ws.akismet.Akismet.prototype.submitSpam = function(userIp, userAgent, commentAuthor, commentContent) {
     return this.__remoteMethod('submit-spam', userIp, userAgent, commentAuthor, commentContent);
