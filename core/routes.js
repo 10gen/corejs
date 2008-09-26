@@ -77,118 +77,118 @@ Routes.log.level = log.LEVEL.INFO;
  * @return A new routes object
  */
 Routes.prototype.create = function() {
-	/*
-	 * return the application scope, given one of it's descendant scopes
-	 */
-	var app_scope = function(the_scope) {
-		if (!the_scope) {
-			throw "cannot find app scope from a null scope";
-		}
+    /*
+     * return the application scope, given one of it's descendant scopes
+     */
+    var app_scope = function(the_scope) {
+        if (!the_scope) {
+            throw "cannot find app scope from a null scope";
+        }
 
-		var index = the_scope.toString().indexOf('AppContext');
-		if (index != -1) {
-			return the_scope;
-		}
-		return app_scope(the_scope.getParent());
-	};
+        var index = the_scope.toString().indexOf('AppContext');
+        if (index != -1) {
+            return the_scope;
+        }
+        return app_scope(the_scope.getParent());
+    };
 
-	/*
-	 * return the path of the currently running site's root as a String
-	 */
-	var app_path = function(the_scope) {
-		var app_scope_string = app_scope(the_scope).toString();
-		var index = app_scope_string.indexOf('AppContext');
-		return app_scope_string.substring(index + 'AppContext'.length + 1, -1);
-	};
+    /*
+     * return the path of the currently running site's root as a String
+     */
+    var app_path = function(the_scope) {
+        var app_scope_string = app_scope(the_scope).toString();
+        var index = app_scope_string.indexOf('AppContext');
+        return app_scope_string.substring(index + 'AppContext'.length + 1, -1);
+    };
 
-	/*
-	 * return the path where the file that called routes is located as a String
-	 */
-	var calling_path = function(the_scope) {
-		if (!the_scope) {
-			throw "cannot find calling path for a null scope";
-		}
+    /*
+     * return the path where the file that called routes is located as a String
+     */
+    var calling_path = function(the_scope) {
+        if (!the_scope) {
+            throw "cannot find calling path for a null scope";
+        }
 
-		var scope_string = the_scope.toString();
+        var scope_string = the_scope.toString();
 
-		if (scope_string.indexOf('routes.js') !== -1) {
-			// we want the path of the parent scope to the routes.js scope
-			scope_string = the_scope.getParent().toString();
+        if (scope_string.indexOf('routes.js') !== -1) {
+            // we want the path of the parent scope to the routes.js scope
+            scope_string = the_scope.getParent().toString();
 
-			var scope_path = scope_string.substring(scope_string.lastIndexOf(':') + 1);
-			if (scope_path.indexOf('/') === -1) {
-				return '';
-			} else {
-				return scope_path.substring(0, scope_path.lastIndexOf('/'));
-			}
-		}
-		return calling_path(the_scope.getParent());
-	};
+            var scope_path = scope_string.substring(scope_string.lastIndexOf(':') + 1);
+            if (scope_path.indexOf('/') === -1) {
+                return '';
+            } else {
+                return scope_path.substring(0, scope_path.lastIndexOf('/'));
+            }
+        }
+        return calling_path(the_scope.getParent());
+    };
 
-	/*
-	 * return the path where the file that called routes is located,
-	 * relative to the site's root. return as an array of directory names.
-	 */
-	var routes_path = function(the_scope) {
-		// get the path of the calling file relative to the site's path
-		try {
-			var ap = app_path(the_scope);
-			var cp = calling_path(the_scope);
-		} catch (e) {
-			function scope_stack(stack, a_scope) {
-				if (a_scope) {
-					stack += a_scope.toString() + " :: ";
-					return scope_stack(stack, a_scope.getParent());
-				}
-				return stack + "end";
-			}
+    /*
+     * return the path where the file that called routes is located,
+     * relative to the site's root. return as an array of directory names.
+     */
+    var routes_path = function(the_scope) {
+        // get the path of the calling file relative to the site's path
+        try {
+            var ap = app_path(the_scope);
+            var cp = calling_path(the_scope);
+        } catch (e) {
+            function scope_stack(stack, a_scope) {
+                if (a_scope) {
+                    stack += a_scope.toString() + " :: ";
+                    return scope_stack(stack, a_scope.getParent());
+                }
+                return stack + "end";
+            }
 
-			throw (e + " => " + scope_stack("", the_scope) + " ||| " + ap + " :: " + cp);
-		}
+            throw (e + " => " + scope_stack("", the_scope) + " ||| " + ap + " :: " + cp);
+        }
 
-		var remainder;
-		if (cp.indexOf(ap) !== -1) {
-			remainder = cp.substring(ap.length);
-		} else {
-			remainder = cp;
-		}
+        var remainder;
+        if (cp.indexOf(ap) !== -1) {
+            remainder = cp.substring(ap.length);
+        } else {
+            remainder = cp;
+        }
 
-		// convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
-		if (remainder === "") {
-			return [];
-		}
-		var to_return =  remainder.split("/");
-		if (to_return[0] === "") {
-			return to_return.slice(1);
-		}
-		return (to_return);
-	};
+        // convert the path to an array (ie: "" => [], "mike/is/cool/" => ['mike', 'is', 'cool'])
+        if (remainder === "") {
+            return [];
+        }
+        var to_return =  remainder.split("/");
+        if (to_return[0] === "") {
+            return to_return.slice(1);
+        }
+        return (to_return);
+    };
 
-	// actually set up the new routes object
+    // actually set up the new routes object
 
-	var new_routes = new Routes();
+    var new_routes = new Routes();
 
-	if (routes === undefined) {
-		var as = app_scope(scope);
+    if (routes === undefined) {
+        var as = app_scope(scope);
 
-		as.set('routes', new_routes);
-	} else {
-		var path = routes_path(scope);
+        as.set('routes', new_routes);
+    } else {
+        var path = routes_path(scope);
 
-		if (path.length === 0) {
-			routes = new Routes();
-			return routes;
-		}
+        if (path.length === 0) {
+            routes = new Routes();
+            return routes;
+        }
 
-		var parent_routes = routes;
-		for (var i = 0; i < path.length - 1; i += 1) {
-			parent_routes = parent_routes[path[i]];
-		}
+        var parent_routes = routes;
+        for (var i = 0; i < path.length - 1; i += 1) {
+            parent_routes = parent_routes[path[i]];
+        }
 
-		parent_routes[path[path.length - 1]] = new_routes;
-	}
+        parent_routes[path[path.length - 1]] = new_routes;
+    }
 
-	return new_routes;
+    return new_routes;
 };
 
 // setting up
@@ -270,7 +270,7 @@ Routes.prototype.apply = function( uri , request , response , prefix ){
         uri = "/" + uri;
 
     var firstPiece = uri.replace( /^\/?([^\/\\\?&=#]+)\b.*/ , "$1" );
-	prefix = prefix ? prefix + "/" + firstPiece : firstPiece;
+    prefix = prefix ? prefix + "/" + firstPiece : firstPiece;
 
     // currentRoot stuff
     if ( true ) {
@@ -352,9 +352,9 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
 
     if ( this.isRoutes( end ) ){
         var res = end.apply( uri.substring( 1 + firstPiece.length ) , request , response , prefix );
-		if ( res === null ) {
-			return null;
-		}
+        if ( res === null ) {
+            return null;
+        }
         if ( ! isString( res ) )
             return res;
         if ( ! ( res && res.startsWith( "/" ) ) )
