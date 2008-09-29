@@ -317,6 +317,78 @@ Search = {
         return good;
     },
 
+    /** Searches a collection based on an array containing field names and weights and returns
+     * relevance weights.  Options include: <ul>
+     * <li>max : the maximum number results to return.</li>
+     * </ul>
+     * @param {dbcollection} collection Collection to search
+     * @param {Array} fields An array of { fieldname : searchweight }
+     * @param {Object} [options] An object representing optional parameters
+     * @returns {Array} An array of objects from the collection that match the query, ordered by weight
+     */
+    relevanceSearch : function( collection , fields , options ) {
+        var getRelevance = function( text , regex , weight ) {
+            var relevance = regex.exec( text );
+            if( relevance == null ) {
+                return 0;
+            }
+            return relevance.length * weight;
+        }
+
+        if( !options )
+            options = {};
+        var max = options.max || 20;
+
+        if( !collection )
+            return [];
+        if( !fields ) 
+            return collection.find().limit( max ).toArray();
+
+        fields.sort( function( a, b ) {
+            return a.weight >= b.weight ? -1 : 1;
+        } );
+
+        var results = [];
+        for( var f in fields ) {
+            for( var n in fields[f] ) {
+                if ( n == "weight" )
+                    continue;
+
+                searchObj = {};
+                searchObj[n] = new RegExp(fields[f][n] , "ig");
+                var temp =  collection.find( searchObj ).limit( max ).toArray();
+                temp.forEach( function( obj ) {
+                    // add to results
+                    var addToResults = true;
+                    var idx = 0;
+                    for each( result in results ) {
+                        if( result._id == obj._id ) {
+                            idx = results.indexOf( result );
+                            addToResults = false;
+                            break;
+                        }
+                    }
+                    if( addToResults ) {
+                        idx = results.length;
+                        results.push( obj );
+                        max--;
+                    }
+
+                    // get relevance
+                    if( !results[idx]._relevance ) {
+                        results[idx]._relevance = 0;
+                    }
+                    results[idx]._relevance += getRelevance( obj[n] , searchObj[n] , fields[f].weight );
+
+                } );
+                if( max <= 0 ) {
+                    break;
+                }
+            }
+        }
+        return results;
+    },
+
     /** Given two queries, determine if they are essentially the same
      * @param {string} query1 First query
      * @param {string} query2 Second query
