@@ -335,9 +335,9 @@ Object.extend(git.Repo.prototype,
             upToDate = true;
         }
         else {
-            var m = exec.err.match(/fatal: Entry '([\.\w]+)' not uptodate\. Cannot merge\.\n$/);
+            var m = exec.err.match(/(fatal|error): Entry '([\.\w]+)' not uptodate\. Cannot merge\.\n$/);
             if(m){
-                failed = {notuptodate: m[1]};
+                failed = {notuptodate: m[2]};
             }
             else {
                 merged = {};

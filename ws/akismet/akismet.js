@@ -23,6 +23,8 @@ ws.akismet.USER_AGENT = '10gen/1.0';
  */
 ws.akismet.HOST = 'rest.akismet.com/1.1';
 
+log.ws.akismet.level = log.LEVEL.ERROR;
+
 /**
  * Akismet Client
  *
@@ -40,19 +42,26 @@ ws.akismet.Akismet = function(apiKey, blogUri) {
     this.xmlHTTPRequest = new XMLHttpRequest();
 };
 
-ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent, commentAuthor, commentContent) {
+ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent, commentAuthor, commentContent, commentAuthorEmail, commentAuthorUrl) {
     var url = 'http://' + this.apiKey + '.' + ws.akismet.HOST + '/' + method;
     log.ws.akismet.debug ('Calling REST Method: ' + url);
 
-    this.xmlHTTPRequest.open("POST", url, this.isAsynchronous);
+    // This could re-use the XMLHttpRequest but there's currently a bug
+    // and it doesn't get us anything so why bother.
+    this.xmlHTTPRequest = new XMLHttpRequest("POST", url, this.isAsynchronous);
     this.xmlHTTPRequest.setRequestHeader("Content-Type", this.contentType);
     this.xmlHTTPRequest.setRequestHeader("User-Agent", ws.akismet.USER_AGENT);
 
     var content = 'blog=' + escape(this.blogUri);
-    content += '&key=' + escape(this.apiKey);
     content += '&user_ip=' + escape(userIp);
     content += '&user_agent=' + escape(userAgent || ws.akismet.USER_AGENT);
     content += '&comment_author=' + escape(commentAuthor);
+    if(commentAuthorEmail){
+        content += '&comment_author_email=' + escape(commentAuthorEmail);
+    }
+    if(commentAuthorUrl){
+        content += '&comment_author_url=' + escape(commentAuthorUrl);
+    }
     content += '&comment_type=comment';
     content += '&comment_content=' + escape(commentContent);
 
@@ -68,7 +77,7 @@ ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent
         if( this.xmlHTTPRequest.responseText == 'invalid' ){
             log.ws.akismet.debug( 'Failed due to ' +this.xmlHTTPRequest.headers['X-akismet-debug-help']);
         }
-        return this.xmlHTTPRequest.responseText == 'valid';
+        return this.xmlHTTPRequest.responseText == 'false';
     } else {
         // there's a lower level issue, so fail
         log.ws.akismet.ERROR("Error: " + this.xmlHTTPRequest.status + ': ' + this.xmlHTTPRequest.statusText);
@@ -110,10 +119,12 @@ ws.akismet.Akismet.prototype.verifyKey = function() {
  * @param {string} userAgent Submitter's user agent
  * @param {string} commentAuthor Submitter's name
  * @param {string} commentContent The text of the comment
+ * @param {string} commentEmail [Optional] The email address of the commenter.
+ * @param {string} commentUrl [Optional] The "personal" url of the commenter.
  * @return {boolean} true if the comment is valid
  */
-ws.akismet.Akismet.prototype.commentCheck = function(userIp, userAgent, commentAuthor, commentContent) {
-    return this.__remoteMethod('comment-check', userIp, userAgent, commentAuthor, commentContent);
+ws.akismet.Akismet.prototype.commentCheck = function(userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl) {
+    return this.__remoteMethod('comment-check', userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl);
 };
 
 /** Tells akismet that a comment is spam
@@ -121,10 +132,12 @@ ws.akismet.Akismet.prototype.commentCheck = function(userIp, userAgent, commentA
  * @param {string} userAgent Submitter's user agent
  * @param {string} commentAuthor Submitter's name
  * @param {string} commentContent The text of the comment
+ * @param {string} commentEmail [Optional] The email address of the commenter.
+ * @param {string} commentUrl [Optional] The "personal" url of the commenter.
  * @return {boolean} true if akismet successful processed the request
  */
-ws.akismet.Akismet.prototype.submitSpam = function(userIp, userAgent, commentAuthor, commentContent) {
-    return this.__remoteMethod('submit-spam', userIp, userAgent, commentAuthor, commentContent);
+ws.akismet.Akismet.prototype.submitSpam = function(userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl) {
+    return this.__remoteMethod('submit-spam', userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl);
 };
 
 /** Tells akismet that a comment is ham
@@ -132,8 +145,10 @@ ws.akismet.Akismet.prototype.submitSpam = function(userIp, userAgent, commentAut
  * @param {string} userAgent Submitter's user agent
  * @param {string} commentAuthor Submitter's name
  * @param {string} commentContent The text of the comment
+ * @param {string} commentEmail [Optional] The email address of the commenter.
+ * @param {string} commentUrl [Optional] The "personal" url of the commenter.
  * @return {boolean} If akismet successful processed the request
  */
-ws.akismet.Akismet.prototype.submitHam = function(userIp, userAgent, commentAuthor, commentContent) {
-    return this.__remoteMethod('submit-ham', userIp, userAgent, commentAuthor, commentContent);
+ws.akismet.Akismet.prototype.submitHam = function(userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl) {
+    return this.__remoteMethod('submit-ham', userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl);
 };
