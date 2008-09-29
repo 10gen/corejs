@@ -23,6 +23,8 @@ ws.akismet.USER_AGENT = '10gen/1.0';
  */
 ws.akismet.HOST = 'rest.akismet.com/1.1';
 
+log.ws.akismet.level = log.LEVEL.ERROR;
+
 /**
  * Akismet Client
  *
