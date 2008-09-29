@@ -51,7 +51,6 @@ ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent
     this.xmlHTTPRequest.setRequestHeader("User-Agent", ws.akismet.USER_AGENT);
 
     var content = 'blog=' + escape(this.blogUri);
-    content += '&key=' + escape(this.apiKey);
     content += '&user_ip=' + escape(userIp);
     content += '&user_agent=' + escape(userAgent || ws.akismet.USER_AGENT);
     content += '&comment_author=' + escape(commentAuthor);
