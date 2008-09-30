@@ -87,28 +87,26 @@ Search = {
     },
 
     fixTableSub : function( table , weights , num){
-        if ( weights ){
-            for ( var field in weights ){
+        if ( !weights )
+            return;
 
-                var w = weights[ field ];
-                if(typeof w == "number"){
-                    num.push( w );
-
-                    var idx = Search.getIndexName( w );
-                    var o = {}
-                    o[idx] = 1;
-
-                    if ( Search.DEBUG ) Search.log( "\t putting index on " + tojson( o ) );
-                    table.ensureIndex( o );
-                }
-                else {
-                    Search.fixTableSub(table, w, num);
-                }
+        for ( var field in weights ){
+            
+            var w = weights[ field ];
+            if(typeof w == "number"){
+                num.push( w );
+                
+                var idx = Search.getIndexName( w );
+                var o = {}
+                o[idx] = 1;
+                
+                if ( Search.DEBUG ) Search.log( "\t putting index on " + tojson( o ) );
+                table.ensureIndex( o );
             }
-
-
+            else {
+                Search.fixTableSub(table, w, num);
+            }
         }
-
     } ,
 
     /** Add a set of words to the search index of an object
@@ -233,13 +231,13 @@ Search = {
             weights = Search._default;
         if ( weights.length == 0 )
             weights.push( { idx : "_searchIndex" , w : 1 } );
-        if ( Search.DEBUG ) Search.log( "\t weights.length : " + weights.length );
+        if ( Search.DEBUG ) Search.log( "\t weights.length : " + tojson(weights) );
 
         var matchCounts = Object(); // _id -> num
         var all = Array();
         var max = 0;
         var words = Search.queryToArray(queryString);
-
+        
         for ( var i=0; i<weights.length; i++){
             var idx = weights[i].idx;
             var w = weights[i].w;
@@ -247,9 +245,9 @@ Search = {
             if ( Search.DEBUG ) Search.log( "\t using index " + idx );
 
             words.forEach( function(z){
-                if ( Search.DEBUG ) Search.log( "\t\t searching on word [" + z + "]" );
                 var s = {}; s[idx] = z;
-                var res = table.find( s , { id : ObjectId() , title : true } );
+                if ( Search.DEBUG ) Search.log( "\t\t searching on "+tojson(s) );
+                var res = table.find( s , { _id : ObjectId() } );
                 if ( options.sort )
                     res.sort( options.sort );
 
@@ -264,7 +262,7 @@ Search = {
 
                     max = Math.max( max , matchCounts[temp] );
 
-                    if ( Search.DEBUG ) Search.log( "\t\t " + temp + "\t" + tempObject.title  + "\t" + matchCounts[temp] );
+                    if ( Search.DEBUG ) Search.log( "\t\t " + temp + "\t" + tojson( tempObject )  + "\t" + matchCounts[temp] );
 
                     if ( ! all.contains( temp ) )
                         all.add( temp );
@@ -284,14 +282,15 @@ Search = {
             );
         }
 
-        if( ! options.ignoreRelevancy )
+        if( ! options.ignoreRelevancy ) {
             all.sort( function( l , r ){
                 var diff = matchCounts[r] - matchCounts[l];
                 if ( diff != 0 )
                     return diff;
-
+                
                 return 0;
             } );
+        }
 
         if ( Search.DEBUG ){
             Search.log( "matchCounts sorted: ");
@@ -307,9 +306,15 @@ Search = {
             if ( matchCounts[z] == max || good.length < min ){
                 var id = ObjectId( z );
                 var obj = table.findOne( id );
-                if( obj == null ) Search.log.error( "couldn't find " + id + " even though it came up in the search!" );
-                else
+                if( obj == null ) {
+                    Search.log.error( "couldn't find " + id + " even though it came up in the search!" );
+                }
+                else {
+                    if( options.recordRelevancy ) {
+                        obj._relevance = matchCounts[ z ];
+                    }
                     good.add( obj );
+                }
                 return;
             }
         } );
@@ -317,77 +322,6 @@ Search = {
         return good;
     },
 
-    /** Searches a collection based on an array containing field names and weights and returns
-     * relevance weights.  Options include: <ul>
-     * <li>max : the maximum number results to return.</li>
-     * </ul>
-     * @param {dbcollection} collection Collection to search
-     * @param {Array} fields An array of { fieldname : searchweight }
-     * @param {Object} [options] An object representing optional parameters
-     * @returns {Array} An array of objects from the collection that match the query, ordered by weight
-     */
-    relevanceSearch : function( collection , fields , options ) {
-        var getRelevance = function( text , regex , weight ) {
-            var relevance = regex.exec( text );
-            if( relevance == null ) {
-                return 0;
-            }
-            return relevance.length * weight;
-        }
-
-        if( !options )
-            options = {};
-        var max = options.max || 20;
-
-        if( !collection )
-            return [];
-        if( !fields ) 
-            return collection.find().limit( max ).toArray();
-
-        fields.sort( function( a, b ) {
-            return a.weight >= b.weight ? -1 : 1;
-        } );
-
-        var results = [];
-        for( var f in fields ) {
-            for( var n in fields[f] ) {
-                if ( n == "weight" )
-                    continue;
-
-                searchObj = {};
-                searchObj[n] = new RegExp(fields[f][n] , "ig");
-                var temp =  collection.find( searchObj ).limit( max ).toArray();
-                temp.forEach( function( obj ) {
-                    // add to results
-                    var addToResults = true;
-                    var idx = 0;
-                    for each( result in results ) {
-                        if( result._id == obj._id ) {
-                            idx = results.indexOf( result );
-                            addToResults = false;
-                            break;
-                        }
-                    }
-                    if( addToResults ) {
-                        idx = results.length;
-                        results.push( obj );
-                        max--;
-                    }
-
-                    // get relevance
-                    if( !results[idx]._relevance ) {
-                        results[idx]._relevance = 0;
-                    }
-                    results[idx]._relevance += getRelevance( obj[n] , searchObj[n] , fields[f].weight );
-
-                } );
-                if( max <= 0 ) {
-                    break;
-                }
-            }
-        }
-        return results;
-    },
 
     /** Given two queries, determine if they are essentially the same
      * @param {string} query1 First query
@@ -479,4 +413,4 @@ Search._doneInit = true;
 Search._default.lock();
 Search._default[0].setReadOnly( true );
 
-Search.log.level = Search.log.LEVEL.ERROR;
+Search.log.level = Search.log.LEVEL.DEBUG;
