@@ -1,13 +1,13 @@
 
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
 *    limitations under the License.
 */
 
-/** Convert SQL queries to 10gen database queries 
+/** Convert SQL queries to 10gen database queries
  */
 SQL = {};
 
@@ -36,7 +36,7 @@ SQL.parseWhere = function( sql , existingFilters ){
 
 /**
 * @param t SQL.Tokenizer
-*/    
+*/
 SQL._parseWhere = function( t , existingFilters ){
     var filters = existingFilters || {};
 
@@ -69,8 +69,8 @@ SQL._parseWhere = function( t , existingFilters ){
             t.extraTokens.add( next );
             break;
         }
-            
-        
+
+
         throw "can't handle [" + next + "] yet";
 
     }
@@ -88,19 +88,19 @@ SQL._parseToNumber = function( s ){
 }
 
 SQL.executeQuery = function( mydb , sql ){
-    
+
     if ( sql.contains( "(" ) || sql.contains( " or " ) )
         throw "don't support lots of things";
-    
+
     var t = new SQL.Tokenizer( sql );
 
     var command = t.nextToken();
     if ( command == null )
         throw "empty sql statement passed to executeQuery";
-    
+
     if ( command.toLowerCase() != "select" )
         throw "only select supported right now";
-    
+
     var fields = [];
     var tables = [];
 
@@ -112,7 +112,7 @@ SQL.executeQuery = function( mydb , sql ){
             throw "table aliases not supported yet";
 
         fields.add( { name : name } );
-        
+
         next = t.nextToken();
 
         if ( ! next )
@@ -123,8 +123,8 @@ SQL.executeQuery = function( mydb , sql ){
 
         if ( next == "," )
             continue;
-        
-        
+
+
         throw "don't support [" + next + "] yet in select";
     }
 
@@ -133,15 +133,15 @@ SQL.executeQuery = function( mydb , sql ){
 
         tables.add( { table : table } );
 
-        next = t.nextToken();        
+        next = t.nextToken();
 
-        if ( ! next 
-             || next.toLowerCase() == "where" 
-             || next.toLowerCase() == "order" 
-             || next.toLowerCase() == "group" 
+        if ( ! next
+             || next.toLowerCase() == "where"
+             || next.toLowerCase() == "order"
+             || next.toLowerCase() == "group"
            )
             break;
-        
+
         if ( next == "," || next == "left" || next == "join" )
             throw "don't support joins";
 
@@ -161,18 +161,18 @@ SQL.executeQuery = function( mydb , sql ){
         next = t.nextToken();
         if ( ! ( next && next.toLowerCase() == "by" ) )
             throw "order without by doesn't make sense to me [" + sql + "]";
-     
+
         sort = {};
 
         while ( t.hasMore() ){
             var sortField = t.nextToken();
-            
+
             sort[ sortField ] = 1;
-            
+
             next = t.nextToken();
             if ( ! next )
                 break;
-            
+
             if ( next.toLowerCase() == "asc" || next.toLowerCase() == "asec" ){
                 sort[ sortField ] = 1;
                 next = t.nextToken();
@@ -181,12 +181,12 @@ SQL.executeQuery = function( mydb , sql ){
                 sort[ sortField ] = -1;
                 next = t.nextToken();
             }
-            
+
             if ( next == "," )
                 throw "only sorting by 1 column supported right now";
 
             break;
-        }        
+        }
     }
 
     assert.eq( 1 , tables.length , "wrong number of tables" );
@@ -202,11 +202,11 @@ SQL.executeQuery = function( mydb , sql ){
             wanted[ field.name ] = 1;
         }
     }
-    
+
     var cursor = mydb[tables[0].table].find( filter , wanted );
     if ( sort )
         cursor.sort( sort );
-    
+
     return cursor;
 }
 
@@ -248,7 +248,7 @@ SQL.Tokenizer.prototype.nextToken = function(){
     this.skipWhiteSpace();
 
     var t = "";
-    
+
     var first = null;
 
     while ( this.pos < this.length ){
@@ -257,9 +257,12 @@ SQL.Tokenizer.prototype.nextToken = function(){
         if ( c == " " )
             break;
 
-        if ( first == null )
+        if ( first == null ) {
+            if ( c == '"' || c == "'")
+                return this._nextString( c )
             first = this._isAlphaNumeric( c );
-        
+        }
+
         var me = this._isAlphaNumeric( c );
 
 
@@ -274,6 +277,35 @@ SQL.Tokenizer.prototype.nextToken = function(){
         return null;
 
     return SQL._parseToNumber( t );
+}
+
+// Returns the next string, without its surrounding quotes.
+SQL.Tokenizer.prototype._nextString = function() {
+  var q = this.sql[this.pos];
+  ++this.pos;
+  var t = "";
+  while (this.pos < this.length) {
+    var c = this.sql[this.pos];
+    if (c == q) {
+      if (this.pos + 1 < this.length && this.sql[this.pos + 1] == q) { // doubled quote
+        t += q;
+        ++this.pos;
+      }
+      else {
+        ++this.pos;
+        return t;
+      }
+    }
+    else if (c == '\\') {       // TODO handle \n, \t, etc.
+      if (++this.pos >= this.length)
+        return t;
+      t += this.sql[this.pos];
+    }
+    else
+      t += c;
+    ++this.pos;
+  }
+  throw "unterminated string";
 }
 
 SQL.Tokenizer.prototype._isAlphaNumeric = function( c ){
