@@ -42,6 +42,10 @@ testing.Client = function(){
     this.redirects = [];
     this.url = new URL('/');
     this.ip = "127.0.0.1";
+    this.responseCode = 200;
+    this.method = "GET";
+    this.responseHeaders = {};
+    this.sentFiles = [];
 };
 
 /* Utility method to get an Array of headers, including the cookies.
@@ -61,6 +65,17 @@ testing.Client.prototype.getHeaders = function(){
     return headers.join("\n");
 };
 
+testing.Client.prototype.getMethod = function() {
+    return this.method;
+};
+
+testing.Client.prototype.setMethod = function(method) {
+    this.method = method;
+};
+testing.Client.prototype.setResponseHeader = function(name, value) {
+    this.headers[name] = value;
+}
+
 /**
 * Set the IP that the request "comes from".
 */
@@ -77,8 +92,7 @@ testing.Client.prototype.addHeader = function(header){
 /* Utility method to get a dummy request.
 */
 testing.Client.prototype.getRequest = function(query){
-    return javaStatic("ed.net.httpserver.HttpRequest", "getDummy", query,
-                      this.getHeaders());
+    return javaStatic("ed.net.httpserver.HttpRequest", "getDummy", query, this.getHeaders(), this.getMethod());
 };
 
 /** Add a cookie to the incoming request.
@@ -98,12 +112,21 @@ testing.Client.prototype.addRedirect = function(type, location){
     return this.setURL(location);
 };
 
+/** This method gets called by the dummy response when its responseCode is set
+ */
+testing.Client.prototype.setResponseCode = function(code) {
+    this.responseCode = code;
+};
+
 /* Utility method to put together a dummy response object.
 */
 testing.Client.prototype.getResponse = function(){
     var t = this;
     var response = { sendRedirectTemporary: function(location){ t.addRedirect('temporary', location); },
-                     addCookie: function(key, val){ t.addCookie(key, val); }
+                     addCookie: function(key, val){ t.addCookie(key, val); },
+                     setResponseCode: function(code){ t.setResponseCode(code); },
+                     setHeader: function(name, value){ t.setResponseHeader(name, value);},
+                     sendFile: function(file) { t.sentFiles.push(file); },
                    };
     return response;
 };
@@ -167,6 +190,8 @@ testing.Client.prototype.execute = function(f){
     // sensible request and response objects and keep track of what happens to
     // them
     this.redirects = [];
+    this.responseCode = 200;
+    this.responseHeaders = {};
     var answer = this.answer || 'output';
 
     // Explicitly pollute the global namespace
