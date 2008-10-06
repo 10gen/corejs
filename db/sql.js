@@ -55,6 +55,8 @@ SQL._parseWhere = function( t , existingFilters ){
             filters[name] = { $lt : val };
         else if ( type == ">" )
             filters[name] = { $gt : val };
+        else if ( type == "like" )
+            filters[name] = this._regexpFromString(val);
         else
             throw "can't handle sql type [" + type + "] yet";
 
@@ -210,6 +212,18 @@ SQL.executeQuery = function( mydb , sql ){
     return cursor;
 }
 
+SQL._regexpFromString = function( val ) {
+    if ( val.charAt( 0 ) == '%' )
+        val = val.substring( 1 );
+    else
+        val = '^' + val;
+    if ( val.charAt( val.length - 1 ) == '%' )
+        val = val.substring( 0, val.length - 1 );
+    else
+        val = val + '$';
+    return new RegExp( val, "i" );  // Let's make this case insensitive by default
+}
+
 // ------------------------
 // ---- SQL.Tokenizer -----
 // -----------------------
@@ -281,31 +295,31 @@ SQL.Tokenizer.prototype.nextToken = function(){
 
 // Returns the next string, without its surrounding quotes.
 SQL.Tokenizer.prototype._nextString = function() {
-  var q = this.sql[this.pos];
-  ++this.pos;
-  var t = "";
-  while (this.pos < this.length) {
-    var c = this.sql[this.pos];
-    if (c == q) {
-      if (this.pos + 1 < this.length && this.sql[this.pos + 1] == q) { // doubled quote
-        t += q;
-        ++this.pos;
-      }
-      else {
-        ++this.pos;
-        return t;
-      }
-    }
-    else if (c == '\\') {       // TODO handle \n, \t, etc.
-      if (++this.pos >= this.length)
-        return t;
-      t += this.sql[this.pos];
-    }
-    else
-      t += c;
+    var q = this.sql[this.pos];
     ++this.pos;
-  }
-  throw "unterminated string";
+    var t = "";
+    while ( this.pos < this.length ) {
+        var c = this.sql[this.pos];
+        if ( c == q ) {
+            if ( this.pos + 1 < this.length && this.sql[this.pos + 1] == q ) { // doubled quote
+                t += q;
+                ++this.pos;
+            }
+            else {
+                ++this.pos;
+                return t;
+            }
+        }
+        else if ( c == '\\' ) {       // TODO handle \n, \t, etc.
+            if ( ++this.pos >= this.length )
+                return t;
+            t += this.sql[this.pos];
+        }
+        else
+            t += c;
+        ++this.pos;
+    }
+    throw "unterminated string";
 }
 
 SQL.Tokenizer.prototype._isAlphaNumeric = function( c ){

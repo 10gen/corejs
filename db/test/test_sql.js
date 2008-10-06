@@ -1,12 +1,12 @@
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,12 +59,53 @@ assert( 5 == z );
 assert( isNumber( z ) );
 assert( null == t.nextToken() );
 
+t = new SQL.Tokenizer( "name = 'foo'" );
+assert( "name" == t.nextToken() );
+assert( "=" == t.nextToken() );
+z = t.nextToken();
+assert( isString( z ) );
+assert( "foo" == z );
+assert( null == t.nextToken() );
+
+t = new SQL.Tokenizer( "name = \"bar\"" );
+assert( "name" == t.nextToken() );
+assert( "=" == t.nextToken() );
+z = t.nextToken();
+assert( isString( z ) );
+assert( "bar" == z );
+assert( null == t.nextToken() );
+
+t = new SQL.Tokenizer( "name = 'foo''bar'" );
+assert( "name" == t.nextToken() );
+assert( "=" == t.nextToken() );
+z = t.nextToken();
+assert( isString( z ) );
+assert( "foo'bar" == z );
+assert( null == t.nextToken() );
+
+f = SQL._regexpFromString( '%foo%' );
+assert( f.toString() == '/foo/i');
+f = SQL._regexpFromString( 'foo%' );
+assert( f.toString() == '/^foo/i');
+f = SQL._regexpFromString( '%foo' );
+assert( f.toString() == '/foo$/i');
+f = SQL._regexpFromString( 'foo' );
+assert( f.toString() == '/^foo$/i');
+
 f = SQL.parseWhere( "clicked = 1 " );
 assert( f.clicked == 1 );
 
 f = SQL.parseWhere( "clicked = 1 and z = 3" );
 assert( f.clicked == 1 );
 assert( f.z == 3 );
+
+f = SQL.parseWhere( "name = 'foo'" );
+assert( f.name = 'foo' );
+
+f = SQL.parseWhere( "name like '%foo%'");
+assert( f.name.toString() == '/foo/i' );
+f = SQL.parseWhere( "name like 'foo%'");
+assert( f.name.toString() == '/^foo/i' );
 
 // ---- executeQuery testing ----
 
