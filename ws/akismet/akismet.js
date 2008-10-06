@@ -72,15 +72,15 @@ ws.akismet.Akismet.prototype.__remoteMethod = function(method, userIp, userAgent
     // handle the response from the server
     // TODO: rewrite this as a switch statement
     if (this.xmlHTTPRequest.status == 200) {
-        // got a valid method response, so process it
         log.ws.akismet.debug('Got Response: ' + this.xmlHTTPRequest.responseText);
         if( this.xmlHTTPRequest.responseText == 'invalid' ){
             log.ws.akismet.debug( 'Failed due to ' +this.xmlHTTPRequest.headers['X-akismet-debug-help']);
         }
-        return this.xmlHTTPRequest.responseText == 'false';
+        return this.xmlHTTPRequest.responseText;
     } else {
         // there's a lower level issue, so fail
         log.ws.akismet.ERROR("Error: " + this.xmlHTTPRequest.status + ': ' + this.xmlHTTPRequest.statusText);
+        return null;
     }
 };
 
@@ -124,7 +124,12 @@ ws.akismet.Akismet.prototype.verifyKey = function() {
  * @return {boolean} true if the comment is valid
  */
 ws.akismet.Akismet.prototype.commentCheck = function(userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl) {
-    return this.__remoteMethod('comment-check', userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl);
+    var response = this.__remoteMethod('comment-check', userIp, userAgent, commentAuthor, commentContent, commentEmail, commentUrl);
+    if( ! response ){
+        return null;
+    }
+    // got a valid method response, so process it
+    return this.xmlHTTPRequest.responseText == 'false';
 };
 
 /** Tells akismet that a comment is spam
