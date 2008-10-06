@@ -124,6 +124,9 @@ assert( f.name.toString() == '/^foo/i' );
 f = SQL.parseWhere( "foo in (1, 2, 'a')" );
 assert( f.foo['$in'].toString() == "1,2,a" );
 
+f = SQL.parseWhere( "foo in ('a', 'b', 'c')" );
+assert( f.foo['$in'].toString() == "a,b,c" );
+
 // ---- executeQuery testing ----
 
 db = connect( "test_sql" );

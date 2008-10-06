@@ -308,6 +308,9 @@ SQL.Tokenizer.prototype.nextToken = function(){
         if ( me != first && t.length > 0 )
             break;
 
+        if ( ! me && (c == '"' || c == "'") ) // string is coming after this non-alnum token
+            break;
+
         t += c;
         this.pos++;
     }
