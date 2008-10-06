@@ -25,8 +25,6 @@ SQL = {};
 * @param {Object} [existingFilters] Object to add filters to
 */
 SQL.parseWhere = function( sql , existingFilters ){
-    if ( sql.contains( "(" ) )
-        throw "sql parser can't handle nested stuff yet";
     if ( sql.toLowerCase().contains( " or " ) )
         throw "sql parser can't handle ors yet";
 
@@ -42,6 +40,9 @@ SQL._parseWhere = function( t , existingFilters ){
 
     while( t.hasMore() ){
         var name = t.nextToken();
+        if ( name == '(' )
+            throw "sql parser can't handle nested stuff yet";
+
         var type = t.nextToken();
         if ( type.toLowerCase() == "not" )
             type += " " + t.nextToken();
@@ -53,10 +54,19 @@ SQL._parseWhere = function( t , existingFilters ){
             filters[name] = val;
         else if ( type == "<" )
             filters[name] = { $lt : val };
+        else if ( type == "<=" )
+            filters[name] = { $lte : val };
         else if ( type == ">" )
             filters[name] = { $gt : val };
+        else if ( type == ">=" )
+            filters[name] = { $gte : val };
         else if ( type == "like" )
             filters[name] = this._regexpFromString(val);
+        else if ( type == "in" ) {
+            if ( val != '(' )
+                throw "'in' must be followed by a list of values";
+            filters[name] = { $in : this._inArray(t) };
+        }
         else
             throw "can't handle sql type [" + type + "] yet";
 
@@ -222,6 +232,21 @@ SQL._regexpFromString = function( val ) {
     else
         val = val + '$';
     return new RegExp( val, "i" );  // Let's make this case insensitive by default
+}
+
+// We have already read the first '(', read up to the ending one and return an
+// array of values.
+SQL._inArray = function( t ) {
+    var arr = new Array();
+    while ( t.hasMore() ) {
+      arr.push( t.nextToken() );
+      var sep = t.nextToken();
+      if ( sep == ')')
+          return arr;
+      if ( sep != ',' )
+          throw "Missing ',' in 'in' list of values";
+    }
+    throw "Missing ')' at end of 'in' list of values";
 }
 
 // ------------------------

@@ -83,6 +83,20 @@ assert( isString( z ) );
 assert( "foo'bar" == z );
 assert( null == t.nextToken() );
 
+t = new SQL.Tokenizer( "age <= 42" );
+assert( "age" == t.nextToken() );
+assert( "<=" == t.nextToken() );
+assert( 42 == t.nextToken() );
+
+t = new SQL.Tokenizer( "(1, 2, 3)");
+assert( "(" == t.nextToken() );
+var arr = SQL._inArray(t);
+assert( arr.length == 3 );
+assert( ! t.hasMore() );
+assert( arr[0] == 1 );
+assert( arr[1] == 2 );
+assert( arr[2] == 3 );
+
 f = SQL._regexpFromString( '%foo%' );
 assert( f.toString() == '/foo/i');
 f = SQL._regexpFromString( 'foo%' );
@@ -106,6 +120,9 @@ f = SQL.parseWhere( "name like '%foo%'");
 assert( f.name.toString() == '/foo/i' );
 f = SQL.parseWhere( "name like 'foo%'");
 assert( f.name.toString() == '/^foo/i' );
+
+f = SQL.parseWhere( "foo in (1, 2, 'a')" );
+assert( f.foo['$in'].toString() == "1,2,a" );
 
 // ---- executeQuery testing ----
 
