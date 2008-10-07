@@ -100,13 +100,20 @@ threaded.data.Reply.prototype.decoratorsHandle = function(args){
         var desc = this.getDescendant(request.reply);
         r = new this.Reply();
         if(this.threaded_users == "free"){
-            r.author = request.nauthor;
+            r.author_name = request.nauthor;
+            r.author_email = request.nemail;
+            r.author_url = request.nurl;
         }
         else{
+            r.author_name = user.getDisplayName();
+            r.author_email = user.email;
+            r.author_url = user.url;
             r.author = user;
         }
         r.title = request.ntitle;
         r.content = this.encodeContent(request.ncontent);
+        r.ip = request.getRemoteIP();
+        r.useragent = request.getHeader('User-Agent');
         if(this.validateReply(r)){
             desc.addReply(r);
             ret = r;
