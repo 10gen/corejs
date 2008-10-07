@@ -331,10 +331,10 @@ function htmltable(specs) {
      * @param {db_cursor} Cursor with collection contents.
      */
     this.dbview = function(cursor) {
-        if(request.style || this.specs.style)
-            print('<link type="text/css" rel="stylesheet" href="'+(request.style || this.specs.style)+'" />');
-        else
-            print('<link type="text/css" rel="stylesheet" href="/~~/content/assets/table.css" />');
+        if(request.style || this.specs.style) 
+            head.push('<link type="text/css" rel="stylesheet" href="'+(request.style || this.specs.style)+'" />');
+        eles
+            head.push('<link type="text/css" rel="stylesheet" href="/~~/content/assets/table.css" />');
 
         var idStr = (this.specs.id && this.specs.id !=null && this.specs.id != "null") ? "id='"+this.specs.id+"'" : "";
         this._rows(cursor );
