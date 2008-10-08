@@ -25,9 +25,6 @@ SQL = {};
 * @param {Object} [existingFilters] Object to add filters to
 */
 SQL.parseWhere = function( sql , existingFilters ){
-    if ( sql.toLowerCase().contains( " or " ) )
-        throw "sql parser can't handle ors yet";
-
     return SQL._parseWhere( new SQL.Tokenizer( sql ) , existingFilters );
 }
 
@@ -76,6 +73,8 @@ SQL._parseWhere = function( t , existingFilters ){
         var next = t.nextToken().toLowerCase();
         if ( next == "and" )
             continue;
+        if ( next == "or" )
+            throw "sql parser can't handle ors yet";
 
         if ( next == "order" || next == "group" || next == "limit" ){
             t.extraTokens.add( next );
@@ -100,9 +99,6 @@ SQL._parseToNumber = function( s ){
 }
 
 SQL.executeQuery = function( mydb , sql ){
-
-    if ( sql.contains( "(" ) || sql.contains( " or " ) )
-        throw "don't support lots of things";
 
     var t = new SQL.Tokenizer( sql );
 
