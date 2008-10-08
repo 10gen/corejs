@@ -127,6 +127,17 @@ assert( f.foo['$in'].toString() == "1,2,a" );
 f = SQL.parseWhere( "foo in ('a', 'b', 'c')" );
 assert( f.foo['$in'].toString() == "a,b,c" );
 
+f = SQL.parseWhere( "name = 'the word '' or '' anywhere (surrounded by spaces) used to throw an error'" )
+assert( f.name = "the word '' or '' anywhere (surrounded by spaces) used to throw an error" );
+
+try {
+    f = SQL.parseWhere( "name = 'foo' or name = 'bar'" )
+    assert( false );
+}
+catch (err) {
+    assert( err.toString() == "sql parser can't handle ors yet" );
+}
+
 // ---- executeQuery testing ----
 
 db = connect( "test_sql" );
@@ -153,7 +164,7 @@ assert.eq( 1 , cursor.length() );
 assert.eq( 1 , cursor[0].a );
 assert.eq( 2 , cursor[0].b );
 
-db.basicSelect1.save( { a : 3 , b : 4 } );
+db.basicSelect1.save( { a : 3 , b : 4 , c : 'the word or is in this string' } );
 
 cursor = SQL.executeQuery( db , "select * from basicSelect1" );
 assert.eq( 2 , cursor.length() );
@@ -190,3 +201,20 @@ cursor = SQL.executeQuery( db , "select a from basicSelect1 where a > 0 order by
 assert.eq( 2 , cursor.length() );
 assert.eq( 3 , cursor[0].a );
 assert.eq( 1 , cursor[1].a );
+
+cursor = SQL.executeQuery( db , "select * from basicSelect1 where c = 'the word or is in this string'" );
+assert.eq( 1 , cursor.length() );
+assert.eq( 'the word or is in this string' , cursor[0].c );
+
+try {
+  SQL.executeQuery( db , "select * from basicSelect1 where c = 'foo' or c = 'bar'" );
+  assert( false );
+}
+catch(err) {
+    assert( err.toString() == "sql parser can't handle ors yet" );
+}
+
+cursor = SQL.executeQuery( db , "select a from basicSelect1 where a in (1, 2, 3)" );
+assert.eq( 2 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 3 , cursor[1].a );
