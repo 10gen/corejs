@@ -1,12 +1,34 @@
 import os
+import sys
 import httplib2
 from xml.dom import minidom, Node
+import getopt
 
 host = "localhost"
 port = 8080
-user = "igor"
-password = "moo"
+user = "admin"
+password = "password"
 
+def main():
+    opts,args = getopt.getopt(sys.argv[1:], "", ["host=","port=","user=","password="])
+
+    for name,value in opts:
+        if name == "--host":
+            host = value
+        elif name == "--port":
+            port = int(value)
+        elif name == "--user":
+            user = value
+        elif name == "--password":
+            password = value
+            
+    test_options()
+    test_admin_only()
+    test_mkcol()
+    test_put()
+    test_propfind()
+    test_move()
+    test_lock_superficial()
 
 def assert_equals(expected, actual, msg):
     if(expected != actual):
@@ -235,11 +257,8 @@ def test_lock_superficial():
     
     #cleanup
     do_dav("DELETE", filename)
-    
-test_options()
-test_admin_only()
-test_mkcol()
-test_put()
-test_propfind()
-test_move()
-test_lock_superficial()
+
+
+
+if __name__ == "__main__":
+    main()
