@@ -52,7 +52,7 @@ BrowserDetect.prototype.isSafari = function(){
 * @return 2 or 3
 */
 BrowserDetect.prototype.getMajorVersion = function(){
-    this.majorVersion;
+    return this.majorVersion;
 }
 
 BrowserDetect.prototype.debug = function(){
