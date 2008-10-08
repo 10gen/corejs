@@ -111,13 +111,15 @@ threaded.data.Reply.prototype.decoratorsHandle = function(args){
             r.author = user;
         }
         r.title = request.ntitle;
+        r.content_unescaped = request.ncontent;
         r.content = this.encodeContent(request.ncontent);
         r.ip = request.getRemoteIP();
         r.useragent = request.getHeader('User-Agent');
         if(this.validateReply(r)){
             desc.addReply(r);
-            ret = r;
         }
+        // We tried to handle this in any event
+        ret = r;
     }
     return ret;
 };
