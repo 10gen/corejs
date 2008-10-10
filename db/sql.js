@@ -57,7 +57,7 @@ SQL._parseWhere = function( t , existingFilters ){
             filters[name] = { $gt : val };
         else if ( type == ">=" )
             filters[name] = { $gte : val };
-        else if ( type == "<>" )
+        else if ( type == "<>" || type == "!=" )
             filters[name] = { $ne : val };
         else if ( type == "like" )
             filters[name] = this._regexpFromString(val);

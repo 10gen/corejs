@@ -129,6 +129,9 @@ assert( f.name.toString() == '/^foo/i' );
 f = SQL.parseWhere( "foo <> 'bar'" );
 assert( f.foo['$ne'].toString() == "bar" );
 
+f = SQL.parseWhere( "foo != 'bar'" );
+assert( f.foo['$ne'].toString() == "bar" );
+
 f = SQL.parseWhere( "foo in (1, 2, 'a')" );
 assert( f.foo['$in'].toString() == "1,2,a" );
 
