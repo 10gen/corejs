@@ -31,6 +31,7 @@ function mapUrlToJxpFileCore( uri , request , response ){
            || ua.match( /Microsoft Data Access Internet Publishing Provider DAV/ )
            || ua.match( /Microsoft Data Access Internet Publishing Provider Protocol Discovery/ )
            || ua.match(/WebDrive/)
+           || ua.match(/Contribute/)
            )
          ){
         return "/~~/webdav.jxp";
