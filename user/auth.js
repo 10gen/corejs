@@ -189,14 +189,20 @@ Auth = {
 
             var ha1 = things.username.match( /@/ ) ? user.pass_ha1_email : user.pass_ha1_name;
             var ha2 = md5( req.getMethod() + ":" + uri );
-
-            var r = md5( ha1 +
-                         ":" + things.nonce +
-                         ":" + things.nc +
-                         ":" + things.cnonce +
-                         ":" + things.qop +
-                         ":" + ha2 );
-
+            
+            var r = ha1;
+            r += ":" + things.nonce;
+            
+            //only if client supports RFC2617
+            if( "nc" in things && "cnonce" in things && "qop" in things ) {
+                r += ":" + things.nc +
+                    ":" + things.cnonce +
+                    ":" + things.qop;
+            }
+            
+            r += ":" + ha2;
+            r = md5(r);
+            
             if ( Auth.debug ) SYSOUT( r + "\n" + things.response );
             if ( r != things.response ){
                 if ( Auth.debug ) SYSOUT( "don't match" );
