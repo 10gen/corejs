@@ -88,6 +88,11 @@ assert( "age" == t.nextToken() );
 assert( "<=" == t.nextToken() );
 assert( 42 == t.nextToken() );
 
+t = new SQL.Tokenizer( "age <> 42" );
+assert( "age" == t.nextToken() );
+assert( "<>" == t.nextToken() );
+assert( 42 == t.nextToken() );
+
 t = new SQL.Tokenizer( "(1, 2, 3)");
 assert( "(" == t.nextToken() );
 var arr = SQL._inArray(t);
@@ -120,6 +125,9 @@ f = SQL.parseWhere( "name like '%foo%'");
 assert( f.name.toString() == '/foo/i' );
 f = SQL.parseWhere( "name like 'foo%'");
 assert( f.name.toString() == '/^foo/i' );
+
+f = SQL.parseWhere( "foo <> 'bar'" );
+assert( f.foo['$ne'].toString() == "bar" );
 
 f = SQL.parseWhere( "foo in (1, 2, 'a')" );
 assert( f.foo['$in'].toString() == "1,2,a" );
