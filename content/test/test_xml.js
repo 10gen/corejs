@@ -147,11 +147,11 @@ assert(x.$ == "<greeting>hello&amp;</greeting>");
 var s = "<ctest>&lt;greeting&gt;</ctest>";
 var x = xml.fromString(s);
 assert(x.$ == "<greeting>");
-/*
+
 var s = "<?xml version=\"1.0\"?><!-- ignore me\n--><result/>";
 var x = xml.fromString(s);
 assert(x._name == "result");
-*/
+
 var s = "<?xml version=\"1.0\"?><ns:whoo f:attr=\"namespace\">test</ns:whoo>";
 var x = xml.fromString(s);
 assert(x._name == "ns:whoo");

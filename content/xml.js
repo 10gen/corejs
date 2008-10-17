@@ -152,7 +152,7 @@ xml = {
      * @returns {Object} JavaScript object
      */
     fromString : function( s ){
-        s = s.replace(/<!--.*?-->/gm, "");
+        s = s.replace(/<!--(.|\s)*?-->/gm, "");
         return xml.from(xml._xmlTokenizerchar(s));
     },
 
