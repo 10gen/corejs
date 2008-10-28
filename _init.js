@@ -33,8 +33,8 @@ htmlfooter = function() {
     if ( useFooter )
         return useFooter();
 
-    if ( jxp.pieces && jxp.pieces.footer )
-        return jxp.pieces.footer();
+    if ( local && local.pieces && local.pieces.footer )
+        return local.pieces.footer();
 
     print('</body></html>');
 }
