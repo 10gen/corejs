@@ -192,7 +192,7 @@ Forms.Form.prototype.select = function( name , value , choices , options ){
         html += "</option>";
     }
     html += "</select>";
-    return html;
+    return djang10.mark_safe( html );
 }
 
 /** Create an HTML submit button tag.
@@ -226,5 +226,5 @@ Forms.Form.prototype.input = function( options ){
     }
 
     html += ">";
-    return html;
+    return djang10.mark_safe( html );
 };
