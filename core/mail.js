@@ -125,7 +125,7 @@ Mail.SMTP = function( addr , server , username , password , ssl , port ){
 
     // only if we want SSL should we use SSL...
     if (ssl) {
-	this._props.setProperty( "mail.smtp.socketFactory.class" , "javax.net.ssl.SSLSocketFactory" );
+        this._props.setProperty( "mail.smtp.socketFactory.class" , "javax.net.ssl.SSLSocketFactory" );
     }
 
     this._props.setProperty( "mail.smtp.socketFactory.fallback" , "false" );
@@ -207,14 +207,14 @@ Mail.IMAP.gmail = function( username , password ){
     store.connect("imap.gmail.com", 993, username, password);
 
     if(!store.isConnected()) {
-	log("not connected");
-	return;
+        log("not connected");
+        return;
     }
 
     var folder = store.getFolder("INBOX");
     if(!folder.exists()) {
-	log("the folder does not exist.");
-	return;
+        log("the folder does not exist.");
+        return;
     }
 
     folder.open(1);
