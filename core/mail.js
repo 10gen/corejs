@@ -80,8 +80,8 @@ Mail.Message.prototype.send = function( smtp ){
         var realType = Mail.recipientTypesJava[i];
 
         this[type].forEach( function(z){
-                m.addRecipient( realType , javaCreate( "javax.mail.internet.InternetAddress" , z ) );
-            } );
+                                m.addRecipient( realType , javaCreate( "javax.mail.internet.InternetAddress" , z ) );
+                            } );
 
     }
 
@@ -125,7 +125,7 @@ Mail.SMTP = function( addr , server , username , password , ssl , port ){
 
     // only if we want SSL should we use SSL...
     if (ssl) {
-	    this._props.setProperty( "mail.smtp.socketFactory.class" , "javax.net.ssl.SSLSocketFactory" );
+	this._props.setProperty( "mail.smtp.socketFactory.class" , "javax.net.ssl.SSLSocketFactory" );
     }
 
     this._props.setProperty( "mail.smtp.socketFactory.fallback" , "false" );
