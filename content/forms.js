@@ -178,14 +178,14 @@ Forms.Form.prototype.select = function( name , value , choices , options ){
         }
         else if ( isObject( c ) && c.name ){
             name = c.name;
-            val = c.value || ( c._id || c.name );
+            val = typeof(c.value) != 'undefined' ? c.value : ( c._id || c.name );
         }
         else {
             name = c.toString();
             val = c.toString();
         }
         html += "<option value='" + val + "' ";
-        if ( value == c )
+        if ( value == val )
             html += " selected ";
         html += " >";
         html += name;
