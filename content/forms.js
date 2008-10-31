@@ -1,12 +1,12 @@
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
 */
 
 /** @class HTML form handling
- * @docmodule core.content.forms 
+ * @docmodule core.content.forms
  */
 Forms = {};
 
@@ -147,7 +147,7 @@ Forms.Form.prototype.hidden = function( name , value , options ){
 };
 
 /**
- * @param choices.  array.  
+ * @param choices.  array.
  * if its of strings or numbers, assumes names and values are the same
  * if objects, looks for name and value
  * if name missing, calls toString
@@ -168,10 +168,10 @@ Forms.Form.prototype.select = function( name , value , choices , options ){
     html += ">";
     for ( var i=0; i<choices.length; i++ ){
         var c = choices[i];
-        
+
         var name;
         var val;
-        
+
         if ( c == null || isString( c ) || isNumber( c ) ){
             name = c;
             val = c;
