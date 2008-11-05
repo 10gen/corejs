@@ -16,6 +16,8 @@
 
 core.testing.client();
 
+print("Hey, running corejs " + core.testing.client.getClass());
+
 var c = new testing.Client();
 
 c.addCookie("test1", "valu1");
