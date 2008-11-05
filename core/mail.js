@@ -134,6 +134,16 @@ Mail.SMTP = function( addr , server , username , password , ssl , port ){
 
 };
 
+/* NOTE:
+ * The algorithm the Python bridge uses to determine if something is a
+ * constructor or a regular function is something like "if there is anything
+ * in the prototype then it's a constructor, otherwise not". This SMTP
+ * constructor, therefore, doesn't work in Python (where it's being used as
+ * part of the AppEngine Mail API). By putting this little bit into the
+ * prototype we get it to work.
+ */
+Mail.SMTP.prototype._hack_for_python = true;
+
 /** Send message from a Gmail account.
  * @param {string} username Gmail username
  * @param {string} password Gmail password
