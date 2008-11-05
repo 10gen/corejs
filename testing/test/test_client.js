@@ -16,7 +16,7 @@
 
 core.testing.client();
 
-log("Hey, running corejs " + core.testing.client.getClass());
+print("Hey, running corejs " + core.testing.client.getClass());
 
 var c = new testing.Client();
 
