@@ -40,34 +40,34 @@ SQL._parseWhere = function( t , existingFilters ){
         if ( name == '(' )
             throw "sql parser can't handle nested stuff yet";
 
-        var type = t.nextToken();
-        if ( type.toLowerCase() == "not" )
-            type += " " + t.nextToken();
+        var op = t.nextToken();
+        if ( op.toLowerCase() == "not" )
+            op += " " + t.nextToken();
         var val = t.nextToken();
 
-        type = type.toLowerCase();
+        op = op.toLowerCase();
 
-        if ( type == "=" )
+        if ( op == "=" )
             filters[name] = val;
-        else if ( type == "<" )
+        else if ( op == "<" )
             filters[name] = { $lt : val };
-        else if ( type == "<=" )
+        else if ( op == "<=" )
             filters[name] = { $lte : val };
-        else if ( type == ">" )
+        else if ( op == ">" )
             filters[name] = { $gt : val };
-        else if ( type == ">=" )
+        else if ( op == ">=" )
             filters[name] = { $gte : val };
-        else if ( type == "<>" || type == "!=" )
+        else if ( op == "<>" || op == "!=" )
             filters[name] = { $ne : val };
-        else if ( type == "like" )
+        else if ( op == "like" )
             filters[name] = this._regexpFromString(val);
-        else if ( type == "in" ) {
+        else if ( op == "in" ) {
             if ( val != '(' )
                 throw "'in' must be followed by a list of values";
             filters[name] = { $in : this._inArray(t) };
         }
         else
-            throw "can't handle sql type [" + type + "] yet";
+            throw "can't handle sql operator [" + op + "] yet";
 
         if ( ! t.hasMore() )
             break;

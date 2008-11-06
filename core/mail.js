@@ -80,8 +80,8 @@ Mail.Message.prototype.send = function( smtp ){
         var realType = Mail.recipientTypesJava[i];
 
         this[type].forEach( function(z){
-                m.addRecipient( realType , javaCreate( "javax.mail.internet.InternetAddress" , z ) );
-            } );
+                                m.addRecipient( realType , javaCreate( "javax.mail.internet.InternetAddress" , z ) );
+                            } );
 
     }
 
@@ -125,7 +125,7 @@ Mail.SMTP = function( addr , server , username , password , ssl , port ){
 
     // only if we want SSL should we use SSL...
     if (ssl) {
-	    this._props.setProperty( "mail.smtp.socketFactory.class" , "javax.net.ssl.SSLSocketFactory" );
+        this._props.setProperty( "mail.smtp.socketFactory.class" , "javax.net.ssl.SSLSocketFactory" );
     }
 
     this._props.setProperty( "mail.smtp.socketFactory.fallback" , "false" );
@@ -133,6 +133,16 @@ Mail.SMTP = function( addr , server , username , password , ssl , port ){
     this._session = javaStatic( "ed.util.MailUtil" , "createSession" , this._props , this.username , this.password );
 
 };
+
+/* NOTE:
+ * The algorithm the Python bridge uses to determine if something is a
+ * constructor or a regular function is something like "if there is anything
+ * in the prototype then it's a constructor, otherwise not". This SMTP
+ * constructor, therefore, doesn't work in Python (where it's being used as
+ * part of the AppEngine Mail API). By putting this little bit into the
+ * prototype we get it to work.
+ */
+Mail.SMTP.prototype._hack_for_python = true;
 
 /** Send message from a Gmail account.
  * @param {string} username Gmail username
@@ -207,14 +217,14 @@ Mail.IMAP.gmail = function( username , password ){
     store.connect("imap.gmail.com", 993, username, password);
 
     if(!store.isConnected()) {
-	log("not connected");
-	return;
+        log("not connected");
+        return;
     }
 
     var folder = store.getFolder("INBOX");
     if(!folder.exists()) {
-	log("the folder does not exist.");
-	return;
+        log("the folder does not exist.");
+        return;
     }
 
     folder.open(1);

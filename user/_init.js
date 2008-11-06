@@ -54,6 +54,10 @@ User.getSiteName = function( name ){
         if ( ! db )
             throw "no db defined";
         name = db.getName();
+
+        if (!name && __instance__) {
+            name = __instance__.getName();
+        }
     }
     
     var idx = name.indexOf( ":" );

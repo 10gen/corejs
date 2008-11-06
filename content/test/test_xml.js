@@ -18,7 +18,7 @@ core.content.xml();
 s = "<thingy attr='name'>hi</thingy>";
 
 function dump(s){
-    s = s.replace(/<!--.*?-->/gm, "");
+    s = s.replace(/<!--(.|\s)*?-->/gm, "");
     f = xml._xmlTokenizerchar(s);
     while(true){
         tok = f();
