@@ -46,8 +46,8 @@ MemoryAppender.create = function(){
             lst.shift();
 
         all.push( obj );
-        if ( lst.length > options.max * 5 )
-            lst.shift();
+        if ( all.length > options.max * 5 )
+            all.shift();
 
     };
 
