@@ -277,7 +277,7 @@ Routes.prototype.finish = function( uri , request , response , firstPiece , key 
             var r = key.exec( uri );
 
             if ( ! r )
-                throw "something is wrong";
+                throw "regex [" + key + "] didn't match [" + uri + "] when it was supposed to";
 
             for ( var i=0; i<names.length; i++ ){
                 if ( r[i+1] ){
