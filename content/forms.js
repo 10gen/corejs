@@ -32,7 +32,6 @@ Forms.fillInObject = function( prefix , o , req ){
     o = o || {};
 
     for ( var name in request ){
-
         if ( prefix && ! name.startsWith( prefix ) )
             continue;
 
@@ -40,6 +39,9 @@ Forms.fillInObject = function( prefix , o , req ){
             continue;
 
 	var val = request[name];
+        if ( val && req.getParameters( name ) && req.getParameters( name ).length > 1 )
+            val = req.getParameters( name );
+
         if ( prefix )
             name = name.substring( prefix.length );
 
@@ -47,6 +49,7 @@ Forms.fillInObject = function( prefix , o , req ){
             continue;
 
 	if ( name == "_id" ) val = ObjectId( val );
+
 
         Forms._subobject( o , name , val );
     }
