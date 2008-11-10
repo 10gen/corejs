@@ -253,7 +253,7 @@ Util.Diff = {
      */
     diff : function(a, b){
         var diffy = Util.Diff.diffObj({arg: a}, {arg: b})["arg"];
-        if(!diffy) return {};
+        if(!diffy) return null;
         else if(diffy.change) return diffy.change;
         else return diffy;
     },
