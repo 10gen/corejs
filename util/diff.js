@@ -120,7 +120,7 @@ Util.Diff = {
         for(var i in newa) {
             if(newb[i]) {
                 var d = Util.Diff.diff(newa[i], newb[i]);
-                if(d != 0 &&
+                if( d && d != 0 &&
                    (d.length && d.length != 0) ||
                    (d instanceof Object && Object.keys(d).length > 0))
                     dArr[i] = d;
