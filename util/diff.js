@@ -120,7 +120,7 @@ Util.Diff = {
         for(var i in newa) {
             if(newb[i]) {
                 var d = Util.Diff.diff(newa[i], newb[i]);
-                if(d != 0 &&
+                if( d && d != 0 &&
                    (d.length && d.length != 0) ||
                    (d instanceof Object && Object.keys(d).length > 0))
                     dArr[i] = d;
@@ -253,7 +253,7 @@ Util.Diff = {
      */
     diff : function(a, b){
         var diffy = Util.Diff.diffObj({arg: a}, {arg: b})["arg"];
-        if(!diffy) return {};
+        if(!diffy) return null;
         else if(diffy.change) return diffy.change;
         else return diffy;
     },

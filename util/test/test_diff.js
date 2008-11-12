@@ -49,3 +49,11 @@ var d = Util.Diff.diffDate( a , b );
 var n = Util.Diff.applyBackwardsDate( b, d );
 
 assert( a == n );
+
+var a = "1\n2\n";
+var b = '1\n2\n';
+
+var d = Util.Diff.diff(a, b);
+var n = Util.Diff.applyBackwards(b, d);
+
+assert( a == n );
