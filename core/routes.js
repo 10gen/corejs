@@ -247,6 +247,7 @@ Routes.prototype.apply = function( uri , request , response , prefix ){
 
     for ( var i=0; i<this._regexp.length; i++ ){
         var value = this._regexp[i];
+        value.key.lastIndex = 0;
         if ( value.key.test( uri ) )
             return this.finish( uri , request , response , firstPiece , value.key , value , prefix);
     }
