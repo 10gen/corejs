@@ -2,13 +2,13 @@
 
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,15 +91,15 @@ Search = {
             return;
 
         for ( var field in weights ){
-            
+
             var w = weights[ field ];
             if(typeof w == "number"){
                 num.push( w );
-                
+
                 var idx = Search.getIndexName( w );
                 var o = {}
                 o[idx] = 1;
-                
+
                 if ( Search.DEBUG ) Search.log( "\t putting index on " + tojson( o ) );
                 table.ensureIndex( o );
             }
@@ -235,9 +235,10 @@ Search = {
 
         var matchCounts = Object(); // _id -> num
         var all = Array();
+        var allIds = [];
         var max = 0;
         var words = Search.queryToArray(queryString);
-        
+
         var fieldsWanted = { _id : ObjectId() };
         if ( options.sort ){
             for ( var k in options.sort )
@@ -249,7 +250,7 @@ Search = {
             var w = weights[i].w;
 
             if ( Search.DEBUG ) Search.log( "\t using index " + idx );
-            
+
             words.forEach( function(z){
                 var s = {}; s[idx] = z;
                 if ( Search.DEBUG ) Search.log( "\t\t searching on "+tojson(s) );
@@ -257,7 +258,7 @@ Search = {
                 if ( options.sort )
                     res.sort( options.sort );
                 res.limit( 20000 );
-                
+
                 while ( res.hasNext() ){
                     var tempObject = res.next();
                     var temp = tempObject._id.toString();
@@ -271,8 +272,10 @@ Search = {
 
                     if ( Search.DEBUG ) Search.log( "\t\t " + temp + "\t" + tojson( tempObject )  + "\t" + matchCounts[temp] );
 
-                    if ( ! all.contains( temp ) )
-                        all.add( temp );
+                    if ( ! allIds.contains( temp ) ){
+                      allIds.add( temp );
+                      all.add( tempObject );
+                    }
                 }
             } );
 
@@ -284,15 +287,15 @@ Search = {
             Search.log( "matchCounts: ");
             all.forEach(
                 function(z){
-                    Search.log( "\t" + z + "\t" + matchCounts[z] );
+                    Search.log( "\t" + z._id + "\t" + matchCounts[z._id] );
                 }
             );
         }
-        
+
         // will only work if options.sort has 1 key
-        all = all.sort( 
+        all = all.sort(
             function( l , r ){
-                
+
                 if ( options.sort ){
                     for ( var k in options.sort ){
                         if ( l[k] < r[k] )
@@ -301,7 +304,7 @@ Search = {
                             return options.sort[k];
                     }
                 }
-                
+
                 if ( ! options.ignoreRelevancy ){
                     var diff = matchCounts[r] - matchCounts[l];
                     if ( diff != 0 )
@@ -330,14 +333,14 @@ Search = {
         var good = Array();
         all.forEach( function( z ){
             if ( good.length <= min ){
-                var id = ObjectId( z );
+                var id = z._id;
                 var obj = table.findOne( id );
                 if( obj == null ) {
                     Search.log.error( "couldn't find " + id + " even though it came up in the search!" );
                 }
                 else {
                     if( options.recordRelevancy ) {
-                        obj._relevance = matchCounts[ z ];
+                        obj._relevance = matchCounts[ id.toString() ];
                     }
                     good.add( obj );
                 }

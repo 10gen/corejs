@@ -1,13 +1,13 @@
 
 /**
 *      Copyright (C) 2008 10gen Inc.
-*  
+*
 *    Licensed under the Apache License, Version 2.0 (the "License");
 *    you may not use this file except in compliance with the License.
 *    You may obtain a copy of the License at
-*  
+*
 *       http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *    Unless required by applicable law or agreed to in writing, software
 *    distributed under the License is distributed on an "AS IS" BASIS,
 *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,9 @@ var OPTIONS = { title : 1 , text : 0.5 };
 Search.fixTable( t , OPTIONS );
 
 o = {
-    title : "the title" ,
-    text : "some content should go here title"
+  title : "the title" ,
+  text : "some content should go here title",
+  ts : 45
 };
 Search.index( o , OPTIONS );
 t.save( o );
@@ -37,25 +38,43 @@ assert( Search.search( t , "title" , { min : 1 } ).length == 1 );
 assert( Search.search( t , "content" , { min : 1 } ).length == 1 );
 
 o = {
-    title : "content test" ,
-    text : "some content should go here title"
+  title : "content test" ,
+  text : "some content should go here title",
+  ts : 12
 };
 Search.index( o , OPTIONS );
 t.save( o );
 
 assert( Search.search( t , "content" , { min : 1 } ).length == 1 );
-assert( Search.search( t , "content" , { min : 10 } ).length == 2 );
+assert.eq( Search.search( t , "content" , { min : 10 } ).length , 2 );
 
-t.remove( { _id: o._id } );
+var results = Search.search( t, 'content', {sort: {ts: -1 } } );
+var lastTS = 1000000;
+results.forEach(function(p){
+                  assert(p.ts < lastTS);
+                  lastTS = p.ts;
+  });
+
+var results = Search.search( t, 'content', {sort: {ts: 1} } );
+
+var lastTS = 0;
+results.forEach(function(p){
+                  assert(p.ts > lastTS);
+                  lastTS = p.ts;
+  });
+
+
+
 
 // nested indexing
+t.remove( { _id: o._id } );
 var OPTIONS = { title: 1, posts: {text: 1}};
 o = {
-    title: 'the title',
-    posts: [
-        {text: "some text"},
-        {text: "more text"}
-    ]
+  title: 'the title',
+  posts: [
+    {text: "some text"},
+    {text: "more text"}
+  ],
 };
 
 Search.index(o, OPTIONS);
@@ -103,7 +122,6 @@ Search.fixTable(t, WEIGHTS);
 
 assert( Search.search( t, "lt", {min: 1}).length == 1);
 assert( Search.search( t, "b", {min: 1}).length == 0);
-
 
 //exit();
 
@@ -188,3 +206,5 @@ opts = {a: {content: 1}};
 results = Search.snippet(o1, query, opts);
 assert(results.length == 1);
 assert(results[0].object == o1.a[1]);
+
+
