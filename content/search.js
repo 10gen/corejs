@@ -238,19 +238,26 @@ Search = {
         var max = 0;
         var words = Search.queryToArray(queryString);
         
+        var fieldsWanted = { _id : ObjectId() };
+        if ( options.sort ){
+            for ( var k in options.sort )
+                fieldsWanted[k] = 1;
+        }
+
         for ( var i=0; i<weights.length; i++){
             var idx = weights[i].idx;
             var w = weights[i].w;
 
             if ( Search.DEBUG ) Search.log( "\t using index " + idx );
-
+            
             words.forEach( function(z){
                 var s = {}; s[idx] = z;
                 if ( Search.DEBUG ) Search.log( "\t\t searching on "+tojson(s) );
-                var res = table.find( s , { _id : ObjectId() } );
+                var res = table.find( s , fieldsWanted );
                 if ( options.sort )
                     res.sort( options.sort );
-
+                res.limit( 20000 );
+                
                 while ( res.hasNext() ){
                     var tempObject = res.next();
                     var temp = tempObject._id.toString();
@@ -281,16 +288,35 @@ Search = {
                 }
             );
         }
-
-        if( ! options.ignoreRelevancy ) {
-            all.sort( function( l , r ){
-                var diff = matchCounts[r] - matchCounts[l];
-                if ( diff != 0 )
-                    return diff;
+        
+        // will only work if options.sort has 1 key
+        all = all.sort( 
+            function( l , r ){
                 
+                if ( options.sort ){
+                    for ( var k in options.sort ){
+                        if ( l[k] < r[k] )
+                            return -1 * options.sort[k];
+                        if ( l[k] > r[k] )
+                            return options.sort[k];
+                    }
+                }
+                
+                if ( ! options.ignoreRelevancy ){
+                    var diff = matchCounts[r] - matchCounts[l];
+                    if ( diff != 0 )
+                        return diff;
+                }
+
+                if ( l._id < r._id )
+                    return -1;
+
+                if ( l._id > r._id )
+                    return 1;
+
                 return 0;
-            } );
-        }
+            }
+        );
 
         if ( Search.DEBUG ){
             Search.log( "matchCounts sorted: ");
@@ -303,7 +329,7 @@ Search = {
 
         var good = Array();
         all.forEach( function( z ){
-            if ( matchCounts[z] == max || good.length < min ){
+            if ( good.length <= min ){
                 var id = ObjectId( z );
                 var obj = table.findOne( id );
                 if( obj == null ) {
