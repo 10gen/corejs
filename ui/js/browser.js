@@ -1,4 +1,11 @@
 
+/**
+* server side usage:
+var browser = new BrowserDetect();
+browser.isFirefox()
+browser.userAgent returns the user agent
+*/
+
 BrowserDetect = function( userAgent ){
     if ( ! userAgent ){
         if ( typeof( request ) != "undefined" && request.getHeader( "User-Agent" ) )
