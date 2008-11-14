@@ -107,7 +107,7 @@ if ( file.track ){
 }
 
 if ( ! response.getHeader( "Expires" ) ){
-    response.setCacheTime( 3600 );
+    response.setCacheTime( 3600 * 24 );
 }
 response.sendFile( file );
 
