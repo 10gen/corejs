@@ -101,6 +101,10 @@ testing.Client.prototype.addCookie = function(key, val){
     this.cookies[key] = val;
 };
 
+testing.Client.prototype.setCookie = function( c ){
+    this.cookies[c.name] = c.value;
+}
+
 /* This method gets called by the dummy response when it is sent a
 *  sendRedirectTemporary. It sets the URL so that further execute() calls get
 *  that URL as a request.
@@ -124,6 +128,7 @@ testing.Client.prototype.getResponse = function(){
     var t = this;
     var response = { sendRedirectTemporary: function(location){ t.addRedirect('temporary', location); },
                      addCookie: function(key, val){ t.addCookie(key, val); },
+                     setCookie: function(c){ t.setCookie(c); },
                      setResponseCode: function(code){ t.setResponseCode(code); },
                      setHeader: function(name, value){ t.setResponseHeader(name, value);},
                      sendFile: function(file) { t.sentFiles.push(file); },
