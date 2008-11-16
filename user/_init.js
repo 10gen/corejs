@@ -127,4 +127,28 @@ User.abort = function(msg){
     throw Exception.Quiet(msg);
 }
 
+User.getAuthDomain = function( request ){
+    if ( ! User._authDomain )
+        return null;
+    
+    if ( request && ! request.getHost().endsWith( User._authDomain ) )
+        return null;
+
+    return User._authDomain;
+}
+
+User.setAuthDomain = function( domain ){
+    User._authDomain = domain;
+}
+
+User.setAuthCookie = function( request , response , name , value , expires ){
+    var c = {};
+    c.name = name;
+    c.value = value;
+    c.path = "/";
+    c.expires = expires;
+    c.domain = User.getAuthDomain( request );
+    response.setCookie( c );
+}
+
 core.content.regexp();

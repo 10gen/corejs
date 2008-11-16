@@ -353,9 +353,9 @@ Auth = {
 
             u.tokens.push( { hash : myHash , expires : expires } );
             db.users.save( u );
-
-            response.addCookie( "username" , request.username , secs );
-            response.addCookie( "userhash" , myHash , secs );
+            
+            User.setAuthCookie( request , response , "username" , request.username , expires );
+            User.setAuthCookie( request , response , "userhash" , myHash , expires );
 
             return u;
 

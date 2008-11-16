@@ -22,6 +22,7 @@ try {
     user = Auth.getUser( request , response );
 }
 catch (e if ! (e instanceof Exception.Redirect)){
+    log.user.error( "weird login error" , e );
     error = e;
 }
 catch(e if (e instanceof Exception.Redirect)){
