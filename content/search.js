@@ -252,19 +252,22 @@ Search = {
             if ( Search.DEBUG ) Search.log( "\t using index " + idx );
 
             words.forEach( function(z){
+
                 var s = { query : {} }; 
                 s.query[idx] = z;
-                
+
                 if ( options.sort )
                     s.orderBy = options.sort;
+                
+                if ( options.filter )
+                    s.query = Object.extend( s.query , options.filter );
+                
 
                 var indexKeys = {};
                 indexKeys[idx] = 1;
                 s.$hint = table.genIndexName( indexKeys );
-
-                if ( Search.DEBUG )Search.log( "\t\t searching on "+tojson(s) );
-                log( "HERE " + tojson( s ) );
                 
+                if ( Search.DEBUG )Search.log( "\t\t searching on "+tojson(s) );
                 
                 var res = table.find( s , fieldsWanted );
 
@@ -303,9 +306,14 @@ Search = {
             );
         }
 
-        // will only work if options.sort has 1 key
         all = all.sort(
             function( l , r ){
+
+                if ( ! options.ignoreRelevancy ){
+                    var diff = matchCounts[r] - matchCounts[l];
+                    if ( diff != 0 )
+                        return diff;
+                }
 
                 if ( options.sort ){
                     for ( var k in options.sort ){
@@ -314,12 +322,6 @@ Search = {
                         if ( l[k] > r[k] )
                             return options.sort[k];
                     }
-                }
-
-                if ( ! options.ignoreRelevancy ){
-                    var diff = matchCounts[r] - matchCounts[l];
-                    if ( diff != 0 )
-                        return diff;
                 }
 
                 if ( l._id < r._id )
