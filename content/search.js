@@ -256,12 +256,8 @@ Search = {
                 var s = { query : {} };
                 s.query[idx] = z;
 
-                if ( options.sort )
-                    s.orderBy = options.sort;
-
                 if ( options.filter )
                     s.query = Object.extend( s.query , options.filter );
-
 
                 var indexKeys = {};
                 indexKeys[idx] = 1;
