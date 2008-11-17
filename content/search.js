@@ -253,22 +253,22 @@ Search = {
 
             words.forEach( function(z){
 
-                var s = { query : {} }; 
+                var s = { query : {} };
                 s.query[idx] = z;
 
                 if ( options.sort )
                     s.orderBy = options.sort;
-                
+
                 if ( options.filter )
                     s.query = Object.extend( s.query , options.filter );
-                
+
 
                 var indexKeys = {};
                 indexKeys[idx] = 1;
                 s.$hint = table.genIndexName( indexKeys );
-                
+
                 if ( Search.DEBUG )Search.log( "\t\t searching on "+tojson(s) );
-                
+
                 var res = table.find( s , fieldsWanted );
 
                 res.limit( 20000 );
@@ -310,7 +310,7 @@ Search = {
             function( l , r ){
 
                 if ( ! options.ignoreRelevancy ){
-                    var diff = matchCounts[r] - matchCounts[l];
+                    var diff = matchCounts[r._id] - matchCounts[l._id];
                     if ( diff != 0 )
                         return diff;
                 }
