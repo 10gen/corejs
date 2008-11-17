@@ -48,14 +48,14 @@ t.save( o );
 assert( Search.search( t , "content" , { min : 1 } ).length == 1 );
 assert.eq( Search.search( t , "content" , { min : 10 } ).length , 2 );
 
-var results = Search.search( t, 'content', {sort: {ts: -1 } } );
+var results = Search.search( t, 'content', {sort: {ts: -1 } , ignoreRelevancy: true } );
 var lastTS = 1000000;
 results.forEach(function(p){
                   assert(p.ts < lastTS);
                   lastTS = p.ts;
   });
 
-var results = Search.search( t, 'content', {sort: {ts: 1} } );
+var results = Search.search( t, 'content', {sort: {ts: 1} , ignoreRelevancy: true} );
 
 var lastTS = 0;
 results.forEach(function(p){
