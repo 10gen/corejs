@@ -252,11 +252,22 @@ Search = {
             if ( Search.DEBUG ) Search.log( "\t using index " + idx );
 
             words.forEach( function(z){
-                var s = {}; s[idx] = z;
-                if ( Search.DEBUG ) Search.log( "\t\t searching on "+tojson(s) );
-                var res = table.find( s , fieldsWanted );
+                var s = { query : {} }; 
+                s.query[idx] = z;
+                
                 if ( options.sort )
-                    res.sort( options.sort );
+                    s.orderBy = options.sort;
+
+                var indexKeys = {};
+                indexKeys[idx] = 1;
+                s.$hint = table.genIndexName( indexKeys );
+
+                if ( Search.DEBUG )Search.log( "\t\t searching on "+tojson(s) );
+                log( "HERE " + tojson( s ) );
+                
+                
+                var res = table.find( s , fieldsWanted );
+
                 res.limit( 20000 );
 
                 while ( res.hasNext() ){
