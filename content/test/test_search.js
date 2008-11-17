@@ -45,8 +45,16 @@ o = {
 Search.index( o , OPTIONS );
 t.save( o );
 
+o = {
+  title : 'another post',
+  text : 'some content that is less relevant',
+  ts : 15
+};
+Search.index( o , OPTIONS );
+t.save( o );
+
 assert( Search.search( t , "content" , { min : 1 } ).length == 1 );
-assert.eq( Search.search( t , "content" , { min : 10 } ).length , 2 );
+assert.eq( Search.search( t , "content" , { min : 10 } ).length , 3 );
 
 var results = Search.search( t, 'content', {sort: {ts: -1 } , ignoreRelevancy: true } );
 var lastTS = 1000000;
@@ -63,8 +71,21 @@ results.forEach(function(p){
                   lastTS = p.ts;
   });
 
+var results = Search.search( t , 'content' , {sort: {ts: 1}});
+var ary = results.toArray();
+assert.eq( results[0].ts , 12 );
+assert.eq( results[1].ts , 15 );
+assert.eq( results[2].ts , 45 );
+
+var results = Search.search( t , 'content' , {sort: {ts: -1}});
+var ary = results.toArray();
+assert.eq( results[0].ts , 12 );
+assert.eq( results[1].ts , 45 );
+assert.eq( results[2].ts , 15 );
+
+
 // filtering
-assert.eq( Search.search( t , 'content', {filter : {ts : {$lt: 20} } } ).length , 1 );
+assert.eq( Search.search( t , 'content', {filter : {ts : {$lt: 20} } } ).length , 2 );
 
 
 // nested indexing
