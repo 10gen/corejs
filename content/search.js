@@ -252,7 +252,10 @@ Search = {
             if ( Search.DEBUG ) Search.log( "\t using index " + idx );
 
             words.forEach( function(z){
-                var s = {}; s[idx] = z;
+                var s = {};
+                if ( options.filter )
+                    s = Object.extend( s , options.filter );
+                s[idx] = z;
                 if ( Search.DEBUG ) Search.log( "\t\t searching on "+tojson(s) );
                 var res = table.find( s , fieldsWanted );
                 if ( options.sort )
