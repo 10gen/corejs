@@ -63,7 +63,8 @@ results.forEach(function(p){
                   lastTS = p.ts;
   });
 
-
+// filtering
+assert.eq( Search.search( t , 'content', {filter : {ts : {$lt: 20} } } ).length , 1 );
 
 
 // nested indexing
