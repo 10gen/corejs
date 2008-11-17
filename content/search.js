@@ -292,9 +292,14 @@ Search = {
             );
         }
 
-        // will only work if options.sort has 1 key
         all = all.sort(
             function( l , r ){
+
+                if ( ! options.ignoreRelevancy ){
+                    var diff = matchCounts[r] - matchCounts[l];
+                    if ( diff != 0 )
+                        return diff;
+                }
 
                 if ( options.sort ){
                     for ( var k in options.sort ){
@@ -303,12 +308,6 @@ Search = {
                         if ( l[k] > r[k] )
                             return options.sort[k];
                     }
-                }
-
-                if ( ! options.ignoreRelevancy ){
-                    var diff = matchCounts[r] - matchCounts[l];
-                    if ( diff != 0 )
-                        return diff;
                 }
 
                 if ( l._id < r._id )
