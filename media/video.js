@@ -65,7 +65,7 @@ Media.Video.prototype.getFLV = function(){
 
     var r = Math.random();
 
-    var localTempRaw = "/tmp/media_video_flv_" + r + "_" + this._file.filename;
+    var localTempRaw = "/tmp/media_video_flv_" + r + "_" + this._file.filename.replace( /[ \/\:]/g , "_" );
     var tempRaw = this._file.writeToLocalFile( localTempRaw );
     var absRoot = tempRaw.substring( 0 , tempRaw.length - localTempRaw.length );
     var tempFlv = tempRaw.replace( /\.\w+$/ , ".flv" );
