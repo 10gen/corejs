@@ -1,4 +1,8 @@
 <%
-core.user.login();
-core.user.register();
+htmlheader("Login or Register");
+
+core.user.html.login({to: request.to || request.getHeader("Referer")});
+core.user.html.register({to: request.to || request.getHeader("Referer")});
+
+htmlfooter();
 %>
