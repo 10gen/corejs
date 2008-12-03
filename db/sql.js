@@ -66,6 +66,13 @@ SQL._parseWhere = function( t , existingFilters ){
                 throw "'in' must be followed by a list of values";
             filters[name] = { $in : this._inArray(t) };
         }
+        else if ( op == "between" ) {
+            var conjunction = t.nextToken().toLowerCase();
+            if ( conjunction != "and" )
+                throw "syntax error: expected 'between X and Y', but saw '" + conjunction + "' instead of 'and'";
+            var val2 = t.nextToken();
+            filters[name] = { $gte: val, $lte: val2 };
+        }
         else
             throw "can't handle sql operator [" + op + "] yet";
 

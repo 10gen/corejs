@@ -138,16 +138,20 @@ assert( f.foo['$in'].toString() == "1,2,a" );
 f = SQL.parseWhere( "foo in ('a', 'b', 'c')" );
 assert( f.foo['$in'].toString() == "a,b,c" );
 
-f = SQL.parseWhere( "name = 'the word '' or '' anywhere (surrounded by spaces) used to throw an error'" )
+f = SQL.parseWhere( "name = 'the word '' or '' anywhere (surrounded by spaces) used to throw an error'" );
 assert( f.name = "the word '' or '' anywhere (surrounded by spaces) used to throw an error" );
 
 try {
-    f = SQL.parseWhere( "name = 'foo' or name = 'bar'" )
+    f = SQL.parseWhere( "name = 'foo' or name = 'bar'" );
     assert( false );
 }
 catch (err) {
     assert( err.toString() == "sql parser can't handle ors yet" );
 }
+
+f = SQL.parseWhere( "foo between 1 and 42");
+assert (f.foo['$gte'] == 1);
+assert (f.foo['$lte'] == 42);
 
 // ---- executeQuery testing ----
 
@@ -226,6 +230,11 @@ catch(err) {
 }
 
 cursor = SQL.executeQuery( db , "select a from basicSelect1 where a in (1, 2, 3)" );
+assert.eq( 2 , cursor.length() );
+assert.eq( 1 , cursor[0].a );
+assert.eq( 3 , cursor[1].a );
+
+cursor = SQL.executeQuery( db, "select a from basicSelect1 where a between 1 and 3" );
 assert.eq( 2 , cursor.length() );
 assert.eq( 1 , cursor[0].a );
 assert.eq( 3 , cursor[1].a );
