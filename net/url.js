@@ -41,16 +41,18 @@ URL = function(s){
         this.scheme = s.substring(0, s.indexOf('://'));
         s = s.substring(s.indexOf('://')+3, s.length);
     }
-    this.hostname = s.substring(0, s.indexOf('/'));
+    var eos = s.indexOf('/') == -1 ? s.length : s.indexOf('/');
+    this.hostname = s.substring(0, eos);
     if(this.hostname.indexOf(':') != -1){
         this.port = this.hostname.substring(this.hostname.indexOf(':')+1,
                                             this.hostname.length);
         this.hostname = this.hostname.substring(0, this.hostname.indexOf(':'));
     }
+
     if (s.indexOf('/') !== -1) {
         has_path = true;
     }
-    s = s.substring(s.indexOf('/'), s.length);
+    s = s.substring(eos, s.length);
 
     // Parse the anchor, path and query args (if any).
     this.args = [];
