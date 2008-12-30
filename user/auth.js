@@ -131,7 +131,7 @@ Auth = {
                 return null;
 
             var things = {};
-            digestThings = things;
+            var digestThings = things;
 
             auth = auth.substring( 7 );
 
@@ -268,7 +268,7 @@ Auth = {
                                 return;
                             log.user.auth.cookie.debug( "\t\t\t hash match!" );
 
-                            if ( expires < now ){
+                            if ( z.expires < now ){
                                 log.user.auth.cookie.debug( "\t\t\t too old" );
                                 return;
                             }
