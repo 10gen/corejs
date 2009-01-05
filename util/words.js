@@ -36,4 +36,6 @@ var wordSet = Class.create(function(){}, {
     },
 });
 
-Util.Words.bad = new wordSet('shit piss fuck cunt cocksucker motherfucker tits'.split(/ /));
+var badString = 'shit piss fuck cunt cocksucker motherfucker tits dildo';
+
+Util.Words.bad = new wordSet(badString.split(/ /));
