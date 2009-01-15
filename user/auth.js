@@ -189,20 +189,20 @@ Auth = {
 
             var ha1 = things.username.match( /@/ ) ? user.pass_ha1_email : user.pass_ha1_name;
             var ha2 = md5( req.getMethod() + ":" + uri );
-            
+
             var r = ha1;
             r += ":" + things.nonce;
-            
+
             //only if client supports RFC2617
             if( "nc" in things && "cnonce" in things && "qop" in things ) {
                 r += ":" + things.nc +
                     ":" + things.cnonce +
                     ":" + things.qop;
             }
-            
+
             r += ":" + ha2;
             r = md5(r);
-            
+
             if ( Auth.debug ) SYSOUT( r + "\n" + things.response );
             if ( r != things.response ){
                 if ( Auth.debug ) SYSOUT( "don't match" );
@@ -247,6 +247,14 @@ Auth = {
          * @returns {Object} If a user is found, the user object, otherwise null.
          */
         getUser : function( request , response , name , u ){
+          if (request.username && request.prefix && request.hash) {
+            return Auth.cookie.getUserFromLogin(request, response, u);
+          } else {
+            return Auth.cookie.getUserFromCookie(request, response, u);
+          }
+        },
+
+        getUserFromCookie: function(request, response, u) {
             var now = new Date();
 
             var username = request.getCookie( "username" );
@@ -279,9 +287,12 @@ Auth = {
                     if ( found )
                         return u;
                 }
-
             }
 
+            return null;
+        },
+
+        getUserFromLogin: function(request, response, u) {
             // check for login
             if ( ! request.username )
                 return null;
@@ -353,7 +364,7 @@ Auth = {
 
             u.tokens.push( { hash : myHash , expires : expires } );
             db.users.save( u );
-            
+
             User.setAuthCookie( request , response , "username" , request.username , expires );
             User.setAuthCookie( request , response , "userhash" , myHash , expires );
 
