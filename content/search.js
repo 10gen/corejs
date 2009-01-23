@@ -340,6 +340,9 @@ Search = {
         }
 
         var good = Array();
+        
+        good.totalEstimate = all.length;
+        
         all.forEach( function( z ){
             if ( good.length <= min ){
                 var id = z._id;
