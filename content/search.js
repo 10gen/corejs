@@ -178,6 +178,11 @@ Search = {
                 var s = obj[field];
                 if ( ! s )
                     continue;
+
+                if (isArray(s)) { // allow arrays of strings to get indexed
+                  s = s.join(' ');
+                }
+
                 if( o.stripHTML || options.stripHTML ){
                     s = content.HTML.strip(s);
                 }
@@ -340,9 +345,9 @@ Search = {
         }
 
         var good = Array();
-        
+
         good.totalEstimate = all.length;
-        
+
         all.forEach( function( z ){
             if ( good.length <= min ){
                 var id = z._id;
