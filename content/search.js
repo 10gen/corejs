@@ -250,13 +250,18 @@ Search = {
                 fieldsWanted[k] = 1;
         }
 
-        for ( var i=0; i<weights.length; i++){
-            var idx = weights[i].idx;
-            var w = weights[i].w;
 
-            if ( Search.DEBUG ) Search.log( "\t using index " + idx );
+        words.forEach( function(z, j) {
+            if (options.andMode) {
+              var newAll = [];
+              var newAllIds = [];
+            }
 
-            words.forEach( function(z){
+            for ( var i=0; i<weights.length; i++){
+                var idx = weights[i].idx;
+                var w = weights[i].w;
+
+                if ( Search.DEBUG ) Search.log( "\t using index " + idx );
 
                 var s = { query : {} };
                 s.query[idx] = z;
@@ -287,16 +292,29 @@ Search = {
 
                     if ( Search.DEBUG ) Search.log( "\t\t " + temp + "\t" + tojson( tempObject )  + "\t" + matchCounts[temp] );
 
+                  if (options.andMode) {
+                    if ((!j || allIds.contains(temp)) && !newAllIds.contains(temp)) {
+                      newAllIds.add(temp);
+                      newAll.add(tempObject);
+                    }
+                  } else {
                     if ( ! allIds.contains( temp ) ){
                       allIds.add( temp );
                       all.add( tempObject );
                     }
+                  }
                 }
-            } );
 
-            if ( matchCounts.keySet().size() >= min )
-                break;
-        }
+                if ( matchCounts.keySet().size() >= min )
+                  return;
+            }
+
+            if (options.andMode) {
+                all = newAll;
+                allIds = newAllIds;
+            }
+
+        } );
 
         if ( Search.DEBUG ){
             Search.log( "matchCounts: ");
