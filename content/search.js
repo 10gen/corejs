@@ -292,6 +292,7 @@ Search = {
 
                     if ( Search.DEBUG ) Search.log( "\t\t " + temp + "\t" + tojson( tempObject )  + "\t" + matchCounts[temp] );
 
+
                   if (options.andMode) {
                     if ((!j || allIds.contains(temp)) && !newAllIds.contains(temp)) {
                       newAllIds.add(temp);
@@ -306,7 +307,7 @@ Search = {
                 }
 
                 if ( matchCounts.keySet().size() >= min )
-                  return;
+                  break;
             }
 
             if (options.andMode) {
